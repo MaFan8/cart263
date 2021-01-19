@@ -1,20 +1,31 @@
-/**************************************************
-Template p5 project
-Pippin Barr
+"use strict";
 
-Here is a description of this template p5 project.
-**************************************************/
-
-// setup()
+// // assign add with another variable
+// let addingFunction = add;
 //
-// Description of setup() goes here.
-function setup() {
-
-}
-
-// draw()
+// let result = addingFunction(1, 5);
 //
-// Description of draw() goes here.
-function draw() {
+// // another way of console, it pops up
+// alert(`the result is ${result}!`);
+//
+//
+// function add(a, b) {
+//   return a + b;
+// }
 
-}
+// function hello() {
+//   alert(`hello!`);
+// }
+//
+// // do something after a delay
+// setTimeout(hello, 5000); // DO NOT PUT () after hello, otherwise it calls it right away
+
+// anonymous functions
+// let hello = function () {
+//   alert(`Hello!`);
+// };
+
+// setTimeout(function () {
+//   alert(`Hello!`);
+// }, 5000);
+
