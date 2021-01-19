@@ -29,3 +29,6 @@
 //   alert(`Hello!`);
 // }, 5000);
 
+setTimeout(() => {
+  alert(`Hello!`);
+}, 5000);
