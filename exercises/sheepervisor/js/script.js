@@ -29,6 +29,8 @@ let sausageDogImages = [];
 let sausageDogs = [];
 let numSausageDogs = 10;
 
+let passage = undefined;
+let fence = undefined;
 let sheepImage = undefined;
 let sheep = undefined;
 
@@ -53,6 +55,7 @@ function preload() {
 // SETUP
 function setup() {
   createCanvas(windowWidth, windowHeight);
+  let passage = new Passage();
 
   // create the animals
   createAnimals();
@@ -80,11 +83,12 @@ function createRandomAnimal() {
 }
 
 function createSausageDog() {
-  for (let i = 0; i < sausageDogs.length; i++) {
+  for (let i = 0; i < sausageDogImages.length; i++) {
     let x = windowWidth / 2;
     let y = windowHeight / 2;
-    let sausageDog = new SausageDog(x, y, sausageDogImage, width, height);
+    let sausageDog = new SausageDog(x, y, sausageDogImages, width, height);
   }
+  console.log(`createdog`);
 }
 
 function createSheep() {
@@ -98,14 +102,31 @@ function createSheep() {
 // DRAW
 function draw() {
   background(245, 227, 228);
+  showPassage();
 
   // call animals
   updateAnimals();
-  updateSausageDog();
+  // updateSausageDog();
 
   // call the sheep
   updateSheep();
 } // END DRAW
+
+// function checkOffScreen() {
+//   if (
+//     animal.x - animal.width / 2 > passage.x + passage.w / 2 &&
+//     animal.x + animal.width / 2 < passage.x - passage.w / 2 &&
+//     animal.y + animal.height / 2 < 0
+//   ) {
+//     animal.active = true;
+//   }
+// }
+
+function showPassage() {
+  let passage = new Passage();
+  // passage.barriers(animal);
+  passage.display();
+}
 
 // call updated animals
 function updateAnimals() {
@@ -118,7 +139,8 @@ function updateAnimals() {
 }
 
 function updateSausageDog() {
-  for (let i = 0; i < sausageDogs.length; i++) {
+  for (let i = 0; i < sausageDogImages.length; i++) {
+    let sausageDog = sausageDogs[i];
     sausageDog.moveRandom();
     sausageDog.moveWrap();
     sausageDog.update();

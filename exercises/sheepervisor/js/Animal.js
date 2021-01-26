@@ -16,6 +16,9 @@ class Animal {
     this.change = 0.002;
     this.angle = 0;
     this.safeDist = 10;
+    this.maxSafeDist = 50;
+
+    this.active = true;
   }
 
   checkProximity(sheep) {
@@ -39,6 +42,10 @@ class Animal {
 
     this.vy += this.ay;
     this.vy = constrain(this.vy, -this.maxSpeed, this.maxSpeed);
+
+    // // constrain animals to maximum safe distence
+    // this.x = constrain(this.x, this.safeDist, this.maxSafeDist);
+    // this.y = constrain(this.y, this.safeDist, this.maxSafeDist);
   }
 
   moveRandom() {
