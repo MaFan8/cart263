@@ -20,7 +20,7 @@ function draw() {
 
 function mousePressed() {
   responsiveVoice.speak(phrase, "UK English Male", {
-    onstart: showSpeaking,
+    onstart: showSpeaking, //calls function
     onend: hideSpeaking,
   });
 }
