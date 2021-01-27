@@ -15,7 +15,7 @@ Source Code and Images
 
 // global constants
 const NUM_ANIMAL_IMAGES = 10;
-const NUM_ANIMALS = 1;
+const NUM_ANIMALS = 30;
 
 const LOAD_ANIMAL_IMAGES = `assets/images/animal`;
 const LOAD_SAUSAGEDOG_IMAGES = `assets/images/sausage-dog.png`;
