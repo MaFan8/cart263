@@ -8,44 +8,33 @@ class Animal {
 
     this.vx = 0;
     this.vy = 0;
-    this.ax = 0;
-    this.ay = 0;
-    this.acceleration = 0.05;
-    this.speed = 0.5;
-    this.maxSpeed = 1.5;
-    this.change = 0.002;
+    this.speed = 0.8;
+    this.change = 0.1;
     this.angle = 0;
-    this.safeDist = 10;
-    this.maxSafeDist = 50;
+    this.safeDist = 100;
 
     this.active = true;
   }
 
+  barriers(passage) {
+    if (
+      this.x > passage.x &&
+      this.x < passage.x + passage.w &&
+      this.y > passage.y &&
+      this.y < passage.y + passage.h
+    ) {
+      this.active = false;
+    }
+  }
+
   checkProximity(sheep) {
     let d = dist(this.x, this.y, sheep.x, sheep.y);
-    if (this.x > sheep.x + this.safeDist) {
-      this.ax = this.acceleration;
+    if (d < this.safeDist) {
+      this.vx = sheep.vx * 1.2;
+      this.vy = sheep.vy * 1.2;
+    } else {
+      this.moveRandom();
     }
-    if (this.x < sheep.x - this.safeDist) {
-      this.ax = -this.acceleration;
-    }
-    if (this.y > sheep.y - this.safeDist) {
-      this.ay = this.acceleration;
-    }
-    if (this.y < sheep.y - this.safeDist) {
-      this.ay = -this.acceleration;
-    }
-
-    // update velocity to acceleration and constrain to maxSpeed
-    this.vx += this.ax;
-    this.vx = constrain(this.vx, -this.maxSpeed, this.maxSpeed);
-
-    this.vy += this.ay;
-    this.vy = constrain(this.vy, -this.maxSpeed, this.maxSpeed);
-
-    // // constrain animals to maximum safe distence
-    // this.x = constrain(this.x, this.safeDist, this.maxSafeDist);
-    // this.y = constrain(this.y, this.safeDist, this.maxSafeDist);
   }
 
   moveRandom() {

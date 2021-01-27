@@ -15,11 +15,30 @@ Source Code and Images
 
 // global constants
 const NUM_ANIMAL_IMAGES = 10;
-const NUM_ANIMALS = 30;
+const NUM_ANIMALS = 1;
 
 const LOAD_ANIMAL_IMAGES = `assets/images/animal`;
 const LOAD_SAUSAGEDOG_IMAGES = `assets/images/sausage-dog.png`;
 const LOAD_SHEEP_IMAGE = `assets/images/sheep.png`;
+
+let title = `SHEEPERVISOR!
+
+
+Collect all animals and drop them into the dark abyss.
+** I hope you know sausage dogs are not real animals. **
+
+Use ↔ ↕ to control your sheep `;
+
+let fail = `Sorry... you're sheep is not good enough!`;
+let end = `APPROUVED!!
+
+That's one spirited sheep!`;
+
+let bg = {
+  r: 245,
+  g: 227,
+  b: 228,
+};
 
 // arrays
 let animalImages = [];
@@ -30,9 +49,10 @@ let sausageDogs = [];
 let numSausageDogs = 10;
 
 let passage = undefined;
-let fence = undefined;
 let sheepImage = undefined;
 let sheep = undefined;
+
+let state = "start"; //could be start, simulation, attacked, success
 
 // PRELOAD
 function preload() {
@@ -55,13 +75,11 @@ function preload() {
 // SETUP
 function setup() {
   createCanvas(windowWidth, windowHeight);
-  let passage = new Passage();
+  passage = new Passage();
 
   // create the animals
   createAnimals();
   createSausageDog();
-
-  // create the Sheep
   createSheep();
 } //END SETUP
 
@@ -84,11 +102,11 @@ function createRandomAnimal() {
 
 function createSausageDog() {
   for (let i = 0; i < sausageDogImages.length; i++) {
-    let x = windowWidth / 2;
-    let y = windowHeight / 2;
-    let sausageDog = new SausageDog(x, y, sausageDogImages, width, height);
+    let x = random(0, width);
+    let y = random(0, height);
+    let sausageDog = new SausageDog(x, y, sausageDogImages[i], 50, 50);
+    sausageDogs.push(sausageDog);
   }
-  console.log(`createdog`);
 }
 
 function createSheep() {
@@ -101,46 +119,101 @@ function createSheep() {
 
 // DRAW
 function draw() {
-  background(245, 227, 228);
-  showPassage();
+  background(bg.r, bg.g, bg.b);
 
-  // call animals
-  updateAnimals();
-  // updateSausageDog();
-
-  // call the sheep
-  updateSheep();
+  if (state === "start") {
+    start();
+  }
+  if (state === "simulation") {
+    simulation();
+  }
+  if (state === "attacked") {
+    attacked();
+  }
+  if (state === "success") {
+    success();
+  }
 } // END DRAW
 
-// function checkOffScreen() {
-//   if (
-//     animal.x - animal.width / 2 > passage.x + passage.w / 2 &&
-//     animal.x + animal.width / 2 < passage.x - passage.w / 2 &&
-//     animal.y + animal.height / 2 < 0
-//   ) {
-//     animal.active = true;
-//   }
-// }
+function start() {
+  push();
+  textSize(40);
+  fill(0);
+  textFont(`futura`);
+  textAlign(CENTER);
+  textStyle(BOLD);
+  text(title, windowWidth / 2, height / 4);
+  pop();
+}
+
+function simulation() {
+  showPassage();
+  updateAnimals();
+  updateSausageDog();
+  updateSheep();
+}
+
+function attacked() {
+  push();
+  textSize(40);
+  fill(0);
+  textFont(`futura`);
+  textAlign(CENTER);
+  textStyle(BOLD);
+  text(fail, windowWidth / 2, height / 4);
+  pop();
+}
+
+function success() {
+  push();
+  textSize(40);
+  fill(0);
+  textFont(`futura`);
+  textAlign(CENTER);
+  textStyle(BOLD);
+  text(end, windowWidth / 2, height / 4);
+  pop();
+
+  let x = random(windowWidth);
+  let y = random(windowHeight);
+  let size = random(20, 80);
+  fill(0, 0, 255);
+  ellipse(x, y, size, size);
+}
 
 function showPassage() {
   let passage = new Passage();
-  // passage.barriers(animal);
   passage.display();
 }
 
-// call updated animals
 function updateAnimals() {
   for (let i = 0; i < animals.length; i++) {
+    animals[i].barriers(passage);
+    if (!animals[i].active) {
+      animals.splice(i, 1);
+      break;
+    }
     animals[i].checkProximity(sheep);
-    animals[i].moveRandom();
     animals[i].moveWrap();
     animals[i].update();
+  }
+  checkNoMoreAnimals();
+}
+
+function checkNoMoreAnimals() {
+  if (animals.length == 0) {
+    state = "success";
   }
 }
 
 function updateSausageDog() {
   for (let i = 0; i < sausageDogImages.length; i++) {
     let sausageDog = sausageDogs[i];
+    if (!sausageDog.active) {
+      state = "attacked";
+    }
+    sausageDog.checkTouch(sheep);
+    sausageDog.barriers(passage);
     sausageDog.moveRandom();
     sausageDog.moveWrap();
     sausageDog.update();
@@ -151,4 +224,10 @@ function updateSheep() {
   sheep.handleInput();
   sheep.moveWrap();
   sheep.update();
+}
+
+function keyPressed() {
+  if (state === "start") {
+    state = "simulation";
+  }
 }

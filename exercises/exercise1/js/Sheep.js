@@ -1,6 +1,8 @@
 class Sheep extends Animal {
   constructor(x, y, image, width, height) {
     super(x, y, image, width, height);
+    this.x = windowWidth / 2;
+    this.y = windowHeight / 2;
     this.speed = 6;
   }
 
@@ -27,6 +29,13 @@ class Sheep extends Animal {
   }
 
   update() {
-    super.update();
+    push();
+    imageMode(CENTER);
+    translate(this.x, this.y);
+    if (keyIsDown(RIGHT_ARROW)) {
+      scale(-1, 1);
+    }
+    image(this.image, 0, 0, this.width, this.height);
+    pop();
   }
 }
