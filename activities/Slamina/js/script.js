@@ -168,12 +168,16 @@ function draw() {
 }
 
 
-function mousePressed() {
-  currentAnimal = random(animals);
-  let reverseAnimal = reverseString(currentAnimal);
+// function mousePressed() {
+//   currentAnimal = random(animals);
+//   let reverseAnimal = reverseString(currentAnimal);
+//   responsiveVoice.speak(reverseAnimal);
+// }
+
+function sayAnimalBackwards(animal) {
+  let reverseAnimal = reverseString(animal);
   responsiveVoice.speak(reverseAnimal);
 }
-
 
 // when annyang gets name of animal, it will pass into paramater of guessAnimal
 function guessAnimal(animal) {
@@ -185,4 +189,14 @@ function reverseString(string) {
   let reverseCharacters = characters.reverse(); //reverse the array of characters
   let result = reverseCharacters.join(``); //join array of characters into a string
   return result;
+}
+
+function nextQuestion() {
+  currentAnswer = ``;
+  currentAnimal = random(animals);
+  sayAnimalBackwards(currentAnimal);
+}
+
+function mousePressed() {
+  nextQuestion();
 }
