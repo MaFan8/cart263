@@ -64,11 +64,8 @@ const instructions = [
 
 // Global constants
 const title = `Consult the Cleanse Advisor
-
-
-
-Tell me 5 things that is in your mind right this moment.
-
+\n
+Tell me 5 things that is in your mind right this moment.\n
 Press 'SPACE' to begin your journey...`;
 
 
@@ -121,7 +118,7 @@ function setWord(word) {
   words.push(word.toLowerCase());
   // stop listening and speak advice after 5 words
   if (words.length === numWords) {
-    annyang.pause();
+    annyang.abort();
     speakAdvice();
   }
 }
@@ -148,10 +145,13 @@ function start() {
   textAlign(CENTER, CENTER);
   text(title, windowWidth/2, windowHeight/2, adviceFrame.x, adviceFrame.y);
   pop();
+
+  annyang.pause();
 }
 
 
 function simulation() {
+  annyang.resume();
   displayUserWords();
   displayAdvice();
 }
