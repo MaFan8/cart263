@@ -14,6 +14,7 @@ function setup() {
   let joke = jokeData[0];
   // Set the joke text as the setup and punchline properties together
   jokeText = `${joke.setup}\n\n${joke.punchline}`;
+  // template string of setup, then 2 breaks and a string of punchline
 }
 
 function draw() {
