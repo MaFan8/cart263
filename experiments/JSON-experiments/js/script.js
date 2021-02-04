@@ -3,19 +3,22 @@
 let tarotData = undefined;
 let fortune = `No fortune found yet...`;
 
-// function preload() {
+function preload() {
 // // immediate assigning results from tarotData
 //   tarotData = loadJSON(`assets/data/tarot_interpretations.json`);
-// }
+
+// loading from URL 
+tarotData = loadJSON(`https://raw.githubusercontent.com/dariusk/corpora/master/data/divination/tarot_interpretations.json`);
+}
 
 
 
 function setup() {
   createCanvas (windowWidth, windowHeight);
 
-  // // picks random card
-  // let card = random(tarotData.tarot_interpretations);
-  // fortune = random(card.fortune_telling);
+  // picks random card
+  let card = random(tarotData.tarot_interpretations);
+  fortune = random(card.fortune_telling);
 }
 
 
@@ -41,15 +44,15 @@ function draw() {
   pop();
 }
 
-function mousePressed() {
-  // outside of preload, jSON file will be loaded, it will keep running until tarotLoaded is called
-  loadJSON(`assets/data/tarot_interpretations.json`, tarotLoaded)
-}
-
-// when it's loaded, then you can assign the data in perameters
-function tarotLoaded(data) {
-  tarotData = data; // saved data into tarotData
-  // picks random card
-  let card = random(tarotData.tarot_interpretations);
-  fortune = random(card.fortune_telling);
-}
+// function mousePressed() {
+//   // outside of preload, jSON file will be loaded, it will keep running until tarotLoaded is called
+//   loadJSON(`assets/data/tarot_interpretations.json`, tarotLoaded)
+// }
+//
+// // when it's loaded, then you can assign the data in perameters
+// function tarotLoaded(data) {
+//   tarotData = data; // saved data into tarotData
+//   // picks random card
+//   let card = random(tarotData.tarot_interpretations);
+//   fortune = random(card.fortune_telling);
+// }
