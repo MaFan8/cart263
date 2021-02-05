@@ -2,31 +2,30 @@
 
 /**
 Title of Project
-Author Name
+Maple Sung
 
 This is a template. You must fill in the title,
 author, and this description to match your project!
+
+Uses:
+
 */
 
-/**
-Description of preload
-*/
+
+
+// PRELOAD
 function preload() {
 
-}
+} // END PRELOAD
 
 
-/**
-Description of setup
-*/
+// SETUP
 function setup() {
 
-}
+} // END SETUP
 
 
-/**
-Description of draw()
-*/
+// DRAW
 function draw() {
 
-}
+} // END DRAW
