@@ -1,7 +1,7 @@
 "use strict";
 
 /**
-Global Stealth Inc.
+Title of Project
 Maple
 
 This is a template. You must fill in the title,
@@ -23,8 +23,6 @@ const TARGET_URL = `https://raw.githubusercontent.com/dariusk/corpora/master/dat
 const WEAPON_URL = `https://raw.githubusercontent.com/dariusk/corpora/master/data/technology/appliances.json`;
 const WEAPON_MATERIAL_URL = `https://raw.githubusercontent.com/dariusk/corpora/master/data/materials/fabrics.json`;
 const VENUE_URL = `https://raw.githubusercontent.com/dariusk/corpora/master/data/geography/venues.json`;
-
-
 
 
 // PRELOAD
