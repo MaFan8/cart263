@@ -33,7 +33,6 @@ function setup() {
     if (data) {
       //check password only if there is data
       let password = prompt(`Input password.`)
-      //confrontation
       if (password === data.password) {
         setSpyData(data);
       } // show data
