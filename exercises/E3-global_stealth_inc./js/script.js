@@ -16,6 +16,9 @@ Uses:
 Darius Kazemi's corpora project:
 https://github.com/dariusk/corpora/
 
+annyang
+https://www.talater.com/annyang/
+
 */
 
 //GLOBAL CONSTANTS
@@ -47,7 +50,8 @@ let assignmentInfo = {
 
 let welcomeText = `Welcome to GLOBAL STEALTH INC.`
 let loadingText = `- Verifying Access...`;
-let deniedText = `** ACCESS DENIED **`;
+let deniedText = `** ACCESS DENIED **
+Data eliminated`;
 let strangeWordsData = undefined;
 let wrestlerData = undefined;
 let appliancesData = undefined;
@@ -95,7 +99,7 @@ function setup() {
       alert(`ANNOUNCE PASSWORD TO ENTER`);
       state = 'admission';
     } else {
-      generatePassword();
+      state = `denied`;
     }
   }
 
@@ -103,9 +107,6 @@ function setup() {
 } // END SETUP
 
 function setPassword(password) {
-  // showText = true;
-
-
   if (password === agentProfile.password.toLowerCase()) {
     state = `accessed`;
   } else {
@@ -180,13 +181,12 @@ function displayUserProfile() {
 
 function displayAdmission() {
   annyang.start(); // start listening
-
-  // if (showText) {
+    // show loading text
     push();
     fill(255, 0, 0);
     text(loadingText, textPosition.w, textPosition.h);
     pop();
-  // }
+
 }
 
 function generateAssignmentProfile() {
@@ -212,7 +212,8 @@ function displayAcessed() {
   let assignment = `<< ASSIGNMENT >>
 
   Target: ${assignmentInfo.target}
-  Weapons: ${assignmentInfo.weapon}, ${assignmentInfo.weaponMaterial}
+  Weapons: ${assignmentInfo.weapon}
+  Weapon Material: ${assignmentInfo.weaponMaterial}
   Place of Termination: ${assignmentInfo.venue}
   Fee:  $ ${assignmentInfo.fee}`
 
