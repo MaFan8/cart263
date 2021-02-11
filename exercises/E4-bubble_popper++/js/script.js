@@ -4,7 +4,7 @@
 Bubble Popper++
 Maple Sung
 
-Use hand with pin on index finger to pop bubbles
+Use hand to cut the ballon free, blow it around until it reaches the pop zone where user claps to pop the bubble.
 
 References:
 Based on Pippin Barr's Bubble Popper
@@ -21,17 +21,37 @@ let bubble = undefined;
 
 let predictions = [];
 
-let pin = {
+let bladeIndex = {
   tip: {
     x: undefined,
     y: undefined
   },
-  head: {
+  base: {
     x: undefined,
     y: undefined,
-    size: 20,
+    // size: 20,
   }
 };
+let bladeIndexTipX = undefined;
+let bladeIndexTipY = undefined;
+let bladeIndexBaseX = undefined;
+let bladeIndexBaseY = undefined;
+
+let bladeMiddleFinger = {
+  tip: {
+    x: undefined,
+    y: undefined
+  },
+  base: {
+    x: undefined,
+    y: undefined,
+    // size: 20,
+  }
+};
+let bladeMiddleFingerTipX = undefined;
+let bladeMiddleFingerTipY = undefined;
+let bladeMiddleFingerBaseX = undefined;
+let bladeMiddleFingerBaseY = undefined;
 
 
 function setup() {
@@ -49,7 +69,7 @@ function setup() {
 
   // listen for predictions
   handpose.on('predict', function(results) {
-    console.log(results);
+    // console.log(results);
     predictions = results;
   })
 
@@ -97,7 +117,7 @@ function running() {
 
   // Check if there are current predictions (hand)
   if (predictions.length > 0) {
-    updatePin(predictions[0]); // take index and middle finger
+    updateScissors(predictions[0]); // take index and middle finger
 
   //   // Check if the tip of the "pin" is touching the bubble
   //   let d = dist(pin.tip.x, pin.tip.y, bubble.x, bubble.y);
@@ -109,19 +129,34 @@ function running() {
   //   displayPin();
   // }
 
+
+
   // Handle the bubble's movement and display (independent of hand detection
   // so it doesn't need to be inside the predictions check)
 
-  checkOutOfBounds();
-  displayString();
-  displayBubble();
+  // checkOutOfBounds();
+  // displayString();
+  // displayBubble();
+
+  // displayScissors();
+}
 }
 
-function updatePin(prediction) {
-  pin.tip.x = prediction.annotations.indexFinger[3][0];
-  pin.tip.y = prediction.annotations.indexFinger[3][1];
-  pin.head.x = prediction.annotations.indexFinger[0][0];
-  pin.head.y = prediction.annotations.indexFinger[0][1];
+function updateScissors(prediction) {
+  bladeIndex.tip.x = prediction.annotations.indexFinger[3][0];
+  bladeIndex.tip.y = prediction.annotations.indexFinger[3][1];
+  bladeIndex.base.x = prediction.annotations.indexFinger[0][0];
+  bladeIndex.base.y = prediction.annotations.indexFinger[0][1];
+
+  // bladeIndexTipX = lerp(bladeIndexTipX, bladeIndex.tip.x, 0.5);
+  // bladeIndexTipY = lerp(bladeIndexTipY, bladeIndex.tip.y, 0.5);
+  // bladeIndexBaseX = lerp(bladeIndexBaseX, bladeIndex.base.x, 0.5);
+  // bladeIndexBaseY = lerp(bladeIndexBaseY, bladeIndex.base.y, 0.5);
+
+  bladeMiddleFinger.tip.x = prediction.annotations.middleFinger[3][0];
+  bladeMiddleFinger.tip.y = prediction.annotations.middleFinger[3][1];
+  bladeMiddleFinger.base.x = prediction.annotations.middleFinger[0][0];
+  bladeMiddleFinger.base.y = prediction.annotations.middleFinger[0][1];
 }
 
 function displayString() {
@@ -133,21 +168,21 @@ function displayString() {
   pop();
 }
 
-function resetBubble() {
-  bubble.x = random(width);
-  bubble.y = height;
-}
+// function resetBubble() {
+//   bubble.x = random(width);
+//   bubble.y = height;
+// }
 
-function moveBubble() {
-  let r = random(0,1);
-  if (r < bubble.change) {
-    bubble.vx = random (-bubble.speed, bubble.speed);
-    bubble.vy = random(-bubble.speed, bubble.speed);
-  }
-
-  bubble.x += bubble.vx;
-  bubble.y += bubble.vy;
-}
+// function moveBubble() {
+//   let r = random(0,1);
+//   if (r < bubble.change) {
+//     bubble.vx = random (-bubble.speed, bubble.speed);
+//     bubble.vy = random(-bubble.speed, bubble.speed);
+//   }
+//
+//   bubble.x += bubble.vx;
+//   bubble.y += bubble.vy;
+// }
 
 function checkOutOfBounds() {
   if (bubble.y < 0) {
@@ -166,18 +201,27 @@ function displayBubble() {
   pop();
 }
 
-function displayPin() {
-  // pin body
+function displayScissors() {
   push();
   noFill();
   stroke(255);
-  strokeWeight(2);
-  line(pin.tip.x, pin.tip.y, pin.head.x, pin.head.y);
+  strokeCap(ROUND);
+  strokeWeight(15);
+  line(bladeIndex.tip.x, bladeIndex.tip.y, bladeIndex.base.x, bladeIndex.base.y);
+  // line(bladeIndexTipX, bladeIndexTipY, bladeIndexBaseX, bladeIndexBaseY);
+  line(bladeMiddleFinger.tip.x, bladeMiddleFinger.tip.y, bladeMiddleFinger.base.x, bladeMiddleFinger.base.y);
   pop();
-  // pin head
+
   push();
-  fill(255, 0, 0);
-  noStroke();
-  ellipse(pin.head.x, pin.head.y, pin.head.size);
+  fill(255,0,0);
+  ellipseMode(CORNERS);
+  ellipse(bladeIndex.base.x, bladeIndex.base.y, bladeMiddleFinger.base.x, bladeMiddleFinger.base.y);
   pop();
+
+  // // pin head
+  // push();
+  // fill(255, 0, 0);
+  // noStroke();
+  // ellipse(pin.head.x, pin.head.y, pin.head.size);
+  // pop();
 }
