@@ -19,7 +19,8 @@ let handpose = undefined;
 
 let classifier;
 let soundModel =
-`https://teachablemachine.withgoogle.com/models/bMkXW1pVN/`;
+`https://teachablemachine.withgoogle.com/models/OMXUjyI3j/model.json`;
+// let options = {probabilityThreashold: 0.5};
 let label = 'listening...';
 
 let string = undefined;
@@ -27,6 +28,7 @@ let stringCut = false;
 let bubble = undefined;
 
 let predictions = [];
+let scissorShow = true;
 
 let bladeIndex = {
   tip: {
@@ -62,8 +64,10 @@ let bladeMiddleFingerBaseY = undefined;
 
 // PRELOAD
 function preload() {
-  classifier = ml5.soundClassifier(soundModel + model.json);
+
+  classifier = ml5.soundClassifier(soundModel);
 } // END PRELOAD
+
 
 // SETUP
 function setup() {
@@ -81,12 +85,12 @@ function setup() {
 
   // listen for predictions
   handpose.on('predict', function(results) {
-    // console.log(results);
     predictions = results;
   })
 
   // start listening for soundModel
-  classifier.classify(gotResults);
+  classifier.classify(gotResult);
+
 
   //string
   string = {
@@ -141,10 +145,8 @@ function running() {
   background(0);
 
   // Check if there are current predictions (hand)
-  if (predictions.length > 0) {
+  if (predictions.length > 0 && scissorShow) {
     updateScissors(predictions[0]); // index and middle finger
-
-
 
     if (bladeIndex.tip.y > bubble.y &&
         bladeIndex.tip.y < (bubble.y + string.height) &&
@@ -165,6 +167,8 @@ function running() {
   if (!stringCut) {
   displayString();
 } else {
+    video.stop();
+    scissorShow = false;
     moveBubble();
 
     // // start listening for soundModel
@@ -212,11 +216,12 @@ function updateScissors(prediction) {
 }
 }
 
-function gotResults(error, results) {
+function gotResult(error, results) {
   if (error) {
-    connsole.error(error);
+    console.error(error);
     return;
   }
+  // console.log(results[0]);
   label = results[0].label;
 }
 
