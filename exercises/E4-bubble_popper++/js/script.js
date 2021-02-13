@@ -41,6 +41,7 @@ let popZone;
 let predictions = [];
 let scissorShow = true;
 
+let blade;
 let bladeIndex = {
   tip: {
     x: undefined,
@@ -160,6 +161,9 @@ function checkHandPredictions() {
 }
 
 function updateScissors(prediction) {
+  // blade = new Blade;
+  // blade.index();
+  // blade.middle();
   bladeIndex.tip.x = prediction.annotations.indexFinger[3][0];
   bladeIndex.tip.y = prediction.annotations.indexFinger[3][1];
   bladeIndex.base.x = prediction.annotations.indexFinger[0][0];
