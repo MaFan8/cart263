@@ -19,7 +19,7 @@ https://teachablemachine.withgoogle.com/
 
 */
 
-let state = `running`; // start, running, end
+let state = `start`; // start, running, end
 
 let video = undefined;
 let modelName = `Handpose`;
@@ -34,14 +34,12 @@ let option = {
 let label = undefined;
 
 let startText;
-let bubbleString;
 let bubble;
 let popZone;
 
 let predictions = [];
 let scissorShow = true;
 
-let blade;
 let bladeIndex = {
   tip: {
     x: undefined,
@@ -221,7 +219,7 @@ function gotResult(error, results) {
     console.error(error);
     return;
   } else if (bubble.stringIsCut) {
-    // console.log(results[0]);
+    console.log(results[0]);
     label = results[0].label;
   }
 }
@@ -234,7 +232,6 @@ function checkStringIsCut() {
     scissorShow = false;
     bubble.move();
     popZone.display();
-    console.log(popZone.x, popZone.y);
   }
 }
 
@@ -246,8 +243,9 @@ function checkSoundClassification() {
   if (label === `Snap`) {
     popZone.displayText();
 
-    if (d < 50 && label === `Snap`) {
+    if (d < 80 && label === `Snap`) {
       bubble.popped = true;
+      state = `end`;
     }
   }
 }
