@@ -10,10 +10,14 @@ Uses:
 
 */
 
+// Global constants
 const ACE_HEAD_IMG = `assets/images/acehead.png`;
 const ACE_HEAD_ANGRY_IMG = `assets/images/acehead_angry.png`;
 const ACE_BODY_IMG = `assets/images/aceBody.png`;
 
+let state = `level_1` // start, level_1, level_2, limbo, end
+
+// Image variables
 let aceHead;
 let aceHeadImg;
 let aceHeadAngry;
@@ -46,9 +50,25 @@ function setup() {
 function draw() {
   background(0);
 
+  if (state = `start`) {
 
-  aceBody.display();
-  aceHead.display();
+  }
+  else if (state = `level_2`) {
+
+  }
+  else if (state = `level_2`) {
+
+  }
+  else if (state = `limbo`) {
+
+  }
+  else if (state = `end`) {
+    
+  }
+
+
+  // aceBody.display();
+  // aceHead.display();
   // aceHeadAngry.display();
 
 } // END DRAW
