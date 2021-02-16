@@ -15,7 +15,8 @@ ml5.js Handpose
 https://learn.ml5js.org/#/reference/handpose
 Teachable Machine - Sound Classification
 https://teachablemachine.withgoogle.com/
-
+Pop soundModel
+https://freesound.org/people/deraj/sounds/202230/
 
 */
 
@@ -32,6 +33,7 @@ let option = {
   probabilityThreashold: 0.7
 };
 let label = undefined;
+let popSound;
 
 let startText;
 let bubble;
@@ -40,6 +42,7 @@ let popZone;
 let predictions = [];
 let scissorShow = true;
 
+let blade;
 let bladeIndex = {
   tip: {
     x: undefined,
@@ -76,6 +79,9 @@ let bladeMiddleFingerBaseY = undefined;
 function preload() {
   // load soundModel
   classifier = ml5.soundClassifier(soundModel, option);
+
+  // load pop sound
+  popSound = loadSound(`assets/sounds/popSound.wav`);
 } // END PRELOAD
 
 
@@ -91,6 +97,7 @@ function setup() {
   // load bubble + PopZone
   bubble = new Bubble;
   popZone = new PopZone;
+  startText = new StartText;
 } // END SETUP
 
 function loadHandPose() {
@@ -101,8 +108,9 @@ function loadHandPose() {
     flipHorizontal: true
   }, function() {
     console.log(`model loaded`);
-    // startText.displaySpace();
-    state = `running`;
+    startText.fillRed.r = 255;
+    // state = `running`;
+    console.log(startText);
   });
 
   // listen for predictions
@@ -128,9 +136,10 @@ function draw() {
 
 function start() {
   background(0);
-  startText = new StartText;
+
   startText.displayTitle();
   startText.display();
+  startText.displaySpace();
 }
 
 function running() {
@@ -160,8 +169,8 @@ function checkHandPredictions() {
 
 function updateScissors(prediction) {
   // blade = new Blade;
-  // blade.index();
-  // blade.middle();
+  // blade.index(prediction);
+  // // blade.middle();
   bladeIndex.tip.x = prediction.annotations.indexFinger[3][0];
   bladeIndex.tip.y = prediction.annotations.indexFinger[3][1];
   bladeIndex.base.x = prediction.annotations.indexFinger[0][0];
@@ -245,7 +254,8 @@ function checkSoundClassification() {
 
     if (d < 80 && label === `Snap`) {
       bubble.popped = true;
-      state = `end`;
+      popSound.isPlaying();
+      // state = `end`;
     }
   }
 }

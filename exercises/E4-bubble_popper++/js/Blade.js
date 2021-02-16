@@ -11,7 +11,7 @@ class Blade {
   }
 
 
-    index() {
+    index(prediction) {
       this.indexTipX = prediction.annotations.indexFinger[3][0];
       this.indexTipY = prediction.annotations.indexFinger[3][1];
       this.indexBaseX = prediction.annotations.indexFinger[0][0];

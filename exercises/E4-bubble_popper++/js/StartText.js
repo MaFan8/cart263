@@ -5,6 +5,11 @@ class StartText {
       this.titleSize = 40;
       this.size = 25;
       this.fill = 128;
+      this.fillRed = {
+        r: 0,
+        g: 0,
+        b: 0,
+      };
 
       this.title = `Bubble Popper++`
       this.text = `Cut the string with your index and middle finger.
@@ -37,7 +42,7 @@ class StartText {
 
     displaySpace() {
       push();
-      fill(255, 0, 0);
+      fill(this.fillRed.r, this.fillRed.g, this.fillRed.b);
       textSize(this.size);
       textStyle(BOLD);
       textAlign(CENTER);
