@@ -43,37 +43,37 @@ let predictions = [];
 let scissorShow = true;
 
 let blade;
-let bladeIndex = {
-  tip: {
-    x: undefined,
-    y: undefined
-  },
-  base: {
-    x: undefined,
-    y: undefined,
-  }
-};
-let bladeIndexTipX = undefined;
-let bladeIndexTipY = undefined;
-let bladeIndexBaseX = undefined;
-let bladeIndexBaseY = undefined;
-
-let predictionStart = true;
-
-let bladeMiddleFinger = {
-  tip: {
-    x: undefined,
-    y: undefined
-  },
-  base: {
-    x: undefined,
-    y: undefined,
-  }
-};
-let bladeMiddleFingerTipX = undefined;
-let bladeMiddleFingerTipY = undefined;
-let bladeMiddleFingerBaseX = undefined;
-let bladeMiddleFingerBaseY = undefined;
+// let bladeIndex = {
+//   tip: {
+//     x: undefined,
+//     y: undefined
+//   },
+//   base: {
+//     x: undefined,
+//     y: undefined,
+//   }
+// };
+// let bladeIndexTipX = undefined;
+// let bladeIndexTipY = undefined;
+// let bladeIndexBaseX = undefined;
+// let bladeIndexBaseY = undefined;
+//
+// let predictionStart = true;
+//
+// let bladeMiddleFinger = {
+//   tip: {
+//     x: undefined,
+//     y: undefined
+//   },
+//   base: {
+//     x: undefined,
+//     y: undefined,
+//   }
+// };
+// let bladeMiddleFingerTipX = undefined;
+// let bladeMiddleFingerTipY = undefined;
+// let bladeMiddleFingerBaseX = undefined;
+// let bladeMiddleFingerBaseY = undefined;
 
 // PRELOAD
 function preload() {
@@ -161,59 +161,27 @@ function checkHandPredictions() {
   if (predictions.length > 0 && scissorShow) {
     updateScissors(predictions[0]); // index and middle finger
     checkScissorCut(); // check for scissor cutting movement
-    displayScissors();
+    blade.displayScissors();
+    console.log(blade.displayScissors);
   }
 }
 
 function updateScissors(prediction) {
-  // blade = new Blade;
-  // blade.index(prediction);
-  // // blade.middle();
-  bladeIndex.tip.x = prediction.annotations.indexFinger[3][0];
-  bladeIndex.tip.y = prediction.annotations.indexFinger[3][1];
-  bladeIndex.base.x = prediction.annotations.indexFinger[0][0];
-  bladeIndex.base.y = prediction.annotations.indexFinger[0][1];
-
-  bladeMiddleFinger.tip.x = prediction.annotations.middleFinger[3][0];
-  bladeMiddleFinger.tip.y = prediction.annotations.middleFinger[3][1];
-  bladeMiddleFinger.base.x = prediction.annotations.middleFinger[0][0];
-  bladeMiddleFinger.base.y = prediction.annotations.middleFinger[0][1];
-
-  // stablize points
-  if (predictionStart === true) {
-    bladeIndexTipX = bladeIndex.tip.x;
-    bladeIndexTipY = bladeIndex.tip.y;
-    bladeIndexBaseX = bladeIndex.base.x;
-    bladeIndexBaseY = bladeIndex.base.y;
-
-    bladeMiddleFingerTipX = bladeMiddleFinger.tip.x;
-    bladeMiddleFingerTipY = bladeMiddleFinger.tip.y;
-    bladeMiddleFingerBaseX = bladeMiddleFinger.base.x;
-    bladeMiddleFingerBaseY = bladeMiddleFinger.base.y;
-
-    predictionStart = false;
-  } else {
-    bladeIndexTipX = lerp(bladeIndexTipX, bladeIndex.tip.x, 0.5);
-    bladeIndexTipY = lerp(bladeIndexTipY, bladeIndex.tip.y, 0.5);
-    bladeIndexBaseX = lerp(bladeIndexBaseX, bladeIndex.base.x, 0.5);
-    bladeIndexBaseY = lerp(bladeIndexBaseY, bladeIndex.base.y, 0.5);
-
-    bladeMiddleFingerTipX = lerp(bladeMiddleFingerTipX, bladeMiddleFinger.tip.x, 0.5);
-    bladeMiddleFingerTipY = lerp(bladeMiddleFingerTipY, bladeMiddleFinger.tip.y, 0.5);
-    bladeMiddleFingerBaseX = lerp(bladeMiddleFingerBaseX, bladeMiddleFinger.base.x, 0.5);
-    bladeMiddleFingerBaseY = lerp(bladeMiddleFingerBaseY, bladeMiddleFinger.base.y, 0.5);
-  }
+  blade = new Blade;
+  blade.index(prediction);
+  blade.middleFinger(prediction);
+  blade.lerpFingers();
 }
 
 function checkScissorCut() {
   // check if scissors are between string length
-  if (bladeIndex.tip.y > bubble.y + bubble.size / 2 &&
-    bladeMiddleFinger.tip.y > bubble.y + bubble.size / 2) {
+  if (blade.bladeIndexTipY > bubble.y + bubble.size / 2 &&
+    blade.bladeMiddleTipY > bubble.y + bubble.size / 2) {
     // tips and bases of index finger surrounds bubble.x position
-    if ((bladeIndex.tip.x > bubble.x + bubble.size / 2 && bladeIndex.base.x < bubble.x - bubble.size / 2) || (bladeIndex.tip.x < bubble.x - bubble.size / 2 &&
-        bladeIndex.base.x > bubble.x + bubble.size / 2)) {
+    if ((blade.bladeIndexTipX > bubble.x + bubble.size / 2 && blade.bladeIndexBaseX < bubble.x - bubble.size / 2) || (blade.bladeIndexTipX < bubble.x - bubble.size / 2 &&
+        blade.bladeIndexBaseX > bubble.x + bubble.size / 2)) {
       // check if index + middle fingers are touching
-      let d = dist(bladeIndex.tip.x, bladeIndex.tip.y, bladeMiddleFinger.tip.x, bladeMiddleFinger.tip.y);
+      let d = dist(blade.bladeIndexTipX, blade.bladeIndexTipY, blade.bladeMiddleTipX, blade.bladeMiddleTipY);
       if (d < 25) {
         bubble.stringIsCut = true;
       }
@@ -261,28 +229,28 @@ function checkSoundClassification() {
   }
 }
 
-function displayScissors() {
-  // check distance between tips and bases
-  let tipDist = dist(bladeIndex.tip.x, bladeIndex.tip.y, bladeMiddleFinger.tip.x, bladeMiddleFinger.tip.y);
-  let baseDist = dist(bladeIndex.base.x, bladeIndex.base.y, bladeMiddleFinger.base.x, bladeMiddleFinger.base.y);
+// function displayScissors() {
+  // // check distance between tips and bases
+  // let tipDist = dist(blade.indexTipX, blade.indexTipY, blade.middleTipX, blade.middleTipY);
+  // let baseDist = dist(blade.indexBaseX, blade.indexBaseY, blade.middleBaseX, blade.middleBaseY);
 
-  // blades of scissors
-  push();
-  noFill();
-  stroke(255);
-  strokeCap(ROUND);
-  strokeWeight(5);
-  line(bladeIndexTipX, bladeIndexTipY + tipDist / 2, bladeIndexBaseX, bladeIndexBaseY);
-  line(bladeMiddleFinger.tip.x, bladeMiddleFinger.tip.y, bladeIndex.base.x, bladeIndex.base.y);
-  pop();
-
-  // hinge
-  push();
-  fill(255, 0, 0);
-  ellipseMode(CENTER);
-  ellipse(bladeIndex.base.x, bladeIndex.base.y, baseDist / 2);
-  pop();
-}
+  // // blades of scissors
+  // push();
+  // noFill();
+  // stroke(255);
+  // strokeCap(ROUND);
+  // strokeWeight(5);
+  // line(blade.bladeIndexTipX, blade.bladeIndexTipY + tipDist / 2, blade.bladeIndexBaseX, blade.bladeIndexBaseY);
+  // line(blade.bladeMiddleTipX, blade.bladeMiddleTipY, blade.bladeIndexBaseX, blade.bladeIndexBaseY);
+  // pop();
+  //
+  // // hinge
+  // push();
+  // fill(255, 0, 0);
+  // ellipseMode(CENTER);
+  // ellipse(blade.bladeIndexBaseX, blade.bladeIndexBaseY, baseDist / 2);
+  // pop();
+// }
 
 // pressing "Space" changes state to running
 function keyPressed() {
