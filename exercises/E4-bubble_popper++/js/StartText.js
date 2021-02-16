@@ -14,7 +14,8 @@ class StartText {
       this.title = `Bubble Popper++`
       this.text = `Cut the string with your index and middle finger.
 
-      Blow the bubble and try to pop it by snapping when bubble overlaps the pop zone!`
+      Blow the bubble and try to pop it by
+      snapping your fingers when bubble overlaps the pop zone!`
       this.spaceText = `** Press space to start popping! **`
       this.ready = false;
       this.end = `WOO-HOO!`
