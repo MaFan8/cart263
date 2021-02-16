@@ -1,4 +1,4 @@
-class Body extends Head {
+class Body extends ImgBase {
   constructor(x, y, image) {
     super(x, y, image);
     this.y = y + 180;
