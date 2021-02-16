@@ -15,8 +15,8 @@ ml5.js Handpose
 https://learn.ml5js.org/#/reference/handpose
 Teachable Machine - Sound Classification
 https://teachablemachine.withgoogle.com/
-Pop soundModel
-https://freesound.org/people/deraj/sounds/202230/
+Pop sound
+https://freesound.org/people/Vilkas_Sound/sounds/463394/
 
 */
 
@@ -43,37 +43,6 @@ let predictions = [];
 let scissorShow = true;
 
 let blade;
-// let bladeIndex = {
-//   tip: {
-//     x: undefined,
-//     y: undefined
-//   },
-//   base: {
-//     x: undefined,
-//     y: undefined,
-//   }
-// };
-// let bladeIndexTipX = undefined;
-// let bladeIndexTipY = undefined;
-// let bladeIndexBaseX = undefined;
-// let bladeIndexBaseY = undefined;
-//
-// let predictionStart = true;
-//
-// let bladeMiddleFinger = {
-//   tip: {
-//     x: undefined,
-//     y: undefined
-//   },
-//   base: {
-//     x: undefined,
-//     y: undefined,
-//   }
-// };
-// let bladeMiddleFingerTipX = undefined;
-// let bladeMiddleFingerTipY = undefined;
-// let bladeMiddleFingerBaseX = undefined;
-// let bladeMiddleFingerBaseY = undefined;
 
 // PRELOAD
 function preload() {
@@ -162,7 +131,7 @@ function checkHandPredictions() {
     updateScissors(predictions[0]); // index and middle finger
     checkScissorCut(); // check for scissor cutting movement
     blade.displayScissors();
-    console.log(blade.displayScissors);
+    // console.log(blade.bladeIndexTipX);
   }
 }
 
@@ -175,13 +144,13 @@ function updateScissors(prediction) {
 
 function checkScissorCut() {
   // check if scissors are between string length
-  if (blade.bladeIndexTipY > bubble.y + bubble.size / 2 &&
-    blade.bladeMiddleTipY > bubble.y + bubble.size / 2) {
+  if (blade.scissorIndexTipY > bubble.y + bubble.size / 2 &&
+    blade.scissorMiddleTipY > bubble.y + bubble.size / 2) {
     // tips and bases of index finger surrounds bubble.x position
-    if ((blade.bladeIndexTipX > bubble.x + bubble.size / 2 && blade.bladeIndexBaseX < bubble.x - bubble.size / 2) || (blade.bladeIndexTipX < bubble.x - bubble.size / 2 &&
-        blade.bladeIndexBaseX > bubble.x + bubble.size / 2)) {
+    if ((blade.scissorIndexTipX > bubble.x + bubble.size / 2 && blade.scissorIndexBaseX < bubble.x - bubble.size / 2) || (blade.scissorIndexTipX < bubble.x - bubble.size / 2 &&
+        blade.scissorIndexBaseX > bubble.x + bubble.size / 2)) {
       // check if index + middle fingers are touching
-      let d = dist(blade.bladeIndexTipX, blade.bladeIndexTipY, blade.bladeMiddleTipX, blade.bladeMiddleTipY);
+      let d = dist(blade.scissorIndexTipX, blade.scissorIndexTipY, blade.scissorMiddleTipX, blade.scissorMiddleTipY);
       if (d < 25) {
         bubble.stringIsCut = true;
       }
@@ -223,34 +192,11 @@ function checkSoundClassification() {
     // if bubble is inside popZone and user snaps, then bubble is popped
     if (d < 90 && label === `Snap`) {
       bubble.popped = true;
-      popSound.isPlaying();
-      // state = `end`;
+      popSound.play();
+      state = `end`;
     }
   }
 }
-
-// function displayScissors() {
-  // // check distance between tips and bases
-  // let tipDist = dist(blade.indexTipX, blade.indexTipY, blade.middleTipX, blade.middleTipY);
-  // let baseDist = dist(blade.indexBaseX, blade.indexBaseY, blade.middleBaseX, blade.middleBaseY);
-
-  // // blades of scissors
-  // push();
-  // noFill();
-  // stroke(255);
-  // strokeCap(ROUND);
-  // strokeWeight(5);
-  // line(blade.bladeIndexTipX, blade.bladeIndexTipY + tipDist / 2, blade.bladeIndexBaseX, blade.bladeIndexBaseY);
-  // line(blade.bladeMiddleTipX, blade.bladeMiddleTipY, blade.bladeIndexBaseX, blade.bladeIndexBaseY);
-  // pop();
-  //
-  // // hinge
-  // push();
-  // fill(255, 0, 0);
-  // ellipseMode(CENTER);
-  // ellipse(blade.bladeIndexBaseX, blade.bladeIndexBaseY, baseDist / 2);
-  // pop();
-// }
 
 // pressing "Space" changes state to running
 function keyPressed() {

@@ -9,14 +9,14 @@ class Blade {
     this.middleBaseX = undefined;
     this.middleBaseY = undefined;
 
-    this.bladeIndexTipX = undefined;
-    this.bladeIndexTipY = undefined;
-    this.bladeIndexBaseX = undefined;
-    this.bladeIndexBaseY = undefined;
-    this.bladeMiddleTipX = undefined;
-    this.bladeMiddleTipY = undefined;
-    this.bladeMiddleBaseX = undefined;
-    this.bladeMiddleBaseY = undefined;
+    this.scissorIndexTipX = undefined;
+    this.scissorIndexTipY = undefined;
+    this.scissorIndexBaseX = undefined;
+    this.scissorIndexBaseY = undefined;
+    this.scissorMiddleTipX = undefined;
+    this.scissorMiddleTipY = undefined;
+    this.scissorMiddleBaseX = undefined;
+    this.scissorMiddleBaseY = undefined;
 
     this.predictionStart = true;
   }
@@ -26,7 +26,7 @@ class Blade {
       this.indexTipX = prediction.annotations.indexFinger[3][0];
       this.indexTipY = prediction.annotations.indexFinger[3][1];
       this.indexBaseX = prediction.annotations.indexFinger[0][0];
-      this.indexBaseX = prediction.annotations.indexFinger[0][1];
+      this.indexBaseY = prediction.annotations.indexFinger[0][1];
     }
 
     middleFinger(prediction) {
@@ -36,67 +36,52 @@ class Blade {
       this.middleBaseY = prediction.annotations.middleFinger[0][1];
     }
 
-    // checkScissorCut(bubble) {
-    //   // check if scissors are between string length
-    //   if (this.indexTipY > bubble.y + bubble.size / 2 &&
-    //     this.middleTipY > bubble.y + bubble.size / 2) {
-    //     // tips and bases of index finger surrounds bubble.x position
-    //     if ((this.indexTipX > bubble.x + bubble.size / 2 && this.indexBaseX < bubble.x - bubble.size / 2) || (this.indexTipX < bubble.x - bubble.size / 2 &&
-    //         this.indexBaseX > bubble.x + bubble.size / 2)) {
-    //       // check if index + middle fingers are touching
-    //       let d = dist(this.indexTipX, this.indexTipY, this.middleTipX, this.middleTipY);
-    //       if (d < 25) {
-    //         bubble.stringIsCut = true;
-    //       }
-    //     }
-    //   }
-    // }
 
     lerpFingers() {
       if (this.predictionStart === true) {
-      this.bladeIndexTipX = this.indexTipX;
-      this.bladeIndexTipY = this.indexTipY;
-      this.bladeIndexBaseX = this.indexBaseX;
-      this.bladeIndexBaseY = this.indexBaseY;
+      this.scissorIndexTipX = this.indexTipX;
+      this.scissorIndexTipY = this.indexTipY;
+      this.scissorIndexBaseX = this.indexBaseX;
+      this.scissorIndexBaseY = this.indexBaseY;
 
-      this.bladeMiddleTipX = this.middleTipY;
-      this.bladeMiddleTipY = this.middleTipY;
-      this.bladeMiddleBaseX = this.middleBaseX;
-      this.bladeMiddleBaseY = this.middleBaseY;
+      this.scissorMiddleTipX = this.middleTipX;
+      this.scissorMiddleTipY = this.middleTipY;
+      this.scissorMiddleBaseX = this.middleBaseX;
+      this.scissorMiddleBaseY = this.middleBaseY;
 
       this.predictionStart = false;
     }  else {
-      this.bladeIndexTipX = lerp(this.bladeIndexTipX, this.indexTipX, 0.5);
-      this.bladeIndexTipY = lerp(this.bladeIndexTipY, this.indexTipY, 0.5);
-      this.bladeIndexBaseX = lerp(this.bladeIndexBaseX, this.indexBaseX, 0.5);
-      this.bladeIndexBaseY = lerp(this.bladeIndexBaseY, this.indexBaseY, 0.5);
+      this.scissorIndexTipX = lerp(this.scissorIndexTipX, this.indexTipX, 0.5);
+      this.scissorIndexTipY = lerp(this.scissorIndexTipY, this.indexTipY, 0.5);
+      this.scissorIndexBaseX = lerp(this.scissorIndexBaseX, this.indexBaseX, 0.5);
+      this.scissorIndexBaseY = lerp(this.scissorIndexBaseY, this.indexBaseY, 0.5);
 
-      this.bladeMiddleTipX = lerp(this.bladeMiddleTipX, this.middleTipX, 0.5);
-      this.bladeMiddleTipY = lerp(this.bladeMiddleTipY, this.middleTipY, 0.5);
-      this.bladeMiddleBaseX = lerp(this.bladeMiddleBaseX, this.middleBaseX, 0.5);
-      this.bladeMiddleBaseY = lerp(this.bladeMiddleBaseY, this.middleBaseY, 0.5);
+      this.scissorMiddleTipX = lerp(this.scissorMiddleTipX, this.middleTipX, 0.5);
+      this.scissorMiddleTipY = lerp(this.scissorMiddleTipY, this.middleTipY, 0.5);
+      this.scissorMiddleBaseX = lerp(this.scissorMiddleBaseX, this.middleBaseX, 0.5);
+      this.scissorMiddleBaseY = lerp(this.scissorMiddleBaseY, this.middleBaseY, 0.5);
     }
   }
 
   displayScissors() {
     // check distance between tips and bases
-    let tipDist = dist(this.bladeIndexTipX, this.bladeIndexTipY, this.bladeMiddleTipX, this.bladeMiddleTipY);
-    let baseDist = dist(this.bladeIndexBaseX, this.bladeIndexBaseY, this.bladeMiddleBaseX, this.bladeMiddleBaseY);
+    let tipDist = dist(this.scissorIndexTipX, this.scissorIndexTipY, this.scissorMiddleTipX, this.scissorMiddleTipY);
+    let baseDist = dist(this.scissorIndexBaseX, this.scissorIndexBaseY, this.scissorMiddleBaseX, this.scissorMiddleBaseY);
     // blades of scissors
     push();
     noFill();
     stroke(255);
     strokeCap(ROUND);
     strokeWeight(5);
-    line(this.bladeIndexTipX, this.bladeIndexTipY + tipDist / 2, this.bladeIndexBaseX, this.bladeIndexBaseY);
-    line(this.bladeMiddleTipX, this.bladeMiddleTipY, this.bladeIndexBaseX, this.bladeIndexBaseY);
+    line(this.scissorIndexTipX, this.scissorIndexTipY + tipDist/2, this.scissorIndexBaseX, this.scissorIndexBaseY);
+    line(this.scissorMiddleTipX, this.scissorMiddleTipY, this.scissorIndexBaseX, this.scissorIndexBaseY);
     pop();
 
     // hinge
     push();
     fill(255, 0, 0);
     ellipseMode(CENTER);
-    ellipse(this.bladeIndexBaseX, this.bladeIndexBaseY, baseDist / 2);
+    ellipse(this.scissorIndexBaseX, this.scissorIndexBaseY, baseDist / 2);
     pop();
   }
   }
