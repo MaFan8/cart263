@@ -109,8 +109,6 @@ function loadHandPose() {
   }, function() {
     console.log(`model loaded`);
     startText.fillRed.r = 255;
-    // state = `running`;
-    console.log(startText);
   });
 
   // listen for predictions
@@ -223,6 +221,7 @@ function checkScissorCut() {
   }
 }
 
+// get results of sound classification
 function gotResult(error, results) {
   if (error) {
     console.error(error);
@@ -244,15 +243,17 @@ function checkStringIsCut() {
   }
 }
 
+// check when sounds are detected
 function checkSoundClassification() {
   if (label === `Blow`) {
     bubble.blow();
   }
+  // check distance between bubble and popZone
   let d = dist(bubble.x, bubble.y, popZone.x, popZone.y);
   if (label === `Snap`) {
     popZone.displayText();
-
-    if (d < 80 && label === `Snap`) {
+    // if bubble is inside popZone and user snaps, then bubble is popped
+    if (d < 90 && label === `Snap`) {
       bubble.popped = true;
       popSound.isPlaying();
       // state = `end`;
@@ -261,9 +262,11 @@ function checkSoundClassification() {
 }
 
 function displayScissors() {
+  // check distance between tips and bases
   let tipDist = dist(bladeIndex.tip.x, bladeIndex.tip.y, bladeMiddleFinger.tip.x, bladeMiddleFinger.tip.y);
   let baseDist = dist(bladeIndex.base.x, bladeIndex.base.y, bladeMiddleFinger.base.x, bladeMiddleFinger.base.y);
 
+  // blades of scissors
   push();
   noFill();
   stroke(255);
@@ -281,6 +284,7 @@ function displayScissors() {
   pop();
 }
 
+// pressing "Space" changes state to running
 function keyPressed() {
   if (keyCode === 32) {
     state = `running`;
