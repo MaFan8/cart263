@@ -25,7 +25,7 @@ const UNICORN_ACE_IMG = `assets/images/unicorn_ace.png`;
 const UNICORN_USER_IMG = `assets/images/unicorn_user.png`;
 
 
-let state = `start` // start, level_1, level_2, limbo, end
+let state = `level_1`; // start, level_1, level_2, limbo, end
 
 // Image variables
 let aceHeadImg, aceHead;
@@ -39,6 +39,17 @@ let unicornUserImg, unicornUser;
 let unicornAceImg, unicornAce;
 let unicornImages = [];
 let unicorns = [];
+
+let circle = {
+  x: undefined,
+  y: undefined,
+  size: undefined,
+  sizeRatio: 0.75,
+  fill: 255,
+  alpha: 200,
+  vx: undefined,
+  speed: 2,
+};
 
 
 
@@ -69,7 +80,7 @@ function setup() {
   createCanvas(windowWidth, windowHeight);
 
   // create images
-  aceHead = new ImgBase(100, 100, aceHeadImg);
+  aceHead = new ImgBase(width/2, height/2, aceHeadImg);
   aceHeadAngry = new ImgBase(50, 50, aceHeadAngry);
   aceBody = new Body(100, 100, aceBodyImg);
   aceKick = new Body(100, 100, aceKickImg);
@@ -77,10 +88,16 @@ function setup() {
   alpaca = new ImgBase(100, 100, alpacaImg);
 
   unicornUser = new ImgBase(100, 100, unicornUserImg);
-  unicornAce = new ImgBase(100, 100, unicornAceImg);
+  unicornAce = new Unicorn(aceHeadImg);
 
   createUnicorns();
 
+  circle.x = width/5 *4;
+  circle.y = height/2;
+  circle.size = random(15,25);
+  circle.vx = random(-1,1);
+
+  // unicornAce.vx = random(-1,1);
 
 } // END SETUP
 
@@ -91,23 +108,22 @@ function createUnicorns() {
   }
 }
 
-
-
 // DRAW
 function draw() {
   background(0);
 
-  if (state = `start`) {
+  if (state === `start`) {
     start();
-  } else if (state = `level_1`) {
-    // level_1();
-  } else if (state = `level_2`) {
+  } else if (state === `level_1`) {
+    level_1();
+  } else if (state === `level_2`) {
     // level_2();
-  } else if (state = `limbo`) {
+  } else if (state === `limbo`) {
     // limbo();
-  } else if (state = `end`) {
+  } else if (state === `end`) {
     // end();
   }
+
 
 } // END DRAW
 
@@ -125,7 +141,15 @@ function start() {
 function level_1() {
   // unicornAce.display();
   // unicornUser.display();
-  showUnicorns();
+  // showUnicorns();
+
+
+unicornAce.move();
+unicornAce.moveWrap();
+unicornAce.display();
+
+
+
 }
 
 function showUnicorns() {

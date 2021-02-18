@@ -131,7 +131,6 @@ function checkHandPredictions() {
     updateScissors(predictions[0]); // index and middle finger
     checkScissorCut(); // check for scissor cutting movement
     blade.displayScissors();
-    // console.log(blade.bladeIndexTipX);
   }
 }
 
