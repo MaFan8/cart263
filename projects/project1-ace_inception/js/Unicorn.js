@@ -20,8 +20,8 @@ class Unicorn {
 
     // once image goes beyond 1/5 of window edges, then raise the image size and speed
     if (this.x < width / 3 || this.x > width / 3 * 2) {
-      this.width += this.sizeIncrease * 2;
-      this.height += this.sizeIncrease * 15;
+      this.width += this.sizeIncrease * 25;
+      this.height += this.sizeIncrease * 10;
       this.vx *= this.speed;
       // tint(255, 100);
     }

@@ -1,7 +1,8 @@
 class Body extends ImgBase {
   constructor(x, y, image) {
     super(x, y, image);
-    this.y = y + 180;
+    this.x = x;
+    this.y = y + 92;
   }
 
   display() {

@@ -49,7 +49,7 @@ let circle = {
   speed: 2,
 };
 
-
+  let angle = 0;
 
 // PRELOAD
 function preload() {
@@ -78,8 +78,8 @@ function setup() {
 
   // create images
   aceHead = new ImgBase(width/2, height/2, aceHeadImg);
-  aceHeadAngry = new ImgBase(50, 50, aceHeadAngry);
-  aceBody = new Body(100, 100, aceBodyImg);
+  aceHeadAngry = new ImgBase(width/2, height/2, aceHeadAngry);
+  aceBody = new Body(width/2, height/2, aceBodyImg);
   aceKick = new Body(100, 100, aceKickImg);
   spike = new ImgBase(100, 100, spikeImg);
   alpaca = new ImgBase(100, 100, alpacaImg);
@@ -87,6 +87,7 @@ function setup() {
   unicornAce = new Unicorn(unicornAceImg);
 
   createUnicorns();
+
 
 
 
@@ -130,14 +131,10 @@ function start() {
 }
 
 function level_1() {
-  // unicornAce.display();
-  // unicornUser.display();
-  showUnicorns();
+  // showUnicorns();
 
-
-// unicornAce.move();
-// unicornAce.moveWrap();
-// unicornAce.display();
+  // let time = random(5000, 15000);
+  // setTimeout(showUnicornAce, time);
 
 
 
@@ -149,4 +146,11 @@ function showUnicorns() {
     unicorns[i].moveWrap();
     unicorns[i].display();
   }
+}
+
+function showUnicornAce() {
+  unicornAce.move();
+  unicornAce.moveWrap();
+  unicornAce.display();
+  console.log("Ace");
 }
