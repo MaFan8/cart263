@@ -18,11 +18,10 @@ const ACE_KICK_IMG = `assets/images/ace_kick.png`;
 const SPIKE_IMG = `assets/images/spike.png`;
 const ALPACA_IMG = `assets/images/alpaca.png`;
 
-const NUM_UNICORN_IMG = 3;
-const NUM_UNICORNS = 50;
-const UNICORN_IMG = `assets/images/unicorn`;
-const UNICORN_ACE_IMG = `assets/images/unicorn_ace.png`;
-const UNICORN_USER_IMG = `assets/images/unicorn_user.png`;
+const NUM_UNICORN_FRONT_IMG = 4;
+const NUM_UNICORNS = 4;
+const UNICORN_FRONT_IMG = `assets/images/unicorn_front`;
+const UNICORN_ACE_IMG = `assets/images/unicorn_ace_front.png`;
 
 
 let state = `level_1`; // start, level_1, level_2, limbo, end
@@ -35,9 +34,8 @@ let aceKickImg, aceKick;
 let spikeImg, spike;
 let alpacaImg, alpaca;
 //unicorns
-let unicornUserImg, unicornUser;
 let unicornAceImg, unicornAce;
-let unicornImages = [];
+let unicornFrontImages = [];
 let unicorns = [];
 
 let circle = {
@@ -63,12 +61,11 @@ function preload() {
   spikeImg = loadImage(`${SPIKE_IMG}`);
   alpacaImg = loadImage(`${ALPACA_IMG}`);
   // Load unicorn images
-  unicornUserImg = loadImage(`${UNICORN_USER_IMG}`);
   unicornAceImg = loadImage(`${UNICORN_ACE_IMG}`);
 
-  for (let i = 0; i < NUM_UNICORN_IMG; i++) {
-    let unicornImage = loadImage(`${UNICORN_IMG}${i}.png`);
-    unicornImages.push(unicornImage);
+  for (let i = 0; i < NUM_UNICORN_FRONT_IMG; i++) {
+    let unicornImage = loadImage(`${UNICORN_FRONT_IMG}${i}.png`);
+    unicornFrontImages.push(unicornImage);
   }
 
 
@@ -87,30 +84,24 @@ function setup() {
   spike = new ImgBase(100, 100, spikeImg);
   alpaca = new ImgBase(100, 100, alpacaImg);
 
-  unicornUser = new ImgBase(100, 100, unicornUserImg);
-  unicornAce = new Unicorn(aceHeadImg);
+  unicornAce = new Unicorn(unicornAceImg);
 
   createUnicorns();
 
-  circle.x = width/5 *4;
-  circle.y = height/2;
-  circle.size = random(15,25);
-  circle.vx = random(-1,1);
 
-  // unicornAce.vx = random(-1,1);
 
 } // END SETUP
 
 function createUnicorns() {
   for (let i = 0; i < NUM_UNICORNS; i++) {
-    let unicorn = new Unicorn(random(unicornImages));
+    let unicorn = new Unicorn(random(unicornFrontImages));
     unicorns.push(unicorn);
   }
 }
 
 // DRAW
 function draw() {
-  background(0);
+  background(234,245,214);
 
   if (state === `start`) {
     start();
@@ -141,12 +132,12 @@ function start() {
 function level_1() {
   // unicornAce.display();
   // unicornUser.display();
-  // showUnicorns();
+  showUnicorns();
 
 
-unicornAce.move();
-unicornAce.moveWrap();
-unicornAce.display();
+// unicornAce.move();
+// unicornAce.moveWrap();
+// unicornAce.display();
 
 
 
@@ -154,6 +145,8 @@ unicornAce.display();
 
 function showUnicorns() {
   for (let i = 0; i < unicorns.length; i++) {
+    unicorns[i].move();
+    unicorns[i].moveWrap();
     unicorns[i].display();
   }
 }

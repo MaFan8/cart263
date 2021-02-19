@@ -1,14 +1,14 @@
 class Unicorn {
   constructor(image) {
-    this.x = random((width/2 -100), (width/2 +100));
-    this.y = height/2;
+    this.x = random((width / 2 - 100), (width / 2 + 100));
+    this.y = height / 2;
     this.image = image;
-    this.width = random(15,30);
-    this.height = random(10,25);
-    this.vx = random(-1,1);
+    this.width = random(5,25);
+    this.height = random(8,33);
+    this.vx = random(-2, 2);
     this.vy = 0;
     this.speed = 1.2;
-    this.sizeIncrease = 0.3;
+    this.sizeIncrease = 0.4;
   }
 
   move() {
@@ -16,39 +16,36 @@ class Unicorn {
     this.x += this.vx;
     this.y += this.vy;
     this.width += this.sizeIncrease;
-    this.height += this.sizeIncrease;
+    this.height += this.sizeIncrease * 2;
 
     // once image goes beyond 1/5 of window edges, then raise the image size and speed
-    if (this.x < width/5|| this.x > width/5 *4 || this.width > 50) {
-      this.width += this.sizeIncrease *2;
-      this.height += this.sizeIncrease/2;
+    if (this.x < width / 3 || this.x > width / 3 * 2) {
+      this.width += this.sizeIncrease * 2;
+      this.height += this.sizeIncrease * 15;
       this.vx *= this.speed;
+      // tint(255, 100);
     }
 
-
-    // if (this.x === width/2) {
-    //   this.width += this.sizeIncrease/4;
-    //   this.height += this.sizeIncrease/2;
-    //   this.vy += 0.1;
-    //   if (this.height > 80) {
-    //     this.reset();
-    //   }
-    // }
+    // if image stays within middle window zone, then it will go down
+    if (this.x > width / 5 * 4 || this.x < width / 5 || this.height > 200) {
+      this.vy += 1;
     }
+  }
 
   moveWrap() {
-    if (this.x < 0 || this.x > width) {
+    if (this.x < 0 || this.x > width || this.y > height) {
       this.reset();
     }
   }
 
   reset() {
-      this.x = random((width/2 -100), (width/2 +100));
-      this.y = height/2;
-      this.width = random(15,30);
-      this.height = random(10,25)
-      this.vx = random(-1,1);
-      this.vy = 0;
+    this.x = random((width / 2 - 100), (width / 2 + 100));
+    this.y = height / 2;
+    this.width = random(5,25);
+    this.height = random(8,33);
+    this.vx = random(-1, 1);
+    this.vy = 0;
+    tint(255, 255);
   }
 
   display() {
