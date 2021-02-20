@@ -1,14 +1,10 @@
 class Unicorn {
   constructor(image) {
-    this.x = random((width / 2 - 100), (width / 2 + 100));
-    this.y = height / 2;
     this.image = image;
-    this.width = random(5,25);
-    this.height = random(8,33);
-    this.vx = random(-2, 2);
-    this.vy = 0;
-    this.speed = 1.2;
-    this.sizeIncrease = 0.4;
+    this.maxHeight = 100;
+    this.alphaChange = -8;
+    this.safeDist = 80;
+    this.reset();
   }
 
   move() {
@@ -16,22 +12,35 @@ class Unicorn {
     this.x += this.vx;
     this.y += this.vy;
     this.width += this.sizeIncrease;
-    this.height += this.sizeIncrease * 2;
+    this.height += this.sizeIncrease * 1.5;
+    this.tint += 2;
 
-    // once image goes beyond 1/5 of window edges, then raise the image size and speed
+    // once image goes beyond 1/3 or 2/3 of window edges, then raise the image size and speed
     if (this.x < width / 3 || this.x > width / 3 * 2) {
-      this.width += this.sizeIncrease * 25;
+      this.width += this.sizeIncrease * 30;
       this.height += this.sizeIncrease * 10;
       this.vx *= this.speed;
-      // tint(255, 100);
     }
-
     // if image stays within middle window zone, then it will go down
-    if (this.x > width / 5 * 4 || this.x < width / 5 || this.height > 200) {
+    if (this.x > width / 3 * 2 || this.x < width / 3 || this.height > this.maxHeight) {
       this.vy += 1;
+      if (this.alpha > 0) {
+        this.alpha += this.alphaChange;
+      }
     }
   }
 
+  // check if unicorn touches user
+  checkTouch(user) {
+    let d = dist(this.x, this.y, user.x, user.y);
+    if (d < this.safeDist) {
+      state = `limbo`;
+    }
+    //only works if I'm not moving...
+  }
+
+
+  // reset unicorn once it reaches window edge
   moveWrap() {
     if (this.x < 0 || this.x > width || this.y > height) {
       this.reset();
@@ -43,15 +52,25 @@ class Unicorn {
     this.y = height / 2;
     this.width = random(5,25);
     this.height = random(8,33);
-    this.vx = random(-1, 1);
+    this.tint = 100;
+    this.alpha = 255;
+    this.r = random(100);
+    if(this.r > 40){
+      this.vx =1.5;
+    }
+    else{
+      this.vx = -1.5;
+    }
     this.vy = 0;
-    tint(255, 255);
+    this.speed = 1.2;
+    this.sizeIncrease = 0.4;
   }
 
   display() {
     push();
     imageMode(CENTER);
     translate(this.x, this.y);
+    tint(this.tint, this.alpha);
     image(this.image, 0, 0, this.width, this.height);
     pop();
   }
