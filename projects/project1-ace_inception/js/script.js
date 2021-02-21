@@ -85,8 +85,8 @@ function preload() {
 function setup() {
   createCanvas(windowWidth, windowHeight);
 
-  // Load FaceMesh
-  loadFaceMesh();
+  // // Load FaceMesh
+  // loadFaceMesh();
 
   // create text
   textBase = new TextBase;
@@ -152,9 +152,11 @@ function draw() {
 } // END DRAW
 
 function start() {
-  video.pause();
   background(bgStart.r, bgStart.g, bgStart.b);
   textBase.displayTitle();
+  textBase.displayStartInfo();
+  textBase.displayStartTips();
+  textBase.displayGo();
 
   // aceBody.display();
   // aceKick.display();
@@ -166,18 +168,18 @@ function start() {
 
 function level_1() {
   background(1, 170, 166);
-  if (pause) {
-    video.pause();
-    user.displayStatic();
-  } else {
-    video.play();
-    // Check for face and update predictions
-    if (predictions.length > 0) {
-      updateUser(predictions[0]);
-    }
+  // if (pause) {
+  //   video.pause();
+  //   user.displayStatic();
+  // } else {
+  //   video.play();
+  //   // Check for face and update predictions
+  //   if (predictions.length > 0) {
+  //     updateUser(predictions[0]);
+  //   }
     showUnicorns(); // display unicorns
     // showUnicornAce(); // display unicornAce
-  }
+
 }
 
 function showUnicorns() {
@@ -194,7 +196,6 @@ function showUnicornAce() {
   unicornAce.move();
   unicornAce.moveWrap();
   unicornAce.display();
-  console.log("Ace");
 }
 
 function updateUser(prediction) {
@@ -211,9 +212,6 @@ function keyPressed() {
   if (keyCode === 32) {
     state = `level_1`;
   }
-  //  else if (state === `level_1` && keyCode === 32) {
-  //   pause = false;
-  // }
 }
 
 
