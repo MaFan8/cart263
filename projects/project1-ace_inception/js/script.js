@@ -45,7 +45,7 @@ let user;
 let pause = true;
 
 // Text varibales
-let text;
+let textBase;
 // Image variables
 let aceHeadImg, aceHead;
 let aceHeadAngryImg, aceHeadAngry;
@@ -89,7 +89,7 @@ function setup() {
   loadFaceMesh();
 
   // create text
-  text = new Text;
+  textBase = new TextBase;
   // create images
   imagesSetup();
 
@@ -146,7 +146,7 @@ function draw() {
   } else if (state === `limbo`) {
     limbo();
   } else if (state === `end`) {
-    // end();
+    end();
   }
 
 } // END DRAW
@@ -154,7 +154,7 @@ function draw() {
 function start() {
   video.pause();
   background(bgStart.r, bgStart.g, bgStart.b);
-  // text.title();
+  textBase.displayTitle();
 
   // aceBody.display();
   // aceKick.display();

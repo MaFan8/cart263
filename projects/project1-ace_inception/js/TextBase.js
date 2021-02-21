@@ -1,4 +1,4 @@
-class Text {
+class TextBase {
   constructor() {
     this.x = width/2;
     this.y = height/2;
@@ -14,7 +14,7 @@ class Text {
     this.title = `ACE INCEPTION`
   }
 
-  title() {
+  displayTitle() {
     push();
     fill(this.fill.r, this.fill.g, this.fill.b);
     textFont(this.font);
