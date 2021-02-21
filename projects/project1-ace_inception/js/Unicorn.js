@@ -36,7 +36,6 @@ class Unicorn {
     if (d < this.safeDist) {
       state = `limbo`;
     }
-    //only works if I'm not moving...
   }
 
 

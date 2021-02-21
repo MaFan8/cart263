@@ -14,6 +14,7 @@ https://learn.ml5js.org/#/reference/facemesh
 */
 
 // Global constants
+const HEART_IMG = `assets/images/heart.png`;
 const ACE_HEAD_IMG = `assets/images/acehead.png`;
 const ACE_HEAD_ANGRY_IMG = `assets/images/acehead_angry.png`;
 const ACE_BODY_IMG = `assets/images/aceBody.png`;
@@ -28,12 +29,13 @@ const UNICORN_ACE_IMG = `assets/images/unicorn_ace_front.png`;
 const SPIKE_BACK_IMG = `assets/images/spikeBack.png`;
 
 
-let state = `start`; // start, level_1, level_2, limbo, end
+let state = `level_1`; // start, level_1, level_2, limbo, end
 let bgStart = {
   r: 255,
   g: 153,
   b: 0,
 };
+
 
 let video;
 let facemesh;
@@ -44,9 +46,16 @@ let predictions = [];
 let user;
 let pause = true;
 
-// Text varibales
+// Text variables
 let textBase;
 // Image variables
+let imgX = 200;
+let imgY = 150;
+let sizeSmall = 0.6;
+let sizeBig = 1.2;
+let heartImg, heart;
+let heartX = 250;
+let heartY = 480;
 let aceHeadImg, aceHead;
 let aceHeadAngryImg, aceHeadAngry;
 let aceBodyImg, aceBody;
@@ -63,6 +72,7 @@ let unicorns = [];
 // PRELOAD
 function preload() {
   // Load character images
+  heartImg = loadImage(`${HEART_IMG}`);
   aceHeadImg = loadImage(`${ACE_HEAD_IMG}`);
   aceHeadAngry = loadImage(`${ACE_HEAD_ANGRY_IMG}`);
   aceBodyImg = loadImage(`${ACE_BODY_IMG}`);
@@ -96,12 +106,13 @@ function setup() {
 } // END SETUP
 
 function imagesSetup() {
+  heart = new ImgBase(heartX, heartY, heartImg, sizeBig);
+  aceBody = new Body(imgX, imgY, aceBodyImg, sizeSmall);
+  aceHeadAngry = new ImgBase(imgX, imgY, aceHeadAngry, sizeSmall);
   aceHead = new ImgBase(width / 2, height / 2, aceHeadImg);
-  aceHeadAngry = new ImgBase(width / 2, height / 2, aceHeadAngry);
-  aceBody = new Body(width / 2, height / 2, aceBodyImg);
-  aceKick = new Body(100, 100, aceKickImg);
-  spike = new ImgBase(100, 100, spikeImg);
-  alpaca = new ImgBase(100, 100, alpacaImg);
+  // aceKick = new Body(100, 100, aceKickImg);
+  spike = new ImgBase(heartX +50, heartY -60, spikeImg, sizeSmall);
+  alpaca = new ImgBase(heartX -20, heartY, alpacaImg, sizeSmall +0.2);
   spikeBack = new User(spikeBackImg);
   unicornAce = new Unicorn(unicornAceImg);
   user = new User(spikeBackImg);
@@ -153,18 +164,10 @@ function draw() {
 
 function start() {
   background(bgStart.r, bgStart.g, bgStart.b);
-  textBase.displayTitle();
-  textBase.displayStartInfo();
-  textBase.displayStartTips();
-  textBase.displayGo();
-
-  // aceBody.display();
-  // aceKick.display();
-  // aceHead.display();
-  // aceHeadAngry.display();
-  // spike.display();
-  // alpaca.display();
+  displayStartText();
+  displayStartImg();
 }
+
 
 function level_1() {
   background(1, 170, 166);
@@ -180,6 +183,22 @@ function level_1() {
     showUnicorns(); // display unicorns
     // showUnicornAce(); // display unicornAce
 
+}
+
+function displayStartText() {
+  textBase.displayTitle();
+  textBase.displayStartInfo();
+  textBase.displayStartTips();
+  textBase.displayGo();
+}
+
+function displayStartImg() {
+  aceBody.display();
+  aceHeadAngry.display();
+  aceHeadAngry.move();
+  heart.displayHeart();
+  spike.display();
+  alpaca.display();
 }
 
 function showUnicorns() {
