@@ -14,23 +14,57 @@ class TextBase {
       g: 120,
       b: 166
     };
+    this.fill3 = {
+      r: 6,
+      g: 51,
+      b: 68,
+    };
     this.spacing = 30;
+    this.textSize = 900;
     // main parameters
     textStyle(BOLD);
     textAlign(LEFT, TOP);
     textFont(`monospace`);
 
-    this.go = `Press "SPACE" to initiate dream!`
+    this.loading = `Loading...`;
+    this.go = `Press "SPACE" to initiate dream!`;
+    this.pause = `Press "SPACE" to start or pause.`;
+    // start state text
+    this.title = `ACE INCEPTION`;
+    this.startInfo = `Ace doesn't sanction his pet Spike's love interest. Help infiltrate Ace's \nsubconsious and insert acceptance of Spike's and Fuzzy's love.`;
+    this.startTips = `* In order to achieve inception, you MUST...\n  - Pass through Ace's 1st dream state.\n  - Establish inception in his 2nd state.\n  - Escape his subconsious by preforming \n    kicks in both states.\n  - If you die in a dream state, you will lost \n    in limbo.`;
 
-    this.title = `ACE INCEPTION`
-    this.startInfo = `Ace doesn't sanction his pet Spike's love interest. Help infiltrate Ace's \nsubconsious and insert acceptance of Spike's and Fuzzy's love.`
-    this.startTips = `* In order to achieve inception, you MUST...\n  - Pass through Ace's 1st dream state.\n  - Establish inception in his 2nd state.\n  - Escape his subconsious by preforming \n    kicks in both states.\n  - If you die in a dream state, you will lost \n    in limbo.`
-
-
-
-    // You must avoid Ace's projections and \n    capture Ace to put him under a deeper \ndream state. \n  -
+    // level_1 state text
+    this.level_1Title = `DREAM STATE #1`;
+    this.level_1Tips = `Ace's subconsious detects \na security breach, you must avoid his projections and \ncapture Ace's spirit animal to induce him under a \ndeeper dream state.`;
   }
 
+  displayLoading() {
+    push();
+    fill(255 + sin(frameCount*0.05) * 128);
+    textAlign(CENTER, CENTER);
+    textSize(this.size);
+    text(this.loading, width/2, height/2 + 160);
+    pop();
+  }
+
+  displayGo() {
+    push();
+    fill(255 + sin(frameCount*0.1)*100);
+    textAlign(CENTER, CENTER);
+    textSize(this.size);
+    text(this.go, width/2, height -50);
+    pop();
+  }
+
+  displayPause() {
+    push();
+    fill(255 + sin(frameCount*0.05) * 128);
+    textAlign(CENTER, CENTER);
+    textSize(this.size);
+    text(this.pause, width/2, height/2 + 160);
+    pop();
+  }
 
   displayTitle() {
     push();
@@ -59,13 +93,23 @@ class TextBase {
     pop();
   }
 
-  displayGo() {
+  displayLevel_1Title() {
     push();
-    fill(255 + sin(frameCount)*100);
-    textAlign(CENTER, CENTER);
-    textSize(this.size);
-    text(this.go, width/2, height -50);
+    fill(this.fill3.r, this.fill3.g, this.fill3.b);
+    textSize(this.sizeLg);
+    textAlign(CENTER);
+    text(this.level_1Title, width/2, this.titleY);
     pop();
   }
+
+  displayLevel_1Tips() {
+    push();
+    fill(this.fill3.r, this.fill3.g, this.fill3.b);
+    textSize(this.size);
+    textAlign(LEFT, CENTER);
+    text(this.level_1Tips, width/3, height/3, width - width/2);
+    pop();
+  }
+
 
 }

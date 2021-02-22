@@ -4,7 +4,7 @@ class User {
     this.x = 0;
     this.y = height - 80;
     this.displayX = 0;
-    
+
     this.active = true;
   }
 

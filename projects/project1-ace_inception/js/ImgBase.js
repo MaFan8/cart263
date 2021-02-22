@@ -40,8 +40,4 @@ class ImgBase {
     pop();
   }
 
-
-
-
-
 }
