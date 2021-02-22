@@ -36,7 +36,7 @@ class TextBase {
 
     // level_1 state text
     this.level_1Title = `DREAM STATE #1`;
-    this.level_1Tips = `Ace's subconsious detects \na security breach, you must avoid his projections and \ncapture Ace's spirit animal to induce him under a \ndeeper dream state.`;
+    this.level_1Tips = `Ace's subconsious detects a \nsecurity breach, you must avoid his projections and capture \nAce's spirit animal to induce \nhim under a deeper dream state.`;
   }
 
   displayLoading() {
@@ -44,7 +44,7 @@ class TextBase {
     fill(255 + sin(frameCount*0.05) * 128);
     textAlign(CENTER, CENTER);
     textSize(this.size);
-    text(this.loading, width/2, height/2 + 160);
+    text(this.loading, width/2, height -180);
     pop();
   }
 
@@ -59,10 +59,10 @@ class TextBase {
 
   displayPause() {
     push();
-    fill(255 + sin(frameCount*0.05) * 128);
+    fill(255 + sin(frameCount*0.05) *128);
     textAlign(CENTER, CENTER);
     textSize(this.size);
-    text(this.pause, width/2, height/2 + 160);
+    text(this.pause, width/2, height -50);
     pop();
   }
 
@@ -107,7 +107,7 @@ class TextBase {
     fill(this.fill3.r, this.fill3.g, this.fill3.b);
     textSize(this.size);
     textAlign(LEFT, CENTER);
-    text(this.level_1Tips, width/3, height/3, width - width/2);
+    text(this.level_1Tips, width/3, height/3, width - width/2.3);
     pop();
   }
 

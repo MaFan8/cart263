@@ -1,11 +1,11 @@
 class Unicorn {
   constructor(image) {
     this.image = image;
-    this.maxHeight = 100;
+    this.maxHeight = 90;
     this.alphaChange = -8;
-    this.safeDist = 80;
     this.reset();
     // for Ace only
+    this.offScreen = 50;
     this.isPaused = false;
     this.startTime = 0;
     this.timePassed = 0;
@@ -21,8 +21,8 @@ class Unicorn {
 
     // once image goes beyond 1/3 or 2/3 of window edges, then raise the image size and speed
     if (this.x < width / 3 || this.x > width / 3 * 2) {
-      this.width += this.sizeIncrease * 30;
-      this.height += this.sizeIncrease * 10;
+      this.width += this.sizeIncrease * 20;
+      this.height += this.sizeIncrease * 5;
       this.vx *= this.speed;
       this.vy += this.speed;
     }
@@ -35,13 +35,6 @@ class Unicorn {
     }
   }
 
-  // check if unicorn touches user
-  checkTouch(user) {
-    let d = dist(this.x, this.y, user.x, user.y);
-    if (d < this.safeDist) {
-      state = `limbo`;
-    }
-  }
 
   // reset unicorn once it reaches window edge
   moveWrap() {
@@ -52,7 +45,7 @@ class Unicorn {
 
   // timer for unicronAce and resetting
   moveWrapAce() {
-    if (this.x < 0 || this.x > width || this.y > height) {
+    if (this.x < -this.offScreen || this.x > width +this.offScreen || this.y > height +this.offScreen) {
       if (!this.isPaused) {
         this.isPaused = true; // pause
         this.startTime = millis(); // start time
@@ -60,8 +53,8 @@ class Unicorn {
       } else {
         // timer going
         this.timePassed = millis() - this.startTime;
-        // if 5s has passed, then reset
-        if (this.timePassed > random(5000, 15000)) {
+        // if 10s - 20s has passed, then reset
+        if (this.timePassed > random(10000, 20000)) {
           this.isPaused = false;
           this.reset();
         }
@@ -71,7 +64,7 @@ class Unicorn {
 
   reset() {
     this.x = random((width / 2 - 100), (width / 2 + 100));
-    this.y = height / 2;
+    this.y = height /2;
     this.width = random(5, 25);
     this.height = random(8, 33);
     this.tint = 100;
@@ -90,7 +83,10 @@ class Unicorn {
   displayStatic() {
     push();
     imageMode(CENTER);
-    translate(150 + sin(frameCount * 0.05), this.y + cos(frameCount * 0.05));
+    translate(150 + sin(frameCount * 0.05), height/2 + cos(frameCount * 0.05));
+    fill(216);
+    noStroke();
+    ellipse(0,0,200);
     image(this.image, 0, 0);
     pop();
   }
@@ -99,6 +95,9 @@ class Unicorn {
     push();
     imageMode(CENTER);
     translate(this.x, this.y);
+    if (this.x < width/2) {
+      scale(-1,1);
+    } // flip x axis if unicorn is on right side
     tint(this.tint, this.alpha);
     image(this.image, 0, 0, this.width, this.height);
     pop();
