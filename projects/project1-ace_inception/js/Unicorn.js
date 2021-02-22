@@ -5,6 +5,10 @@ class Unicorn {
     this.alphaChange = -8;
     this.safeDist = 80;
     this.reset();
+    // for Ace only
+    this.isPaused = false;
+    this.startTime = 0;
+    this.timePassed = 0;
   }
 
   move() {
@@ -20,6 +24,7 @@ class Unicorn {
       this.width += this.sizeIncrease * 30;
       this.height += this.sizeIncrease * 10;
       this.vx *= this.speed;
+      this.vy += this.speed;
     }
     // if image stays within middle window zone, then it will go down
     if (this.x > width / 3 * 2 || this.x < width / 3 || this.height > this.maxHeight) {
@@ -38,7 +43,6 @@ class Unicorn {
     }
   }
 
-
   // reset unicorn once it reaches window edge
   moveWrap() {
     if (this.x < 0 || this.x > width || this.y > height) {
@@ -46,23 +50,49 @@ class Unicorn {
     }
   }
 
+  // timer for unicronAce and resetting
+  moveWrapAce() {
+    if (this.x < 0 || this.x > width || this.y > height) {
+      if (!this.isPaused) {
+        this.isPaused = true; // pause
+        this.startTime = millis(); // start time
+        this.timePassed = 0;
+      } else {
+        // timer going
+        this.timePassed = millis() - this.startTime;
+        // if 5s has passed, then reset
+        if (this.timePassed > random(5000, 15000)) {
+          this.isPaused = false;
+          this.reset();
+        }
+      }
+    }
+  }
+
   reset() {
     this.x = random((width / 2 - 100), (width / 2 + 100));
     this.y = height / 2;
-    this.width = random(5,25);
-    this.height = random(8,33);
+    this.width = random(5, 25);
+    this.height = random(8, 33);
     this.tint = 100;
     this.alpha = 255;
     this.r = random(100);
-    if(this.r > 40){
-      this.vx =1.5;
-    }
-    else{
+    if (this.r > 40) {
+      this.vx = 1.5;
+    } else {
       this.vx = -1.5;
     }
     this.vy = 0;
     this.speed = 1.2;
     this.sizeIncrease = 0.4;
+  }
+
+  displayStatic() {
+    push();
+    imageMode(CENTER);
+    translate(150 + sin(frameCount * 0.05), this.y + cos(frameCount * 0.05));
+    image(this.image, 0, 0);
+    pop();
   }
 
   display() {
