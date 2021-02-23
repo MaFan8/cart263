@@ -31,25 +31,26 @@ const UNICORN_ACE_IMG = `assets/images/unicorn_ace.png`;
 const SPIKE_BACK_IMG = `assets/images/spikeBack.png`;
 
 
-let state = `level_2`; // start, level_1, level_2, limbo, end
+let state = `level_1`; // start, level_1, level_2, limbo, end
 
 // Level variables
 let startedLevel_1 = 0; // 0, 1, 2
 let level_1Rect = undefined;
 let startedLevel_2 = 0; // 0, 1, 2
-let level_2Rect;
+let level_2Rect = undefined;
 let loaded = false;
 let inPlay = false;
+let pause = false;
 
 // Canvas variables
 let canvasStart;
 let canvas_1 = {
-  x: 1000,
-  y: 600,
+  w: 1000,
+  h: 600,
 };
 let canvas_2 = {
-  x: 600,
-  y: 500,
+  w: 500,
+  h: 500,
 };
 
 // ml5 variables
@@ -98,7 +99,7 @@ let unicornsFront = [];
 let unicornImages = [];
 let unicorns = [];
 
-let safeDist = 50;
+let safeDist = 40;
 
 // PRELOAD
 function preload() {
@@ -131,6 +132,8 @@ function preload() {
 function setup() {
   // create canvase
   canvasStart = createCanvas(1200, 800);
+  level_1Rect = createGraphics(canvas_1.w, canvas_1.h);
+  level_2Rect = createGraphics(canvas_2.w, canvas_2.h);
 
   background(bgOrange.r, bgOrange.g, bgOrange.b); //orange
   // create text
@@ -147,15 +150,15 @@ function imagesSetup() {
   // aceKick = new Body(100, 100, aceKickImg);
   spike = new ImgBase(heartX + 50, heartY - 60, spikeImg, sizeSmall);
   alpaca = new ImgBase(heartX - 20, heartY, alpacaImg, sizeSmall + 0.2);
-  spikeBack = new User(spikeBackImg);
-  unicornAceFront = new Unicorn(unicornAceFrontImg);
-  unicornAce = new Unicorn(unicornAceImg);
-  user = new User(spikeBackImg);
+  spikeBack = new User(spikeBackImg, level_1Rect);
+  unicornAceFront = new Unicorn(unicornAceFrontImg, level_1Rect);
+  unicornAce = new Unicorn(unicornAceImg, level_1Rect);
+  user = new User(spikeBackImg, level_1Rect);
 }
 
 setInterval(function() {
   if (unicornsFront.length < NUM_UNICORNS) {
-    let unicornFront = new Unicorn(random(unicornFrontImages));
+    let unicornFront = new Unicorn(random(unicornFrontImages), level_1Rect);
     unicornsFront.push(unicornFront);
   }
 }, randomNumber(2000, 10000));
@@ -212,7 +215,6 @@ function level_1() {
 
   // Load FaceMesh Once
   if (startedLevel_1 === 0) {
-    level_1Rect = createGraphics(canvas_1.x, canvas_1.y);
     level_1Rect.background(bgTeal.r, bgTeal.g, bgTeal.b);
     loadFaceMesh();
     startedLevel_1 = 1;
@@ -234,33 +236,36 @@ function level_1() {
 }
 
 function level_2() {
-  // Load
+  level_1Rect.background(bgTeal.r, bgTeal.g, bgTeal.b);
+  level_2Rect.background(0);
+  // if (!loaded) {
+  //
+  // }
+  // Load createGraphics
   if (startedLevel_2 === 0) {
-    level_1Rect = createGraphics(canvas_1.x, canvas_1.y);
-    level_1Rect.background(bgTeal.r, bgTeal.g, bgTeal.b);
-    level_2Rect = createGraphics(canvas_2.x, canvas_2.y);
-    level_2Rect.background(0);
+
     startedLevel_2 = 1;
   }
   else if (startedLevel_2 == 1) {
+
     imageMode(CORNER);
     image(level_1Rect,100,100);
 
-    imageMode(CORNER);
-    image(level_2Rect,300,150);
+
+
+
+
+
+
+    push();
+    imageMode(CENTER);
+    translate(width/2, height/2)
+    rotate(frameCount/60);
+    image(level_2Rect,0,0);
+    pop();
   }
 }
 
-function level_1Play() {
-  // Check for face and update predictions
-  if (predictions.length > 0) {
-    updateUser(predictions[0]);
-  }
-  showUnicornsFront(); // display unicorns
-  //display unicornAce after 15s
-  if (millis() > 35000)
-    showUnicornAceFront(); // display unicornAce
-}
 
 function displayStartText() {
   textBase.displayTitle();
@@ -274,6 +279,24 @@ function displayLevel_1Start() {
   textBase.displayLevel_1Title();
   textBase.displayLevel_1Tips();
   unicornAce.displayStatic();
+}
+
+function level_1Play() {
+  //reset rect_1:
+  level_1Rect.clear();
+  level_1Rect.background(bgTeal.r, bgTeal.g, bgTeal.b);
+
+  if (predictions.length > 0) {
+    updateUser(predictions[0]);
+  }
+  showUnicornsFront(); // display unicorns
+  //display unicornAce after 15s
+  if (millis() > 35000)
+    showUnicornAceFront(); // display unicornAce
+
+    // draw rect
+    imageMode(CORNER);
+    image(level_1Rect,100,100);
 }
 
 function displayStartImg() {
