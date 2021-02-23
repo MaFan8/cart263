@@ -1,8 +1,8 @@
 class User {
   constructor(image) {
     this.image = image;
-    this.x = 0;
-    this.y = height - 190;
+    this.x = width/2;
+    this.y = height - 265;
     this.displayX = 0;
     this.scale = 0.6;
 
@@ -16,23 +16,37 @@ class User {
 
 
   display() {
-    push();
-    imageMode(CENTER);
-    translate(this.displayX, this.y);
-    scale(this.scale);
+    level_1Rect.push();
+    level_1Rect.imageMode(CENTER);
+    level_1Rect.translate(this.displayX, this.y);
+    level_1Rect.scale(this.scale);
     if (this.displayX > width / 2) {
-      scale(-1, 1);
+      level_1Rect.scale(-1, 1);
     } // filp user image if in right side of screen
-    image(this.image, 0, 0);
-    pop();
+    level_1Rect.image(this.image, 0, 0);
+    level_1Rect.pop();
+    imageMode(CORNER);
+    image(level_1Rect,100,100);
   }
 
   displayStatic() {
-    push();
-    imageMode(CENTER);
-    translate(this.x + width/2, this.y);
-    scale(this.scale);
-    image(this.image, 0, 0);
-    pop();
+    if (level_1Rect === undefined) {
+      push();
+      imageMode(CENTER);
+      translate(this.x - 100, this.y);
+      scale(this.scale);
+      image(this.image, 0, 0);
+      pop();
+    }
+     else {
+      level_1Rect.push();
+      level_1Rect.imageMode(CENTER);
+      level_1Rect.translate(this.x - 100, this.y);
+      level_1Rect.scale(this.scale);
+      level_1Rect.image(this.image, 0, 0);
+      level_1Rect.pop();
+      imageMode(CORNER);
+      image(level_1Rect,100,100);
+    }
   }
 }

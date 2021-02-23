@@ -23,7 +23,7 @@ const SPIKE_IMG = `assets/images/spike.png`;
 const ALPACA_IMG = `assets/images/alpaca.png`;
 
 const NUM_UNICORN_FRONT_IMG = 4;
-const NUM_UNICORNS = 5;
+const NUM_UNICORNS = 4;
 const UNICORN_FRONT_IMG = `assets/images/unicorn_front`;
 const UNICORN_IMG = `assets/images/unicorn`
 const UNICORN_ACE_FRONT_IMG = `assets/images/unicorn_ace_front.png`;
@@ -31,12 +31,28 @@ const UNICORN_ACE_IMG = `assets/images/unicorn_ace.png`;
 const SPIKE_BACK_IMG = `assets/images/spikeBack.png`;
 
 
-let state = `level_1`; // start, level_1, level_2, limbo, end
-let startedLevel_1 = 2;
+let state = `level_2`; // start, level_1, level_2, limbo, end
+
+// Level variables
+let startedLevel_1 = 0; // 0, 1, 2
+let level_1Rect = undefined;
+let startedLevel_2 = 0; // 0, 1, 2
+let level_2Rect;
 let loaded = false;
+let inPlay = false;
 
+// Canvas variables
+let canvasStart;
+let canvas_1 = {
+  x: 1000,
+  y: 600,
+};
+let canvas_2 = {
+  x: 600,
+  y: 500,
+};
 
-
+// ml5 variables
 let video;
 let facemesh;
 let options = {
@@ -46,10 +62,15 @@ let predictions = [];
 let user;
 
 // Background variables
-let bgStart = {
+let bgOrange = {
   r: 255,
   g: 153,
   b: 0,
+};
+let bgTeal = {
+  r: 1,
+  g: 170,
+  b: 166,
 };
 
 // Text variables
@@ -69,7 +90,7 @@ let aceKickImg, aceKick;
 let spikeImg, spike;
 let spikeBackImg, spikeBack;
 let alpacaImg, alpaca;
-//unicorns
+//unicorns images
 let unicornAceFrontImg, unicornAceFront;
 let unicornAceImg, unicornAce;
 let unicornFrontImages = [];
@@ -77,6 +98,7 @@ let unicornsFront = [];
 let unicornImages = [];
 let unicorns = [];
 
+let safeDist = 50;
 
 // PRELOAD
 function preload() {
@@ -107,7 +129,10 @@ function preload() {
 
 // SETUP
 function setup() {
-  createCanvas(windowWidth, windowHeight);
+  // create canvase
+  canvasStart = createCanvas(1200, 800);
+
+  background(bgOrange.r, bgOrange.g, bgOrange.b); //orange
   // create text
   textBase = new TextBase;
   // create images
@@ -156,13 +181,15 @@ function loadFaceMesh() {
 
 // DRAW
 function draw() {
+  background(bgOrange.r, bgOrange.g, bgOrange.b);
 
   if (state === `start`) {
     start();
   } else if (state === `level_1`) {
     level_1();
-  } else if (state === `level_2`) {
-    // level_2();
+  }
+  if (state === `level_2`) {
+    level_2();
   } else if (state === `limbo`) {
     limbo();
   } else if (state === `end`) {
@@ -172,13 +199,11 @@ function draw() {
 } // END DRAW
 
 function start() {
-  background(bgStart.r, bgStart.g, bgStart.b);
   displayStartText();
   displayStartImg();
 }
 
 function level_1() {
-  background(1, 170, 166);
   // display text & image if FaceMesh is loading
   if (!loaded) {
     displayLevel_1Start();
@@ -187,6 +212,8 @@ function level_1() {
 
   // Load FaceMesh Once
   if (startedLevel_1 === 0) {
+    level_1Rect = createGraphics(canvas_1.x, canvas_1.y);
+    level_1Rect.background(bgTeal.r, bgTeal.g, bgTeal.b);
     loadFaceMesh();
     startedLevel_1 = 1;
   }
@@ -197,19 +224,42 @@ function level_1() {
   }
   // play once "space" is pressed
   else if (startedLevel_1 == 2) {
-    level_1Play();
+    if (inPlay) {
+      level_1Play();
+    } else {
+      displayLevel_1Start();
+      textBase.displayPause();
+    }
+  }
+}
+
+function level_2() {
+  // Load
+  if (startedLevel_2 === 0) {
+    level_1Rect = createGraphics(canvas_1.x, canvas_1.y);
+    level_1Rect.background(bgTeal.r, bgTeal.g, bgTeal.b);
+    level_2Rect = createGraphics(canvas_2.x, canvas_2.y);
+    level_2Rect.background(0);
+    startedLevel_2 = 1;
+  }
+  else if (startedLevel_2 == 1) {
+    imageMode(CORNER);
+    image(level_1Rect,100,100);
+
+    imageMode(CORNER);
+    image(level_2Rect,300,150);
   }
 }
 
 function level_1Play() {
-  // // Check for face and update predictions
-  // if (predictions.length > 0) {
-  //   updateUser(predictions[0]);
-  // }
+  // Check for face and update predictions
+  if (predictions.length > 0) {
+    updateUser(predictions[0]);
+  }
   showUnicornsFront(); // display unicorns
-  // display unicornAce randomly
-  // if (millis() > 15000)
-  // showUnicornAceFront(); // display unicornAce
+  //display unicornAce after 15s
+  if (millis() > 35000)
+    showUnicornAceFront(); // display unicornAce
 }
 
 function displayStartText() {
@@ -239,7 +289,11 @@ function showUnicornsFront() {
   for (let i = 0; i < unicornsFront.length; i++) {
     let unicornFront = unicornsFront[i];
     unicornFront.move();
-    // unicornFront.checkTouch(user);
+    // check if unicorn touches user
+    let d = dist(unicornFront.x, unicornFront.y, user.displayX, user.y - safeDist);
+    if (d < safeDist) {
+      state = `limbo`;
+    }
     unicornFront.moveWrap();
     unicornFront.display();
   }
@@ -247,8 +301,13 @@ function showUnicornsFront() {
 
 function showUnicornAceFront() {
   if (!unicornAceFront.isPaused) {
-  unicornAceFront.move();
-}
+    unicornAceFront.move();
+    // check if unicornAce touches user
+    let d = dist(unicornAceFront.x, unicornAceFront.y, user.displayX, user.y - safeDist);
+    if (d < safeDist) {
+      state = `level_2`;
+    }
+  }
   unicornAceFront.moveWrapAce();
   unicornAceFront.display();
 }
@@ -269,8 +328,13 @@ function keyPressed() {
   }
   if (startedLevel_1 === 1 && keyCode === 32) {
     startedLevel_1 = 2;
+    inPlay = true;
+  }
+  if (startedLevel_1 === 2 && keyCode === 32) {
+    inPlay = !inPlay; // pause
   }
 }
+
 
 
 

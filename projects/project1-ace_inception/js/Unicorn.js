@@ -83,7 +83,7 @@ class Unicorn {
   displayStatic() {
     push();
     imageMode(CENTER);
-    translate(150 + sin(frameCount * 0.05), height/2 + cos(frameCount * 0.05));
+    translate(250 + sin(frameCount * 0.05), height/2 + cos(frameCount * 0.05));
     fill(216);
     noStroke();
     ellipse(0,0,200);

@@ -20,7 +20,7 @@ class TextBase {
       b: 68,
     };
     this.spacing = 30;
-    this.textSize = 900;
+    this.LevelRectSpacing = 50;
     // main parameters
     textStyle(BOLD);
     textAlign(LEFT, TOP);
@@ -36,7 +36,7 @@ class TextBase {
 
     // level_1 state text
     this.level_1Title = `DREAM STATE #1`;
-    this.level_1Tips = `Ace's subconsious detects a \nsecurity breach, you must avoid his projections and capture \nAce's spirit animal to induce \nhim under a deeper dream state.`;
+    this.level_1Tips = `Ace's subconsious detects a \nsecurity breach, you must avoid \nhis projections and capture Ace's spirit animal to induce him under a deeper dream state.`;
   }
 
   displayLoading() {
@@ -44,7 +44,7 @@ class TextBase {
     fill(255 + sin(frameCount*0.05) * 128);
     textAlign(CENTER, CENTER);
     textSize(this.size);
-    text(this.loading, width/2, height -180);
+    text(this.loading, width/2, height/1.5);
     pop();
   }
 
@@ -53,7 +53,7 @@ class TextBase {
     fill(255 + sin(frameCount*0.1)*100);
     textAlign(CENTER, CENTER);
     textSize(this.size);
-    text(this.go, width/2, height -50);
+    text(this.go, width/2, height -150);
     pop();
   }
 
@@ -62,7 +62,7 @@ class TextBase {
     fill(255 + sin(frameCount*0.05) *128);
     textAlign(CENTER, CENTER);
     textSize(this.size);
-    text(this.pause, width/2, height -50);
+    text(this.pause, width/2, height/1.5);
     pop();
   }
 
@@ -98,7 +98,7 @@ class TextBase {
     fill(this.fill3.r, this.fill3.g, this.fill3.b);
     textSize(this.sizeLg);
     textAlign(CENTER);
-    text(this.level_1Title, width/2, this.titleY);
+    text(this.level_1Title, width/2, height/5);
     pop();
   }
 
@@ -107,7 +107,7 @@ class TextBase {
     fill(this.fill3.r, this.fill3.g, this.fill3.b);
     textSize(this.size);
     textAlign(LEFT, CENTER);
-    text(this.level_1Tips, width/3, height/3, width - width/2.3);
+    text(this.level_1Tips, width/3, height/3, width - width/2.1);
     pop();
   }
 
