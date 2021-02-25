@@ -15,8 +15,8 @@ class Unicorn {
     // update position with velocity and image size increase
     this.x += this.vx;
     this.y += this.vy;
-    this.width += this.sizeIncrease;
-    this.height += this.sizeIncrease * 1.5;
+    this.width += this.sizeIncrease/2;
+    this.height += this.sizeIncrease +(sin(frameCount/5));
     this.tint += 2;
 
     // once image goes beyond 1/3 or 2/3 of window edges, then raise the image size and speed
@@ -77,7 +77,7 @@ class Unicorn {
     }
     this.vy = 0;
     this.speed = 1.2;
-    this.sizeIncrease = 0.4;
+    this.sizeIncrease = 0.8;
   }
 
   displayStatic() {

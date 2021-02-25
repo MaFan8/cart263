@@ -12,8 +12,8 @@ class User {
   update(prediction) {
     this.x = prediction.annotations.noseTip[0][0];
     this.displayX = width - this.x - this.x; // flip horizontal
-    // constrain to level_1Rect window
-    this.displayX = constrain(this.displayX, 0, level_1Rect.width);
+    // constrain to user to 3/4 of width
+    this.displayX = constrain(this.displayX, level_1Rect.width/4 , level_1Rect.width/4 *3);
   }
 
 

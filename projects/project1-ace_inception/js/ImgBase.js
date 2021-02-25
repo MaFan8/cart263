@@ -1,5 +1,5 @@
 class ImgBase {
-  constructor(x, y, image, scale) {
+  constructor(x, y, image, scale, graphics) {
     this.x = x;
     this.y = y;
     this.image = image;
@@ -39,5 +39,6 @@ class ImgBase {
     image(this.image, 0, 0);
     pop();
   }
+
 
 }

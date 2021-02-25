@@ -30,8 +30,10 @@ const UNICORN_ACE_FRONT_IMG = `assets/images/unicorn_ace_front.png`;
 const UNICORN_ACE_IMG = `assets/images/unicorn_ace.png`;
 const SPIKE_BACK_IMG = `assets/images/spikeBack.png`;
 
+const VAULT_IMG = `assets/images/vault.png`;
 
-let state = `level_1`; // start, level_1, level_2, limbo, end
+
+let state = `level_2`; // start, level_1, level_2, limbo, end
 
 // Level variables
 let startedLevel_1 = 0; // 0, 1, 2
@@ -49,7 +51,7 @@ let canvas_1 = {
   h: 600,
 };
 let canvas_2 = {
-  w: 500,
+  w: 700,
   h: 500,
 };
 
@@ -73,10 +75,15 @@ let bgTeal = {
   g: 170,
   b: 166,
 };
+let bgRed = {
+  r: 94,
+  g: 24,
+  b: 0,
+};
 
 // Text variables
 let textBase;
-// Image variables
+// Image variables: Start
 let imgX = 200;
 let imgY = 150;
 let sizeSmall = 0.6;
@@ -84,6 +91,7 @@ let sizeBig = 1.2;
 let heartImg, heart;
 let heartX = 250;
 let heartY = 480;
+// Image variables: Level_1
 let aceHeadImg, aceHead;
 let aceHeadAngryImg, aceHeadAngry;
 let aceBodyImg, aceBody;
@@ -98,6 +106,10 @@ let unicornFrontImages = [];
 let unicornsFront = [];
 let unicornImages = [];
 let unicorns = [];
+// Image variables: level_2
+let vaultImg, vault;
+
+
 
 let safeDist = 40;
 
@@ -120,6 +132,9 @@ function preload() {
     let unicornFrontImage = loadImage(`${UNICORN_FRONT_IMG}${i}.png`);
     unicornFrontImages.push(unicornFrontImage);
   }
+
+  vaultImg = loadImage(`${VAULT_IMG}`);
+
   // // Load unicorns images in array
   // for (let i = 0; i < NUM_UNICORN_IMG; i++) {
   //   let unicornImage = loadImage(`${UNICORN_IMG}${i}.png`);
@@ -135,7 +150,7 @@ function setup() {
   level_1Rect = createGraphics(canvas_1.w, canvas_1.h);
   level_2Rect = createGraphics(canvas_2.w, canvas_2.h);
 
-  background(bgOrange.r, bgOrange.g, bgOrange.b); //orange
+  background(bgOrange.r, bgOrange.g, bgOrange.b);
   // create text
   textBase = new TextBase;
   // create images
@@ -154,6 +169,7 @@ function imagesSetup() {
   unicornAceFront = new Unicorn(unicornAceFrontImg, level_1Rect);
   unicornAce = new Unicorn(unicornAceImg, level_1Rect);
   user = new User(spikeBackImg, level_1Rect);
+  vault = new ImgBase(width/2, height/2, vaultImg, 2, level_2Rect);
 }
 
 setInterval(function() {
@@ -237,33 +253,34 @@ function level_1() {
 
 function level_2() {
   level_1Rect.background(bgTeal.r, bgTeal.g, bgTeal.b);
-  level_2Rect.background(0);
+  level_2Rect.background(bgRed.r, bgRed.g, bgRed.b);
   // if (!loaded) {
   //
   // }
   // Load createGraphics
-  if (startedLevel_2 === 0) {
-
-    startedLevel_2 = 1;
-  }
-  else if (startedLevel_2 == 1) {
+  // if (startedLevel_2 === 0) {
+  //
+  //   startedLevel_2 = 1;
+  // }
+  // else if (startedLevel_2 == 1) {
 
     imageMode(CORNER);
     image(level_1Rect,100,100);
 
 
 
-
-
-
-
     push();
     imageMode(CENTER);
-    translate(width/2, height/2)
-    rotate(frameCount/60);
-    image(level_2Rect,0,0);
+    // rotate(frameCount/60);
+    image(level_2Rect, width/2, height/2);
+    tint(255, 80);
+    vault.display();
     pop();
-  }
+
+
+
+
+  // }
 }
 
 
