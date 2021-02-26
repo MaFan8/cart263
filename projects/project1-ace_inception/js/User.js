@@ -7,6 +7,12 @@ class User {
     this.scale = 0.6;
 
     this.active = true;
+    // poseNet
+    this.wristLX;
+    this.wristLY;
+    this.wristRX;
+    this.wristRY;
+    this.poseDetect = true;
   }
 
   update(prediction) {
@@ -48,5 +54,33 @@ class User {
       imageMode(CORNER);
       image(level_1Rect,100,100);
     }
+  }
+
+  update(poses) {
+      let wLX = poses[0].pose.leftWrist.x;
+      let wLY = poses[0].pose.leftWrist.y;
+      let wRX = poses[0].pose.rightWrist.x;
+      let wRY = poses[0].pose.rightWrist.y;
+
+      if (this.poseDetect) {
+        this.wristLX = wLX;
+        this.wristLY = wLY;
+        this.wristRX = wRX;
+        this.wristRY = wRY;
+        this.poseDetect = false;
+      } else {
+        this.wristLX = lerp(this.wristLX, wLX, 0.5);
+        this.wristLY = lerp(this.wristLY, wLY, 0.5);
+        this.wristRX = lerp(this.wristRX, wRX, 0.5);
+        this.wristRY = lerp(this.wristRY, wRY, 0.5);
+    }
+  }
+
+  displayHands() {
+    level_2Rect.push();
+    level_2Rect.fill(255);
+    level_2Rect.ellipse(this.wristLX, this.wristLY - 100, 30);
+    level_2Rect.ellipse(this.wristRX, this.wristRY - 100, 30);
+    level_2Rect.pop();
   }
 }

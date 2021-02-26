@@ -40,6 +40,10 @@ class ImgBase {
     pop();
   }
 
+  moveVault() {
+    
+  }
+
   displayVault() {
     level_2Rect.push();
     level_2Rect.imageMode(CENTER);
@@ -48,6 +52,15 @@ class ImgBase {
     level_2Rect.scale(this.scale);
     level_2Rect.image(this.image, 0, 0);
     level_2Rect.pop();
+  }
+
+  displayVideo() {
+    push();
+    tint(255, 80);
+    translate(video.width, 0);
+    scale(-1, 1);
+    image(video, -310, 150, level_2Rect.width, level_2Rect.height)
+    pop();
   }
 
 

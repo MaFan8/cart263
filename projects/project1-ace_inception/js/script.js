@@ -56,7 +56,7 @@ let canvas_2 = {
 };
 
 // ml5 variables
-let video;
+let videoImg, video;
 let facemesh;
 let predictions = [];
 let user;
@@ -174,6 +174,7 @@ function imagesSetup() {
   unicornAce = new Unicorn(unicornAceImg, level_1Rect);
   user = new User(spikeBackImg, level_1Rect);
   vault = new ImgBase(level_2Rect.width / 2, level_2Rect.height / 2, vaultImg, 2, level_2Rect);
+  videoImg = new ImgBase(-310, 150, video, level_2Rect);
 }
 
 // set interval for pushing images out randomly
@@ -243,6 +244,7 @@ function start() {
   displayStartImg();
 }
 
+// LEVEL_1
 function level_1() {
   // display text & image if FaceMesh is loading
   if (!loaded) {
@@ -270,8 +272,9 @@ function level_1() {
       textBase.displayPause();
     }
   }
-}
+} // END LEVEL_1
 
+// LEVEL_2
 function level_2() {
 
 
@@ -290,7 +293,7 @@ function level_2() {
     level_2Play();
 
   }
-}
+} // END LEVEL_2
 
 
 function displayStartText() {
@@ -320,7 +323,7 @@ function level_1Play() {
   if (millis() > 35000)
     showUnicornAceFront(); // display unicornAce
 
-  // draw rect
+  // draw rect_1
   imageMode(CORNER);
   image(level_1Rect, 100, 100);
 }
@@ -374,51 +377,24 @@ function showLevel_1Graphics() {
   image(level_1Rect, 100, 100);
 }
 
+// get poses
 function gotPoses(poses) {
-  // console.log(poses);
   if (poses.length > 0) {
-    let wLX = poses[0].pose.leftWrist.x;
-    let wLY = poses[0].pose.leftWrist.y;
-    let wRX = poses[0].pose.rightWrist.x;
-    let wRY = poses[0].pose.rightWrist.y;
-
-    if (poseDetect) {
-      wristLX = wLX;
-      wristLY = wLY;
-      wristRX = wRX;
-      wristRY = wRY;
-      poseDetect = false;
-    } else {
-      wristLX = lerp(wristLX, wLX, 0.5);
-      wristLY = lerp(wristLY, wLY, 0.5);
-      wristRX = lerp(wristRX, wRX, 0.5);
-      wristRY = lerp(wristRY, wRY, 0.5);
-    }
+    user.update(poses);
   }
-
 }
 
 function level_2Play() {
+  //reset rect_2:
   level_2Rect.clear();
   level_2Rect.background(bgRed.r, bgRed.g, bgRed.b);
+  vault.displayVault(); // display vault
 
-
-  vault.displayVault();
-
-  level_2Rect.push();
-  level_2Rect.fill(255);
-  level_2Rect.ellipse(wristLX, wristLY - 100, 30);
-  level_2Rect.ellipse(wristRX, wristRY - 100, 30);
-  level_2Rect.pop();
-
+  user.displayHands();
+  // draw rect_2 and video image
   imageMode(CORNER);
   image(level_2Rect, 250, 150);
-  push();
-  tint(255, 80);
-  translate(video.width, 0);
-  scale(-1, 1);
-  image(video, -310, 150, level_2Rect.width, level_2Rect.height)
-  pop();
+  videoImg.displayVideo();
 
 }
 
