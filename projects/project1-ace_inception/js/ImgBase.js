@@ -40,5 +40,15 @@ class ImgBase {
     pop();
   }
 
+  displayVault() {
+    level_2Rect.push();
+    level_2Rect.imageMode(CENTER);
+    level_2Rect.translate(this.x, this.y);
+    level_2Rect.tint(255, 80);
+    level_2Rect.scale(this.scale);
+    level_2Rect.image(this.image, 0, 0);
+    level_2Rect.pop();
+  }
+
 
 }

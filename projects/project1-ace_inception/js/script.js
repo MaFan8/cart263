@@ -173,7 +173,7 @@ function imagesSetup() {
   unicornAceFront = new Unicorn(unicornAceFrontImg, level_1Rect);
   unicornAce = new Unicorn(unicornAceImg, level_1Rect);
   user = new User(spikeBackImg, level_1Rect);
-  vault = new ImgBase(width/2, height/2, vaultImg, 2, level_2Rect);
+  vault = new ImgBase(level_2Rect.width / 2, level_2Rect.height / 2, vaultImg, 2, level_2Rect);
 }
 
 // set interval for pushing images out randomly
@@ -208,7 +208,9 @@ function loadPosenet() {
   video = createCapture(VIDEO);
   video.hide();
   // get poses
-  poseNet = ml5.poseNet(video, function() {
+  poseNet = ml5.poseNet(video, {
+    flipHorizontal: true
+  }, function() {
     console.log(`PoseNet loaded`);
     // loaded = true;
   });
@@ -271,38 +273,21 @@ function level_1() {
 }
 
 function level_2() {
-  level_1Rect.background(bgTeal.r, bgTeal.g, bgTeal.b);
-  level_2Rect.background(bgRed.r, bgRed.g, bgRed.b);
+
+
   // if (!loaded) {
   //
   // }
 
-  // Load createGraphics
+  // Load PoseNet & createGraphics
   if (startedLevel_2 === 0) {
+    level_1Rect.background(bgTeal.r, bgTeal.g, bgTeal.b);
+    level_2Rect.background(bgRed.r, bgRed.g, bgRed.b);
     loadPosenet();
     startedLevel_2 = 1;
-  }
-  else if (startedLevel_2 == 1) {
-
-    imageMode(CORNER);
-    image(level_1Rect,100,100);
-
-
-
-    push();
-    imageMode(CENTER);
-    // rotate(frameCount/60);
-    image(level_2Rect, width/2, height/2);
-    tint(255, 80);
-    vault.display();
-    pop();
-
-  image(video, 0, 0);
-  push();
-  fill (255);
-  ellipse(wristLX, wristLY -100, 50);
-  ellipse(wristRX, wristRY -100, 50);
-  pop();
+  } else if (startedLevel_2 == 1) {
+    showLevel_1Graphics();
+    level_2Play();
 
   }
 }
@@ -335,9 +320,9 @@ function level_1Play() {
   if (millis() > 35000)
     showUnicornAceFront(); // display unicornAce
 
-    // draw rect
-    imageMode(CORNER);
-    image(level_1Rect,100,100);
+  // draw rect
+  imageMode(CORNER);
+  image(level_1Rect, 100, 100);
 }
 
 function displayStartImg() {
@@ -381,6 +366,14 @@ function updateUser(prediction) {
   user.display();
 }
 
+function showLevel_1Graphics() {
+  level_1Rect.clear();
+  level_1Rect.background(bgTeal.r, bgTeal.g, bgTeal.b);
+  showUnicornsFront();
+  imageMode(CORNER);
+  image(level_1Rect, 100, 100);
+}
+
 function gotPoses(poses) {
   // console.log(poses);
   if (poses.length > 0) {
@@ -396,12 +389,36 @@ function gotPoses(poses) {
       wristRY = wRY;
       poseDetect = false;
     } else {
-    wristLX = lerp(wristLX, wLX, 0.5);
-    wristLY = lerp(wristLY, wLY, 0.5);
-    wristRX = lerp(wristRX, wRX, 0.5);
-    wristRY = lerp(wristRY, wRY, 0.5);
+      wristLX = lerp(wristLX, wLX, 0.5);
+      wristLY = lerp(wristLY, wLY, 0.5);
+      wristRX = lerp(wristRX, wRX, 0.5);
+      wristRY = lerp(wristRY, wRY, 0.5);
+    }
   }
+
 }
+
+function level_2Play() {
+  level_2Rect.clear();
+  level_2Rect.background(bgRed.r, bgRed.g, bgRed.b);
+
+
+  vault.displayVault();
+
+  level_2Rect.push();
+  level_2Rect.fill(255);
+  level_2Rect.ellipse(wristLX, wristLY - 100, 30);
+  level_2Rect.ellipse(wristRX, wristRY - 100, 30);
+  level_2Rect.pop();
+
+  imageMode(CORNER);
+  image(level_2Rect, 250, 150);
+  push();
+  tint(255, 80);
+  translate(video.width, 0);
+  scale(-1, 1);
+  image(video, -310, 150, level_2Rect.width, level_2Rect.height)
+  pop();
 
 }
 
