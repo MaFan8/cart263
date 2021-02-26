@@ -23,11 +23,13 @@ const SPIKE_IMG = `assets/images/spike.png`;
 const ALPACA_IMG = `assets/images/alpaca.png`;
 
 const NUM_UNICORN_FRONT_IMG = 4;
-const NUM_UNICORNS = 4;
+const NUM_UNICORNSFRONT = 4;
 const UNICORN_FRONT_IMG = `assets/images/unicorn_front`;
-const UNICORN_IMG = `assets/images/unicorn`
 const UNICORN_ACE_FRONT_IMG = `assets/images/unicorn_ace_front.png`;
 const UNICORN_ACE_IMG = `assets/images/unicorn_ace.png`;
+const NUM_UNICORN_IMG = 4;
+const NUM_UNICORNS = 50;
+const UNICORN_IMG = `assets/images/unicorn`;
 const SPIKE_BACK_IMG = `assets/images/spikeBack.png`;
 
 const VAULT_IMG = `assets/images/vault.png`;
@@ -42,7 +44,8 @@ let startedLevel_2 = 0; // 0, 1, 2
 let level_2Rect = undefined;
 let loaded = false;
 let inPlay = false;
-let pause = false;
+let inPlay2 = false;
+let injured = 0;
 
 // Canvas variables
 let canvasStart;
@@ -57,16 +60,10 @@ let canvas_2 = {
 
 // ml5 variables
 let videoImg, video;
-let facemesh;
-let predictions = [];
 let user;
 let poseNet;
 let pose;
-let poseDetect = true;
-let wristLX;
-let wristLY;
-let wristRX;
-let wristRY;
+let poses = [];
 
 // Background variables
 let bgOrange = {
@@ -136,14 +133,13 @@ function preload() {
     let unicornFrontImage = loadImage(`${UNICORN_FRONT_IMG}${i}.png`);
     unicornFrontImages.push(unicornFrontImage);
   }
+  // Load unicorns images in array
+  for (let i = 0; i < NUM_UNICORN_IMG; i++) {
+    let unicornImage = loadImage(`${UNICORN_IMG}${i}.png`);
+    unicornImages.push(unicornImage);
+  }
 
   vaultImg = loadImage(`${VAULT_IMG}`);
-
-  // // Load unicorns images in array
-  // for (let i = 0; i < NUM_UNICORN_IMG; i++) {
-  //   let unicornImage = loadImage(`${UNICORN_IMG}${i}.png`);
-  //   unicornImages.push(unicornImage);
-  // }
 } // END PRELOAD
 
 
@@ -170,38 +166,26 @@ function imagesSetup() {
   spike = new ImgBase(heartX + 50, heartY - 60, spikeImg, sizeSmall);
   alpaca = new ImgBase(heartX - 20, heartY, alpacaImg, sizeSmall + 0.2);
   spikeBack = new User(spikeBackImg, level_1Rect);
+  // unicorns
   unicornAceFront = new Unicorn(unicornAceFrontImg, level_1Rect);
   unicornAce = new Unicorn(unicornAceImg, level_1Rect);
+
+
+
   user = new User(spikeBackImg, level_1Rect);
-  vault = new ImgBase(level_2Rect.width / 2, level_2Rect.height / 2, vaultImg, 2, level_2Rect);
+  vault = new ImgBase(level_2Rect.width / 2, level_2Rect.height / 2, vaultImg, 1.5, level_2Rect);
   videoImg = new ImgBase(-310, 150, video, level_2Rect);
+
 }
 
 // set interval for pushing images out randomly
 setInterval(function() {
-  if (unicornsFront.length < NUM_UNICORNS) {
+  if (unicornsFront.length < NUM_UNICORNSFRONT) {
     let unicornFront = new Unicorn(random(unicornFrontImages), level_1Rect);
     unicornsFront.push(unicornFront);
   }
 }, randomNumber(2000, 10000));
 
-// FACEMESH
-function loadFaceMesh() {
-  // start video and hide video element
-  video = createCapture(VIDEO);
-  video.hide();
-
-  // start facemesh model
-  facemesh = ml5.facemesh(video, function() {
-    console.log(`FaceMesh loaded`);
-    loaded = true;
-  });
-  // save face detected results to prediction
-  facemesh.on(`predict`, function(results) {
-    predictions = results;
-    // console.log(predictions);
-  });
-} // END FACEMESH
 
 // POSENET
 function loadPosenet() {
@@ -213,10 +197,13 @@ function loadPosenet() {
     flipHorizontal: true
   }, function() {
     console.log(`PoseNet loaded`);
-    // loaded = true;
+    loaded = true;
   });
   // turn on poseNet
-  poseNet.on('pose', gotPoses);
+  poseNet.on('pose', function(results) {
+    poses = results;
+    // console.log(poses);
+  });
 } // END POSENET
 
 
@@ -228,8 +215,7 @@ function draw() {
     start();
   } else if (state === `level_1`) {
     level_1();
-  }
-  if (state === `level_2`) {
+  } else if (state === `level_2`) {
     level_2();
   } else if (state === `limbo`) {
     limbo();
@@ -239,6 +225,7 @@ function draw() {
 
 } // END DRAW
 
+// START
 function start() {
   displayStartText();
   displayStartImg();
@@ -249,65 +236,82 @@ function level_1() {
   // display text & image if FaceMesh is loading
   if (!loaded) {
     displayLevel_1Start();
-    textBase.displayLoading();
   }
-
   // Load FaceMesh Once
   if (startedLevel_1 === 0) {
     level_1Rect.background(bgTeal.r, bgTeal.g, bgTeal.b);
-    loadFaceMesh();
+    loadPosenet();
     startedLevel_1 = 1;
   }
   // add start/pause instruction after FaceMesh is loaded
   else if (startedLevel_1 == 1 && loaded) {
     displayLevel_1Start();
-    textBase.displayPause();
   }
   // play once "space" is pressed
   else if (startedLevel_1 == 2) {
     if (inPlay) {
       level_1Play();
     } else {
+      level_1Rect.clear();
+      level_1Rect.background(bgTeal.r, bgTeal.g, bgTeal.b);
       displayLevel_1Start();
-      textBase.displayPause();
     }
   }
 } // END LEVEL_1
 
 // LEVEL_2
 function level_2() {
-
-
-  // if (!loaded) {
-  //
-  // }
-
+  if (!loaded) {
+    showLevel_1Graphics();
+    textBase.displayPause(); //TEST
+  }
   // Load PoseNet & createGraphics
   if (startedLevel_2 === 0) {
     level_1Rect.background(bgTeal.r, bgTeal.g, bgTeal.b);
+    if (unicorns.length < NUM_UNICORNS) {
+      let unicorn = new Unicorn (random(unicornImages), level_1Rect);
+      unicorns.push(unicorn);
+    }
     level_2Rect.background(bgRed.r, bgRed.g, bgRed.b);
-    loadPosenet();
+    loadPosenet(); /// TESTING
     startedLevel_2 = 1;
-  } else if (startedLevel_2 == 1) {
+  }
+  else if (startedLevel_2 == 1) {
     showLevel_1Graphics();
-    level_2Play();
 
+    if (inPlay) {
+
+
+
+    level_2Play();
+  } else {
+    textBase.displayPause(); //TEST
+  }
   }
 } // END LEVEL_2
 
 
+// ********** START FUNCTIONS ***************************
 function displayStartText() {
   textBase.displayTitle();
   textBase.displayStartInfo();
   textBase.displayStartTips();
   textBase.displayGo();
 }
+// ********** END -  START FUNCTIONS ********************
 
+
+  // ********** LEVEL_1 FUNCTIONS *************************
 function displayLevel_1Start() {
   user.displayStatic();
   textBase.displayLevel_1Title();
   textBase.displayLevel_1Tips();
   unicornAce.displayStatic();
+  if (!loaded) {
+    textBase.displayLoading();
+  } else {
+    textBase.displayPause();
+  }
 }
 
 function level_1Play() {
@@ -315,8 +319,8 @@ function level_1Play() {
   level_1Rect.clear();
   level_1Rect.background(bgTeal.r, bgTeal.g, bgTeal.b);
 
-  if (predictions.length > 0) {
-    updateUser(predictions[0]);
+  if (poses.length > 0) {
+    updateUser(poses[0]);
   }
   showUnicornsFront(); // display unicorns
   //display unicornAce after 15s
@@ -326,6 +330,7 @@ function level_1Play() {
   // draw rect_1
   imageMode(CORNER);
   image(level_1Rect, 100, 100);
+
 }
 
 function displayStartImg() {
@@ -338,12 +343,22 @@ function displayStartImg() {
 }
 
 function showUnicornsFront() {
+  // display injured counted
+  level_1Rect.push();
+  level_1Rect.fill(0);
+  level_1Rect.text(injured, 200, 200);
+  level_1Rect.pop();
+
   for (let i = 0; i < unicornsFront.length; i++) {
     let unicornFront = unicornsFront[i];
     unicornFront.move();
     // check if unicorn touches user
     let d = dist(unicornFront.x, unicornFront.y, user.displayX, user.y - safeDist);
-    if (d < safeDist) {
+    if (d < safeDist && unicornFront.istouched === false) {
+      injured += 1;
+      unicornFront.istouched = true;
+    }
+    if (injured > 3) {
       state = `limbo`;
     }
     unicornFront.moveWrap();
@@ -364,49 +379,61 @@ function showUnicornAceFront() {
   unicornAceFront.display();
 }
 
-function updateUser(prediction) {
-  user.update(prediction);
+function updateUser(poses) {
+  user.updateNose(poses);
+  user.update(poses);
   user.display();
 }
+  // ********** END - LEVEL_1 FUNCTIONS *******************
 
+
+    //********** LEVEL_2 FUNCTIONS **************************
 function showLevel_1Graphics() {
-  level_1Rect.clear();
+  // level_1Rect.clear();
   level_1Rect.background(bgTeal.r, bgTeal.g, bgTeal.b);
-  showUnicornsFront();
+
+  for (let i = 0; i < unicorns.length; i++) {
+    let unicorn = unicorns[i];
+    unicorn.displayRandom();
+    unicorn.moveRandom();
+  }
+
+
   imageMode(CORNER);
   image(level_1Rect, 100, 100);
-}
 
-// get poses
-function gotPoses(poses) {
-  if (poses.length > 0) {
-    user.update(poses);
-  }
+  // draw rect_2
+  imageMode(CORNER);
+  image(level_2Rect, 250, 150);
 }
 
 function level_2Play() {
   //reset rect_2:
   level_2Rect.clear();
   level_2Rect.background(bgRed.r, bgRed.g, bgRed.b);
-  vault.displayVault(); // display vault
+  if (poses.length > 0) {
+    updateUser(poses[0]);
+  }
+  vault.displayVault(user); // display vault that turns by poses
+  user.displayHands(); // display hands
 
-  user.displayHands();
   // draw rect_2 and video image
   imageMode(CORNER);
   image(level_2Rect, 250, 150);
   videoImg.displayVideo();
-
 }
+
+// ********** END - LEVEL_2 FUNCTIONS *******************
 
 function limbo() {
   background(0);
-  console.log("limbo");
 }
 
 function keyPressed() {
-  if (keyCode === 32) {
+  if (state === `start` && keyCode === 32) {
     state = `level_1`;
   }
+  if (state === `level_1`) {
   if (startedLevel_1 === 1 && keyCode === 32) {
     startedLevel_1 = 2;
     inPlay = true;
@@ -414,6 +441,16 @@ function keyPressed() {
   if (startedLevel_1 === 2 && keyCode === 32) {
     inPlay = !inPlay; // pause
   }
+}
+  if (state === `level_2`) {
+  if (startedLevel_2 === 0 && keyCode === 32) {
+    startedLevel_2 = 1;
+    inPlay = true;
+  }
+  if (startedLevel_2 === 1 && keyCode === 32) {
+    inPlay = !inPlay; // pause
+  }
+}
 }
 
 
