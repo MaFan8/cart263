@@ -58,11 +58,15 @@ let canvas_2 = {
 // ml5 variables
 let video;
 let facemesh;
-let options = {
-  flipHorizontal: true
-};
 let predictions = [];
 let user;
+let poseNet;
+let pose;
+let poseDetect = true;
+let wristLX;
+let wristLY;
+let wristRX;
+let wristRY;
 
 // Background variables
 let bgOrange = {
@@ -172,6 +176,7 @@ function imagesSetup() {
   vault = new ImgBase(width/2, height/2, vaultImg, 2, level_2Rect);
 }
 
+// set interval for pushing images out randomly
 setInterval(function() {
   if (unicornsFront.length < NUM_UNICORNS) {
     let unicornFront = new Unicorn(random(unicornFrontImages), level_1Rect);
@@ -179,7 +184,7 @@ setInterval(function() {
   }
 }, randomNumber(2000, 10000));
 
-
+// FACEMESH
 function loadFaceMesh() {
   // start video and hide video element
   video = createCapture(VIDEO);
@@ -187,7 +192,7 @@ function loadFaceMesh() {
 
   // start facemesh model
   facemesh = ml5.facemesh(video, function() {
-    console.log(`model loaded`);
+    console.log(`FaceMesh loaded`);
     loaded = true;
   });
   // save face detected results to prediction
@@ -195,7 +200,21 @@ function loadFaceMesh() {
     predictions = results;
     // console.log(predictions);
   });
-}
+} // END FACEMESH
+
+// POSENET
+function loadPosenet() {
+  // start video and hide video element
+  video = createCapture(VIDEO);
+  video.hide();
+  // get poses
+  poseNet = ml5.poseNet(video, function() {
+    console.log(`PoseNet loaded`);
+    // loaded = true;
+  });
+  // turn on poseNet
+  poseNet.on('pose', gotPoses);
+} // END POSENET
 
 
 // DRAW
@@ -257,12 +276,13 @@ function level_2() {
   // if (!loaded) {
   //
   // }
+
   // Load createGraphics
-  // if (startedLevel_2 === 0) {
-  //
-  //   startedLevel_2 = 1;
-  // }
-  // else if (startedLevel_2 == 1) {
+  if (startedLevel_2 === 0) {
+    loadPosenet();
+    startedLevel_2 = 1;
+  }
+  else if (startedLevel_2 == 1) {
 
     imageMode(CORNER);
     image(level_1Rect,100,100);
@@ -277,10 +297,14 @@ function level_2() {
     vault.display();
     pop();
 
+  image(video, 0, 0);
+  push();
+  fill (255);
+  ellipse(wristLX, wristLY -100, 50);
+  ellipse(wristRX, wristRY -100, 50);
+  pop();
 
-
-
-  // }
+  }
 }
 
 
@@ -355,6 +379,30 @@ function showUnicornAceFront() {
 function updateUser(prediction) {
   user.update(prediction);
   user.display();
+}
+
+function gotPoses(poses) {
+  // console.log(poses);
+  if (poses.length > 0) {
+    let wLX = poses[0].pose.leftWrist.x;
+    let wLY = poses[0].pose.leftWrist.y;
+    let wRX = poses[0].pose.rightWrist.x;
+    let wRY = poses[0].pose.rightWrist.y;
+
+    if (poseDetect) {
+      wristLX = wLX;
+      wristLY = wLY;
+      wristRX = wRX;
+      wristRY = wRY;
+      poseDetect = false;
+    } else {
+    wristLX = lerp(wristLX, wLX, 0.5);
+    wristLY = lerp(wristLY, wLY, 0.5);
+    wristRX = lerp(wristRX, wRX, 0.5);
+    wristRY = lerp(wristRY, wRY, 0.5);
+  }
+}
+
 }
 
 function limbo() {
