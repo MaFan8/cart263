@@ -4,6 +4,7 @@ class User {
     this.x = level_1Rect.width/2;
     this.y = level_1Rect.height - 60;
     this.displayX = 0;
+    this.offest = 225;
     this.scale = 0.6;
 
     this.active = true;
@@ -13,11 +14,13 @@ class User {
     this.wristRX;
     this.wristRY;
     this.poseDetect = true;
+    this.movePosition = 100;
+    this.handSize = 20;
   }
 
-  update(prediction) {
-    this.x = prediction.annotations.noseTip[0][0];
-    this.displayX = width - this.x - this.x; // flip horizontal
+  updateNose(pose) {
+    this.displayX = poses[0].pose.nose.x;
+    this.displayX += this.offest; // offset position of display X to middle of canvas
     // constrain to user to 3/4 of width
     this.displayX = constrain(this.displayX, level_1Rect.width/4 , level_1Rect.width/4 *3);
   }
@@ -30,7 +33,7 @@ class User {
     level_1Rect.scale(this.scale);
     if (this.displayX > level_1Rect.width/2) {
       level_1Rect.scale(-1, 1);
-    } // filp user image if in right side of screen
+    } // filp image if in right side of screen
     level_1Rect.image(this.image, 0, 0);
     level_1Rect.pop();
   }
@@ -56,7 +59,7 @@ class User {
     }
   }
 
-  update(poses) {
+  update(pose) {
       let wLX = poses[0].pose.leftWrist.x;
       let wLY = poses[0].pose.leftWrist.y;
       let wRX = poses[0].pose.rightWrist.x;
@@ -78,9 +81,9 @@ class User {
 
   displayHands() {
     level_2Rect.push();
-    level_2Rect.fill(255);
-    level_2Rect.ellipse(this.wristLX, this.wristLY - 100, 30);
-    level_2Rect.ellipse(this.wristRX, this.wristRY - 100, 30);
+    level_2Rect.fill(0);
+    level_2Rect.ellipse(this.wristLX, this.wristLY - this.movePosition, this.handSize);
+    level_2Rect.ellipse(this.wristRX, this.wristRY - this.movePosition, this.handSize);
     level_2Rect.pop();
   }
 }
