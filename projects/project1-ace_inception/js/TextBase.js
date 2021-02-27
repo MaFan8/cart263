@@ -4,6 +4,7 @@ class TextBase {
     this.y = 0;
     this.titleY = 80;
     this.sizeLg = 80;
+    this.sizeMd = 60;
     this.size = 30;
     this.fill1 = {
       r: 1,
@@ -19,6 +20,11 @@ class TextBase {
       g: 51,
       b: 68,
     };
+    this.fill4 = {
+      r: 81,
+      g: 141,
+      b: 173,
+    };
     this.spacing = 30;
     this.LevelRectSpacing = 50;
     // main parameters
@@ -31,12 +37,16 @@ class TextBase {
     this.pause = `Press "SPACE" to start or pause.`;
     // start state text
     this.title = `ACE INCEPTION`;
-    this.startInfo = `Ace doesn't sanction his pet Spike's love interest. Help infiltrate Ace's \nsubconsious and insert acceptance of Spike's and Fuzzy's love.`;
+    this.startInfo = `Ace doesn't sanction his pet Spike's love interest. Help infiltrate Ace's \nsubconsious and implant acceptance of Spike's and Fuzzy's love.`;
     this.startTips = `* In order to achieve inception, you MUST...\n  - Pass through Ace's 1st dream state.\n  - Establish inception in his 2nd state.\n  - Escape his subconsious by preforming \n    kicks in both states.\n  - If you die in a dream state, you will lost \n    in limbo.`;
 
-    // level_1 state text
-    this.level_1Title = `DREAM STATE #1`;
+    // level_1 text
+    this.level_1Title = `INITIAL DREAM STATE`;
     this.level_1Tips = `Ace's subconsious detects a \nsecurity breach, you must avoid \nhis projections and capture Ace's spirit animal to induce him under a deeper dream state.`;
+
+    // level_2 text
+    this.level_2Title = `FINAL DREAM STATE`;
+    this.level_2Tips = `Unlocking the vault will allow you to implant your\nidea. Retrieve your code and turn the vault dial to access the vault.\n\nMove hands up/down counter to eachother to turn the dail. Hand detection works best when elbows are \ndisplayed on screen.`
   }
 
   displayLoading() {
@@ -95,7 +105,7 @@ class TextBase {
 
   displayLevel_1Title() {
     push();
-    fill(this.fill3.r, this.fill3.g, this.fill3.b);
+    fill(this.fill3.r + sin(frameCount*0.01) * 255, this.fill3.g, this.fill3.b);
     textSize(this.sizeLg);
     textAlign(CENTER);
     text(this.level_1Title, width/2, height/5);
@@ -108,6 +118,24 @@ class TextBase {
     textSize(this.size);
     textAlign(LEFT, CENTER);
     text(this.level_1Tips, width/3, height/3, width - width/2.1);
+    pop();
+  }
+
+  displayLevel_2Title() {
+    push();
+    fill(this.fill4.r + sin(frameCount*0.01) * 255, this.fill4.g, this.fill4.b);
+    textSize(this.sizeMd);
+    textAlign(CENTER);
+    text(this.level_2Title, width/2, height/5);
+    pop();
+  }
+
+  displayLevel_2Tips() {
+    push();
+    fill(this.fill4.r, this.fill4.g, this.fill4.b);
+    textSize(this.size -10);
+    textAlign(LEFT, CENTER);
+    text(this.level_2Tips, width/4, height/3, width - width/2.1);
     pop();
   }
 
