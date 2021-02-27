@@ -33,6 +33,8 @@ const UNICORN_IMG = `assets/images/unicorn`;
 const SPIKE_BACK_IMG = `assets/images/spikeBack.png`;
 
 const VAULT_IMG = `assets/images/vault.png`;
+const FIST_DIAGRAM_IMG = `assets/images/fistDiagram.png`;
+const FIST_IMG = `assets/images/fist.png`;
 
 
 let state = `level_2`; // start, level_1, level_2, limbo, end
@@ -109,6 +111,8 @@ let unicornImages = [];
 let unicorns = [];
 // Image variables: level_2
 let vaultImg, vault;
+let fistDiagramImg, fistDiagram;
+let fistImg, fist;
 
 
 
@@ -140,6 +144,8 @@ function preload() {
   }
 
   vaultImg = loadImage(`${VAULT_IMG}`);
+  fistDiagramImg = loadImage(`${FIST_DIAGRAM_IMG}`);
+  fistImg = loadImage(`${FIST_IMG}`);
 } // END PRELOAD
 
 
@@ -189,11 +195,11 @@ function imagesSetup() {
     }
 // }
 
-
   user = new User(spikeBackImg, level_1Rect);
   vault = new ImgBase(level_2Rect.width / 2, level_2Rect.height / 2, vaultImg, 1.5, level_2Rect);
+  fistDiagram = new ImgBase(width / 2, level_2Rect.height, fistDiagramImg, 0.8, level_2Rect);
+  fist = new ImgBase(0, 0, fistImg, 0.2, level_2Rect);
   videoImg = new ImgBase(-310, 150, video, level_2Rect);
-
 }
 
 // set interval for pushing images out randomly
@@ -403,20 +409,22 @@ function updateUser(poses) {
 function showLevel_1Graphics() {
   // level_1Rect.clear();
   level_1Rect.background(bgTeal.r, bgTeal.g, bgTeal.b);
-
+  // draw unicorns
   for (let i = 0; i < unicorns.length; i++) {
     let unicorn = unicorns[i];
     unicorn.moveRandom();
     unicorn.displayRandom();
   }
-
-
+  // draw rect_1
   imageMode(CORNER);
   image(level_1Rect, 100, 100);
 
   // draw rect_2
   imageMode(CORNER);
   image(level_2Rect, 250, 150);
+  textBase.displayLevel_2Title();
+  textBase.displayLevel_2Tips();
+  fistDiagram.displayFistDiagram();
 }
 
 function level_2Play() {
@@ -427,7 +435,7 @@ function level_2Play() {
     updateUser(poses[0]);
   }
   vault.displayVault(user); // display vault that turns by poses
-  user.displayHands(); // display hands
+  fist.displayFists(user); // display hands
 
   // draw rect_2 and video image
   imageMode(CORNER);
