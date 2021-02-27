@@ -37,7 +37,7 @@ const FIST_DIAGRAM_IMG = `assets/images/fistDiagram.png`;
 const FIST_IMG = `assets/images/fist.png`;
 
 
-let state = `level_2`; // start, level_1, level_2, limbo, end
+let state = `start`; // start, level_1, level_2, limbo, end
 
 // Level variables
 let startedLevel_1 = 0; // 0, 1, 2
@@ -46,54 +46,29 @@ let startedLevel_2 = 0; // 0, 1, 2
 let level_2Rect = undefined;
 let loaded = false;
 let inPlay = false;
-let inPlay2 = false;
 let injured = 0;
 
-// Canvas variables
-let canvasStart;
-let canvas_1 = {
-  w: 1000,
-  h: 600,
-};
-let canvas_2 = {
-  w: 700,
-  h: 500,
-};
-
+// Canvas & background variables
+let canvasBase;
 // ml5 variables
 let videoImg, video;
 let user;
 let poseNet;
 let pose;
 let poses = [];
-
-// Background variables
-let bgOrange = {
-  r: 255,
-  g: 153,
-  b: 0,
-};
-let bgTeal = {
-  r: 1,
-  g: 170,
-  b: 166,
-};
-let bgRed = {
-  r: 94,
-  g: 24,
-  b: 0,
-};
-
 // Text variables
 let textBase;
+
 // Image variables: Start
-let imgX = 200;
-let imgY = 150;
-let sizeSmall = 0.6;
-let sizeBig = 1.2;
+let img = {
+  x: 200,
+  y: 150,
+  sizeSmall: 0.6,
+  sizeBig: 1.2,
+  heartX: 250,
+  heartY: 480,
+};
 let heartImg, heart;
-let heartX = 250;
-let heartY = 480;
 // Image variables: Level_1
 let aceHeadImg, aceHead;
 let aceHeadAngryImg, aceHeadAngry;
@@ -114,9 +89,6 @@ let vaultImg, vault;
 let fistDiagramImg, fistDiagram;
 let fistImg, fist;
 
-
-
-let safeDist = 40;
 
 // PRELOAD
 function preload() {
@@ -151,12 +123,13 @@ function preload() {
 
 // SETUP
 function setup() {
-  // create canvase
-  canvasStart = createCanvas(1200, 800);
-  level_1Rect = createGraphics(canvas_1.w, canvas_1.h);
-  level_2Rect = createGraphics(canvas_2.w, canvas_2.h);
+  // create canvas
+  canvasBase = new CanvasAndBg;
+  canvasBase.canvas_0;
+  level_1Rect = createGraphics(canvasBase.canvas_1.w, canvasBase.canvas_1.h);
+  level_2Rect = createGraphics(canvasBase.canvas_2.w, canvasBase.canvas_2.h);
 
-  background(bgOrange.r, bgOrange.g, bgOrange.b);
+  canvasBase.bgOrange;
   // create text
   textBase = new TextBase;
   // create images
@@ -164,13 +137,13 @@ function setup() {
 } // END SETUP
 
 function imagesSetup() {
-  heart = new ImgBase(heartX, heartY, heartImg, sizeBig);
-  aceBody = new Body(imgX, imgY, aceBodyImg, sizeSmall);
-  aceHeadAngry = new ImgBase(imgX, imgY, aceHeadAngry, sizeSmall);
+  heart = new ImgBase(img.heartX, img.heartY, heartImg, img.sizeBig);
+  aceBody = new Body(img.x, img.y, aceBodyImg, img.sizeSmall);
+  aceHeadAngry = new ImgBase(img.x, img.y, aceHeadAngry, img.sizeSmall);
   aceHead = new ImgBase(width / 2, height / 2, aceHeadImg);
   // aceKick = new Body(100, 100, aceKickImg);
-  spike = new ImgBase(heartX + 50, heartY - 60, spikeImg, sizeSmall);
-  alpaca = new ImgBase(heartX - 20, heartY, alpacaImg, sizeSmall + 0.2);
+  spike = new ImgBase(img.heartX + 50, img.heartY - 60, spikeImg, img.sizeSmall);
+  alpaca = new ImgBase(img.heartX - 20, img.heartY, alpacaImg, img.sizeSmall + 0.2);
   spikeBack = new User(spikeBackImg, level_1Rect);
   // unicorns
   unicornAceFront = new Unicorn(unicornAceFrontImg, level_1Rect);
@@ -233,7 +206,7 @@ function loadPosenet() {
 
 // DRAW
 function draw() {
-  background(bgOrange.r, bgOrange.g, bgOrange.b);
+  canvasBase.bgOrange;
 
   if (state === `start`) {
     start();
@@ -263,7 +236,7 @@ function level_1() {
   }
   // Load FaceMesh Once
   if (startedLevel_1 === 0) {
-    level_1Rect.background(bgTeal.r, bgTeal.g, bgTeal.b);
+    level_1Rect.background(canvasBase.bgTeal.r, canvasBase.bgTeal.g, canvasBase.bgTeal.b);
     loadPosenet();
     startedLevel_1 = 1;
   }
@@ -277,7 +250,7 @@ function level_1() {
       level_1Play();
     } else {
       level_1Rect.clear();
-      level_1Rect.background(bgTeal.r, bgTeal.g, bgTeal.b);
+      level_1Rect.background(canvasBase.bgTeal.r, canvasBase.bgTeal.g, canvasBase.bgTeal.b);
       displayLevel_1Start();
     }
   }
@@ -291,8 +264,8 @@ function level_2() {
   }
   // Load PoseNet & createGraphics
   if (startedLevel_2 === 0) {
-    level_1Rect.background(bgTeal.r, bgTeal.g, bgTeal.b);
-    level_2Rect.background(bgRed.r, bgRed.g, bgRed.b);
+    level_1Rect.background(canvasBase.bgTeal.r, canvasBase.bgTeal.g, canvasBase.bgTeal.b);
+    level_2Rect.background(canvasBase.bgRed.r, canvasBase.bgRed.g, canvasBase.bgRed.b);
     loadPosenet(); /// TESTING
     startedLevel_2 = 1;
   } else if (startedLevel_2 == 1) {
@@ -317,6 +290,15 @@ function displayStartText() {
   textBase.displayStartTips();
   textBase.displayGo();
 }
+
+function displayStartImg() {
+  aceBody.display();
+  aceHeadAngry.display();
+  aceHeadAngry.move();
+  heart.displayHeart();
+  spike.display();
+  alpaca.display();
+}
 // ********** END -  START FUNCTIONS ********************
 
 
@@ -336,7 +318,7 @@ function displayLevel_1Start() {
 function level_1Play() {
   //reset rect_1:
   level_1Rect.clear();
-  level_1Rect.background(bgTeal.r, bgTeal.g, bgTeal.b);
+  level_1Rect.background(canvasBase.bgTeal.r, canvasBase.bgTeal.g, canvasBase.bgTeal.b);
 
   if (poses.length > 0) {
     updateUser(poses[0]);
@@ -351,15 +333,6 @@ function level_1Play() {
   image(level_1Rect, 100, 100);
 }
 
-function displayStartImg() {
-  aceBody.display();
-  aceHeadAngry.display();
-  aceHeadAngry.move();
-  heart.displayHeart();
-  spike.display();
-  alpaca.display();
-}
-
 function showUnicornsFront() {
   // display injured counted
   level_1Rect.push();
@@ -371,8 +344,8 @@ function showUnicornsFront() {
     let unicornFront = unicornsFront[i];
     unicornFront.move();
     // check if unicorn touches user
-    let d = dist(unicornFront.x, unicornFront.y, user.displayX, user.y - safeDist);
-    if (d < safeDist && unicornFront.istouched === false) {
+    let d = dist(unicornFront.x, unicornFront.y, user.displayX, user.y - unicornFront.safeDist);
+    if (d < unicornFront.safeDist && unicornFront.istouched === false) {
       injured += 1;
       unicornFront.istouched = true;
     }
@@ -388,8 +361,8 @@ function showUnicornAceFront() {
   if (!unicornAceFront.isPaused) {
     unicornAceFront.move();
     // check if unicornAce touches user
-    let d = dist(unicornAceFront.x, unicornAceFront.y, user.displayX, user.y - safeDist);
-    if (d < safeDist) {
+    let d = dist(unicornAceFront.x, unicornAceFront.y, user.displayX, user.y - unicornAceFront.safeDist);
+    if (d < unicornAceFront.safeDist) {
       state = `level_2`;
     }
   }
@@ -408,7 +381,7 @@ function updateUser(poses) {
 //********** LEVEL_2 FUNCTIONS **************************
 function showLevel_1Graphics() {
   // level_1Rect.clear();
-  level_1Rect.background(bgTeal.r, bgTeal.g, bgTeal.b);
+  level_1Rect.background(canvasBase.bgTeal.r, canvasBase.bgTeal.g, canvasBase.bgTeal.b);
   // draw unicorns
   for (let i = 0; i < unicorns.length; i++) {
     let unicorn = unicorns[i];
@@ -430,7 +403,7 @@ function showLevel_1Graphics() {
 function level_2Play() {
   //reset rect_2:
   level_2Rect.clear();
-  level_2Rect.background(bgRed.r, bgRed.g, bgRed.b);
+  level_2Rect.background(canvasBase.bgRed.r, canvasBase.bgRed.g, canvasBase.bgRed.b);
   if (poses.length > 0) {
     updateUser(poses[0]);
   }

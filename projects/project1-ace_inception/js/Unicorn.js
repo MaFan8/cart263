@@ -3,6 +3,7 @@ class Unicorn {
     this.image = image;
     this.maxHeight = 90;
     this.alphaChange = -8;
+    this.safeDist = 40;
     this.istouched = false;
     this.reset();
     // for Ace only
