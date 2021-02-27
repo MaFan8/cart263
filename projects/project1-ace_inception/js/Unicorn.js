@@ -11,8 +11,10 @@ class Unicorn {
     this.startTime = 0;
     this.timePassed = 0;
     // for random unicorns
-    this.randomX = random(width);
-    this.randomY = random(height);
+    this.randomX = random(0, width);
+    this.randomY = random(0, height);
+    this.randomW = random(40, 120);
+    this.randomH = random(48, 125);
     this.velX = 0;
     this.velY = 0;
     this.vSpeed = 2;
@@ -51,13 +53,18 @@ class Unicorn {
     }
     this.randomX = this.randomX + this.velX;
     this.randomY = this.randomY + this.velY;
-
-    // reset animal if moved out of window
-    if (this.randomX < 0 || this.randomX > width || this.randomY < 0 || this.randomY > width) {
-      this.randomX = random(width);
-      this.randomY = random(height);
+    // 
+    // if (this.vSpeed < 0) {
+    //   level_1Rect.scale(-1,1);
+    // }
+    // constrain to window
+    if (this.randomX + this.randomW < 0) {
+      this.vSpeed = 1;
+    } else if (this.randomX + this.randomW/2 > width) {
+      this.vSpeed = -1;
     }
-  }
+    this.randomY = constrain(this.randomY, 0+ this.offScreen, level_1Rect.height-this.offScreen);
+}
 
   // reset unicorn once it reaches window edge
   moveWrap() {
@@ -117,10 +124,8 @@ class Unicorn {
   displayRandom() {
     level_1Rect.push();
     level_1Rect.imageMode(CENTER);
-    // level_1Rect.translate(250 + sin(frameCount * 0.05), height/2 + cos(frameCount * 0.05));
-    // level_1Rect.translate(this.randomX, this.randomY);
-    level_1Rect.scale(0.5);
-    level_1Rect.image(this.image, this.randomX, this.randomY);
+    // level_1Rect.translate(this.randomX + sin(frameCount * 0.05), this.randomY + cos(frameCount * 0.05))
+    level_1Rect.image(this.image, this.randomX, this.randomY, this.randomW, this.randomH);
     level_1Rect.pop();
   }
 

@@ -169,7 +169,25 @@ function imagesSetup() {
   // unicorns
   unicornAceFront = new Unicorn(unicornAceFrontImg, level_1Rect);
   unicornAce = new Unicorn(unicornAceImg, level_1Rect);
+  // setup unicorn images
+  // while(unicorns.length < NUM_UNICORNS){
+  for (let i = 0; i < NUM_UNICORNS; i++) {
+    let unicorn = new Unicorn(random(unicornImages), level_1Rect);
 
+    // let overlapping = false;
+    // // let protection = 0;
+    // for (let j = 0; j< unicorns.length; j++) {
+    //   let other = unicorns[j];
+    //   let d = dist(unicorn.randomX, unicorn.randomY, other.randomX, other.randomY)
+    //   if (d < unicorn.randomW + other.randomW || d < unicorn.randomH + other.randomW) {
+    //     overlapping = true;
+    //     break;
+    //   }
+    // }
+    // if (!overlapping) {
+      unicorns.push(unicorn);
+    }
+// }
 
 
   user = new User(spikeBackImg, level_1Rect);
@@ -268,25 +286,20 @@ function level_2() {
   // Load PoseNet & createGraphics
   if (startedLevel_2 === 0) {
     level_1Rect.background(bgTeal.r, bgTeal.g, bgTeal.b);
-    if (unicorns.length < NUM_UNICORNS) {
-      let unicorn = new Unicorn (random(unicornImages), level_1Rect);
-      unicorns.push(unicorn);
-    }
     level_2Rect.background(bgRed.r, bgRed.g, bgRed.b);
     loadPosenet(); /// TESTING
     startedLevel_2 = 1;
-  }
-  else if (startedLevel_2 == 1) {
+  } else if (startedLevel_2 == 1) {
     showLevel_1Graphics();
 
     if (inPlay) {
 
 
 
-    level_2Play();
-  } else {
-    textBase.displayPause(); //TEST
-  }
+      level_2Play();
+    } else {
+      textBase.displayPause(); //TEST
+    }
   }
 } // END LEVEL_2
 
@@ -301,7 +314,7 @@ function displayStartText() {
 // ********** END -  START FUNCTIONS ********************
 
 
-  // ********** LEVEL_1 FUNCTIONS *************************
+// ********** LEVEL_1 FUNCTIONS *************************
 function displayLevel_1Start() {
   user.displayStatic();
   textBase.displayLevel_1Title();
@@ -330,7 +343,6 @@ function level_1Play() {
   // draw rect_1
   imageMode(CORNER);
   image(level_1Rect, 100, 100);
-
 }
 
 function displayStartImg() {
@@ -384,18 +396,18 @@ function updateUser(poses) {
   user.update(poses);
   user.display();
 }
-  // ********** END - LEVEL_1 FUNCTIONS *******************
+// ********** END - LEVEL_1 FUNCTIONS *******************
 
 
-    //********** LEVEL_2 FUNCTIONS **************************
+//********** LEVEL_2 FUNCTIONS **************************
 function showLevel_1Graphics() {
   // level_1Rect.clear();
   level_1Rect.background(bgTeal.r, bgTeal.g, bgTeal.b);
 
   for (let i = 0; i < unicorns.length; i++) {
     let unicorn = unicorns[i];
-    unicorn.displayRandom();
     unicorn.moveRandom();
+    unicorn.displayRandom();
   }
 
 
@@ -434,23 +446,23 @@ function keyPressed() {
     state = `level_1`;
   }
   if (state === `level_1`) {
-  if (startedLevel_1 === 1 && keyCode === 32) {
-    startedLevel_1 = 2;
-    inPlay = true;
+    if (startedLevel_1 === 1 && keyCode === 32) {
+      startedLevel_1 = 2;
+      inPlay = true;
+    }
+    if (startedLevel_1 === 2 && keyCode === 32) {
+      inPlay = !inPlay; // pause
+    }
   }
-  if (startedLevel_1 === 2 && keyCode === 32) {
-    inPlay = !inPlay; // pause
-  }
-}
   if (state === `level_2`) {
-  if (startedLevel_2 === 0 && keyCode === 32) {
-    startedLevel_2 = 1;
-    inPlay = true;
+    if (startedLevel_2 === 0 && keyCode === 32) {
+      startedLevel_2 = 1;
+      inPlay = true;
+    }
+    if (startedLevel_2 === 1 && keyCode === 32) {
+      inPlay = !inPlay; // pause
+    }
   }
-  if (startedLevel_2 === 1 && keyCode === 32) {
-    inPlay = !inPlay; // pause
-  }
-}
 }
 
 
