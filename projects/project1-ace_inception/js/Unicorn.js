@@ -53,7 +53,7 @@ class Unicorn {
     }
     this.randomX = this.randomX + this.velX;
     this.randomY = this.randomY + this.velY;
-    // 
+    //
     // if (this.vSpeed < 0) {
     //   level_1Rect.scale(-1,1);
     // }
@@ -117,6 +117,7 @@ class Unicorn {
     translate(250 + sin(frameCount * 0.05), height / 2 + cos(frameCount * 0.05));
     fill(216);
     noStroke();
+    ellipse(0,0,200);
     image(this.image, 0, 0);
     pop();
   }

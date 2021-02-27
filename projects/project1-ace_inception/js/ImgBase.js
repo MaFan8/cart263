@@ -13,6 +13,8 @@ class ImgBase {
     this.rotateSpeed = 0;
     this.reCenter = 25;
 
+    this.movePosition = 100;
+
     imageMode(CENTER);
   }
 
@@ -69,6 +71,15 @@ class ImgBase {
     level_2Rect.pop();
   }
 
+  displayFistDiagram() {
+    push();
+    translate(this.x, this.y -80);
+    imageMode(CORNER);
+    scale(this.scale + sin(frameCount/20)*0.1);
+    image(this.image, 0, 0);
+    pop();
+  }
+
   displayVideo() {
     push();
     tint(255, 80);
@@ -78,5 +89,16 @@ class ImgBase {
     pop();
   }
 
+  displayFists(user) {
+    level_2Rect.push();
+    level_2Rect.translate(user.wristLX, user.wristLY);
+    level_2Rect.scale(-1, 1);
+    level_2Rect.image(this.image, 0,0);
+    level_2Rect.pop();
+    level_2Rect.push();
+    level_2Rect.scale(-1, 1);
+    level_2Rect.image(this.image, user.wristRX, user.wristRY - user.movePosition);
+    level_2Rect.pop();
+  }
 
 }
