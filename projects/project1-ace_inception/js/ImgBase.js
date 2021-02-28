@@ -92,12 +92,14 @@ class ImgBase {
   displayFists(user) {
     level_2Rect.push();
     level_2Rect.translate(user.wristLX, user.wristLY);
-    level_2Rect.scale(-1, 1);
+    level_2Rect.scale(this.scale);
     level_2Rect.image(this.image, 0,0);
     level_2Rect.pop();
     level_2Rect.push();
-    level_2Rect.scale(-1, 1);
-    level_2Rect.image(this.image, user.wristRX, user.wristRY - user.movePosition);
+    level_2Rect.translate(user.wristRX, user.wristRY);
+
+    level_2Rect.scale(this.scale);
+    level_2Rect.image(this.image, 0, 0);
     level_2Rect.pop();
   }
 

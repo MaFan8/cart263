@@ -46,7 +46,7 @@ class TextBase {
 
     // level_2 text
     this.level_2Title = `FINAL DREAM STATE`;
-    this.level_2Tips = `Unlocking the vault will allow you to implant your\nidea. Retrieve your code and turn the vault dial to access the vault.\n\nMove hands up/down counter to eachother to turn the dail. Hand detection works best when elbows are \ndisplayed on screen.`
+    this.level_2Tips = `Unlocking the vault will allow you to implant your\nidea. Retrieve your code and access the vault by \nentering the code combination.\n\nMove hands up/down counter to eachother to turn the dail. Hand detection works best when elbows are \ndisplayed on screen.`
   }
 
   displayLoading() {

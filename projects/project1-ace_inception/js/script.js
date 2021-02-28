@@ -171,7 +171,7 @@ function imagesSetup() {
   user = new User(spikeBackImg, level_1Rect);
   vault = new ImgBase(level_2Rect.width / 2, level_2Rect.height / 2, vaultImg, 1.5, level_2Rect);
   fistDiagram = new ImgBase(width / 2, level_2Rect.height, fistDiagramImg, 0.8, level_2Rect);
-  fist = new ImgBase(0, 0, fistImg, 0.2, level_2Rect);
+  fist = new ImgBase(0, 0, fistImg, 0.5, level_2Rect);
   videoImg = new ImgBase(-310, 150, video, level_2Rect);
 }
 
@@ -206,7 +206,7 @@ function loadPosenet() {
 
 // DRAW
 function draw() {
-  canvasBase.bgOrange;
+  canvasBase.bgOrange();
 
   if (state === `start`) {
     start();
@@ -330,7 +330,7 @@ function level_1Play() {
 
   // draw rect_1
   imageMode(CORNER);
-  image(level_1Rect, 100, 100);
+  image(level_1Rect, canvasBase.canvas_1.x, canvasBase.canvas_1.y);
 }
 
 function showUnicornsFront() {
@@ -390,11 +390,11 @@ function showLevel_1Graphics() {
   }
   // draw rect_1
   imageMode(CORNER);
-  image(level_1Rect, 100, 100);
+  image(level_1Rect, canvasBase.canvas_1.x, canvasBase.canvas_1.y);
 
   // draw rect_2
   imageMode(CORNER);
-  image(level_2Rect, 250, 150);
+  image(level_2Rect, canvasBase.canvas_2.x, canvasBase.canvas_2.y);
   textBase.displayLevel_2Title();
   textBase.displayLevel_2Tips();
   fistDiagram.displayFistDiagram();
@@ -412,7 +412,7 @@ function level_2Play() {
 
   // draw rect_2 and video image
   imageMode(CORNER);
-  image(level_2Rect, 250, 150);
+  image(level_2Rect, canvasBase.canvas_2.x, canvasBase.canvas_2.y);
   videoImg.displayVideo();
 }
 

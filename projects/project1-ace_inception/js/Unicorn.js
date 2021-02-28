@@ -14,12 +14,13 @@ class Unicorn {
     // for random unicorns
     this.randomX = random(0, width);
     this.randomY = random(0, height);
-    this.randomW = random(40, 120);
+    this.randomW = random(60, 120);
     this.randomH = random(48, 125);
     this.velX = 0;
     this.velY = 0;
     this.vSpeed = 2;
     this.jitterness = 0.01;
+    this.switchedDirection = false;
   }
 
   move() {
@@ -54,18 +55,20 @@ class Unicorn {
     }
     this.randomX = this.randomX + this.velX;
     this.randomY = this.randomY + this.velY;
-    //
-    // if (this.vSpeed < 0) {
-    //   level_1Rect.scale(-1,1);
-    // }
+
+    if (this.velX < 0) {
+      this.switchedDirection = true;
+    } else {
+      this.switchedDirection = false;
+    }
     // constrain to window
     if (this.randomX + this.randomW < 0) {
       this.vSpeed = 1;
-    } else if (this.randomX + this.randomW/2 > width) {
+    } else if (this.randomX + this.randomW / 2 > width) {
       this.vSpeed = -1;
     }
-    this.randomY = constrain(this.randomY, 0+ this.offScreen, level_1Rect.height-this.offScreen);
-}
+    this.randomY = constrain(this.randomY, 0 + this.offScreen, level_1Rect.height - this.offScreen);
+  }
 
   // reset unicorn once it reaches window edge
   moveWrap() {
@@ -118,7 +121,7 @@ class Unicorn {
     translate(250 + sin(frameCount * 0.05), height / 2 + cos(frameCount * 0.05));
     fill(216);
     noStroke();
-    ellipse(0,0,200);
+    ellipse(0, 0, 200);
     image(this.image, 0, 0);
     pop();
   }
@@ -126,8 +129,11 @@ class Unicorn {
   displayRandom() {
     level_1Rect.push();
     level_1Rect.imageMode(CENTER);
-    // level_1Rect.translate(this.randomX + sin(frameCount * 0.05), this.randomY + cos(frameCount * 0.05))
-    level_1Rect.image(this.image, this.randomX, this.randomY, this.randomW, this.randomH);
+    level_1Rect.translate(this.randomX, this.randomY);
+    if (this.switchedDirection) {
+      level_1Rect.scale(-1, 1);
+    };
+    level_1Rect.image(this.image, 0, 0, this.randomW, this.randomH);
     level_1Rect.pop();
   }
 
