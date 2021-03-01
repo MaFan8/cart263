@@ -46,13 +46,13 @@ class ImgBase {
   }
 
   displayVaultStatic() {
-    push();
-    translate(this.x + 55, this.y - this.reCenter);
-    imageMode(CORNER);
-    tint(255, 80);
-    scale(this.scale);
-    image(this.image, 0, 0);
-    pop();
+    level_2Rect.push();
+    level_2Rect.translate(this.x, this.y);
+    level_2Rect.imageMode(CENTER);
+    level_2Rect.tint(255, 80);
+    level_2Rect.scale(this.scale);
+    level_2Rect.image(this.image, 0, 0);
+    level_2Rect.pop();
   }
 
   displayVault(user) {
