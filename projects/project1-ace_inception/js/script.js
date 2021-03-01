@@ -248,17 +248,17 @@ function start() {
 
 // LEVEL_1
 function level_1() {
-  // display text & image if FaceMesh is loading
+  // display text & image if Posenet is loading
   if (!loaded) {
     displayLevel_1Start();
   }
-  // Load FaceMesh Once
+  // Load Posenet Once
   if (startedLevel_1 === 0) {
     level_1Rect.background(canvasBase.bgTeal.r, canvasBase.bgTeal.g, canvasBase.bgTeal.b);
     loadPosenet();
     startedLevel_1 = 1;
   }
-  // add start/pause instruction after FaceMesh is loaded
+  // add start/pause instruction after Posenet is loaded
   else if (startedLevel_1 == 1 && loaded) {
     // display start until keypressed to switch to 2
     displayLevel_1Start();
@@ -275,10 +275,10 @@ function level_1() {
 
 // LEVEL_2
 function level_2() {
-  // // display graphics until state: 0 is loaded
-  // if (!loaded) {
-  //   showLevel_1Graphics();
-  // }
+  // display graphics until state: 0 is loaded
+  if (!loaded) {
+    showLevel_1Graphics();
+  }
   // Load create background
   if (startedLevel_2 === 0) {
     level_1Rect.background(canvasBase.bgTeal.r, canvasBase.bgTeal.g, canvasBase.bgTeal.b);
@@ -288,15 +288,16 @@ function level_2() {
     // display until keypressed to switch to state: 2
     showLevel_1Graphics();
   } else if (startedLevel_2 == 2) {
-    // display level_1 graphics
-    showLevel_1Graphics();
     if (inPlay) {
       level_2GetPasscode();
+      showLevel_1unicorns();
+      textBase.displayPause(); // display pause
     } else {
       level_2Rect.clear();
       level_2Rect.background(canvasBase.bgRed.r, canvasBase.bgRed.g, canvasBase.bgRed.b);
       showLevel_1Graphics();
     }
+
   }
 
   // else if (startedLevel_2 == 3) {
@@ -310,7 +311,6 @@ function level_2() {
   //     showLevel_1Graphics();
   //   }
   // }
-  console.log(startedLevel_2);
 } // END LEVEL_2
 
 
@@ -428,6 +428,23 @@ function showLevel_1Graphics() {
   textBase.displayPause();
 }
 
+function showLevel_1unicorns() {
+  level_1Rect.background(canvasBase.bgTeal.r, canvasBase.bgTeal.g, canvasBase.bgTeal.b);
+  // draw unicorns
+  for (let i = 0; i < unicorns.length; i++) {
+    let unicorn = unicorns[i];
+    unicorn.moveRandom();
+    unicorn.displayRandom();
+  }
+  // draw rect_1
+  imageMode(CORNER);
+  image(level_1Rect, canvasBase.canvas_1.x, canvasBase.canvas_1.y);
+
+  // draw rect_2
+  imageMode(CORNER);
+  image(level_2Rect, canvasBase.canvas_2.x, canvasBase.canvas_2.y);
+}
+
 function level_2GetPasscode() {
   //reset rect_2:
   level_2Rect.clear();
@@ -438,18 +455,20 @@ function level_2GetPasscode() {
 
   textBase.vaultMoniter(extLibrary);
   if (!extLibrary.instructionSpoken) {
-    textBase.displayCurrentInstruction(extLibrary);
+    // textBase.displayCurrentInstruction(extLibrary);
+    extLibrary.showVoiceInstruction();
   }
 
   if (extLibrary.attemptsLeft <= 2) {
     textBase.displayAttempts(extLibrary);
   } else if (extLibrary.attemptsLeft < 0) {
-    textBase.displayDenied(extLibrary);
+    extLibrary.showVoiceDenied();
   }
-  if (extLibrary.correct) {
-    startedLevel_2 = 3;
-  }
-  textBase.displayRetrieved(extLibrary);
+  // if (extLibrary.correct) {
+  //   console.log("change state");
+  //   // startedLevel_2 = 3;
+  // }
+  // extLibrary.showVoiceRetrieved();
 
   // draw rect_2
   imageMode(CORNER);
@@ -487,7 +506,7 @@ function keyPressed() {
       startedLevel_1 = 2;
       inPlay = true;
     }
-    if (startedLevel_1 === 2 && keyCode === 32) {
+    else if (startedLevel_1 === 2 && keyCode === 32) {
       inPlay = !inPlay; // pause
     }
   }
@@ -495,10 +514,10 @@ function keyPressed() {
     if (startedLevel_2 === 1 && keyCode === 32) {
       startedLevel_2 = 2;
       inPlay = true;
-    }
-    if (startedLevel_2 === 2 && keyCode === 32) {
       // run responsiveVoice "Declare your name."
       extLibrary.timedPrompt();
+    }
+    else if (startedLevel_2 === 2 && keyCode === 32) {
       inPlay = !inPlay; // pause
     }
     // if (startedLevel_2 === 3 && keyCode === 32) {

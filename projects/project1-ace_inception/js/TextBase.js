@@ -162,7 +162,7 @@ class TextBase {
     let account = `<< RETRIEVE YOUR ACCOUNT >>
 
   Name: ${extLibrary.currentNameAnswer}
-  Passcode: ${this.userAccount.passcode}`
+  Passcode: ${extLibrary.passcode}`
 
     level_2Rect.push();
     level_2Rect.fill(50, 50, 50, 80);
