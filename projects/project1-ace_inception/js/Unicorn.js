@@ -18,7 +18,7 @@ class Unicorn {
     this.randomH = random(48, 125);
     this.velX = 0;
     this.velY = 0;
-    this.vSpeed = 2;
+    this.vSpeed = 0.5;
     this.jitterness = 0.01;
     this.switchedDirection = false;
   }
@@ -63,9 +63,9 @@ class Unicorn {
     }
     // constrain to window
     if (this.randomX + this.randomW < 0) {
-      this.vSpeed = 1;
+      this.velX = 1;
     } else if (this.randomX + this.randomW / 2 > width) {
-      this.vSpeed = -1;
+      this.velX = -1;
     }
     this.randomY = constrain(this.randomY, 0 + this.offScreen, level_1Rect.height - this.offScreen);
   }

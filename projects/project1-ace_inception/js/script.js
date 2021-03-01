@@ -7,8 +7,11 @@ Maple Sung
 A game that enlists the user's help to infiltrate Ace's subconsious to implant an idea.
 
 Uses:
-ml5.js Facemesh:
-https://learn.ml5js.org/#/reference/facemesh
+ml5.js Posenet:
+https://ml5js.org/reference/api-PoseNet/
+
+Annyang
+https://www.talater.com/annyang/
 
 
 */
@@ -21,7 +24,6 @@ const ACE_BODY_IMG = `assets/images/aceBody.png`;
 const ACE_KICK_IMG = `assets/images/ace_kick.png`;
 const SPIKE_IMG = `assets/images/spike.png`;
 const ALPACA_IMG = `assets/images/alpaca.png`;
-
 const NUM_UNICORN_FRONT_IMG = 4;
 const NUM_UNICORNSFRONT = 4;
 const UNICORN_FRONT_IMG = `assets/images/unicorn_front`;
@@ -31,7 +33,6 @@ const NUM_UNICORN_IMG = 4;
 const NUM_UNICORNS = 50;
 const UNICORN_IMG = `assets/images/unicorn`;
 const SPIKE_BACK_IMG = `assets/images/spikeBack.png`;
-
 const VAULT_IMG = `assets/images/vault.png`;
 const FIST_DIAGRAM_IMG = `assets/images/fistDiagram.png`;
 const FIST_IMG = `assets/images/fist.png`;
@@ -46,16 +47,21 @@ let startedLevel_2 = 0; // 0, 1, 2
 let level_2Rect = undefined;
 let loaded = false;
 let inPlay = false;
-let injured = 0;
 
 // Canvas & background variables
 let canvasBase;
-// ml5 variables
+// External libraries
+let extLibrary;
+
+// Library variables: ml5 Posenet, annyang, ResponsiveVoice
 let videoImg, video;
 let user;
 let poseNet;
 let pose;
 let poses = [];
+let name;
+let insctructionSpoken = false;
+
 // Text variables
 let textBase;
 
@@ -67,6 +73,10 @@ let img = {
   sizeBig: 1.2,
   heartX: 250,
   heartY: 480,
+  videoX: -350,
+  videoY: 150,
+  // kickX: 100,
+  // kickY: 100,
 };
 let heartImg, heart;
 // Image variables: Level_1
@@ -92,7 +102,7 @@ let fistImg, fist;
 
 // PRELOAD
 function preload() {
-  // Load character images
+  // Load LEVEL_1 Images
   heartImg = loadImage(`${HEART_IMG}`);
   aceHeadImg = loadImage(`${ACE_HEAD_IMG}`);
   aceHeadAngry = loadImage(`${ACE_HEAD_ANGRY_IMG}`);
@@ -114,34 +124,39 @@ function preload() {
     let unicornImage = loadImage(`${UNICORN_IMG}${i}.png`);
     unicornImages.push(unicornImage);
   }
-
+  // Load LEVEL_2 Images
   vaultImg = loadImage(`${VAULT_IMG}`);
   fistDiagramImg = loadImage(`${FIST_DIAGRAM_IMG}`);
   fistImg = loadImage(`${FIST_IMG}`);
+
 } // END PRELOAD
 
 
 // SETUP
 function setup() {
-  // create canvas
+  // create canvas & background
   canvasBase = new CanvasAndBg;
   canvasBase.canvas_0;
   level_1Rect = createGraphics(canvasBase.canvas_1.w, canvasBase.canvas_1.h);
   level_2Rect = createGraphics(canvasBase.canvas_2.w, canvasBase.canvas_2.h);
-
   canvasBase.bgOrange;
+
+  // create library setup
+  extLibrary = new ExternalLibraries();
+
   // create text
   textBase = new TextBase;
   // create images
   imagesSetup();
 } // END SETUP
 
+// create images
 function imagesSetup() {
   heart = new ImgBase(img.heartX, img.heartY, heartImg, img.sizeBig);
   aceBody = new Body(img.x, img.y, aceBodyImg, img.sizeSmall);
   aceHeadAngry = new ImgBase(img.x, img.y, aceHeadAngry, img.sizeSmall);
   aceHead = new ImgBase(width / 2, height / 2, aceHeadImg);
-  // aceKick = new Body(100, 100, aceKickImg);
+  // aceKick = new Body(img.kickX, img.kickY, aceKickImg);
   spike = new ImgBase(img.heartX + 50, img.heartY - 60, spikeImg, img.sizeSmall);
   alpaca = new ImgBase(img.heartX - 20, img.heartY, alpacaImg, img.sizeSmall + 0.2);
   spikeBack = new User(spikeBackImg, level_1Rect);
@@ -164,16 +179,18 @@ function imagesSetup() {
     //   }
     // }
     // if (!overlapping) {
-      unicorns.push(unicorn);
-    }
-// }
+    unicorns.push(unicorn);
+    // }
+  }
 
   user = new User(spikeBackImg, level_1Rect);
   vault = new ImgBase(level_2Rect.width / 2, level_2Rect.height / 2, vaultImg, 1.5, level_2Rect);
   fistDiagram = new ImgBase(width / 2, level_2Rect.height, fistDiagramImg, 0.8, level_2Rect);
   fist = new ImgBase(0, 0, fistImg, 0.5, level_2Rect);
-  videoImg = new ImgBase(-310, 150, video, level_2Rect);
-}
+  videoImg = new ImgBase(-350, 150, video, level_2Rect);
+
+} // END CREATE IMAGES
+
 
 // set interval for pushing images out randomly
 setInterval(function() {
@@ -202,6 +219,7 @@ function loadPosenet() {
     // console.log(poses);
   });
 } // END POSENET
+
 
 
 // DRAW
@@ -242,10 +260,9 @@ function level_1() {
   }
   // add start/pause instruction after FaceMesh is loaded
   else if (startedLevel_1 == 1 && loaded) {
+    // display start until keypressed to switch to 2
     displayLevel_1Start();
-  }
-  // play once "space" is pressed
-  else if (startedLevel_1 == 2) {
+  } else if (startedLevel_1 == 2) {
     if (inPlay) {
       level_1Play();
     } else {
@@ -258,28 +275,42 @@ function level_1() {
 
 // LEVEL_2
 function level_2() {
-  if (!loaded) {
-    showLevel_1Graphics();
-    textBase.displayPause(); //TEST
-  }
-  // Load PoseNet & createGraphics
+  // // display graphics until state: 0 is loaded
+  // if (!loaded) {
+  //   showLevel_1Graphics();
+  // }
+  // Load create background
   if (startedLevel_2 === 0) {
     level_1Rect.background(canvasBase.bgTeal.r, canvasBase.bgTeal.g, canvasBase.bgTeal.b);
     level_2Rect.background(canvasBase.bgRed.r, canvasBase.bgRed.g, canvasBase.bgRed.b);
-    loadPosenet(); /// TESTING
     startedLevel_2 = 1;
   } else if (startedLevel_2 == 1) {
+    // display until keypressed to switch to state: 2
     showLevel_1Graphics();
-
+  } else if (startedLevel_2 == 2) {
+    // display level_1 graphics
+    showLevel_1Graphics();
     if (inPlay) {
-
-
-
-      level_2Play();
+      level_2GetPasscode();
     } else {
-      textBase.displayPause(); //TEST
+      level_2Rect.clear();
+      level_2Rect.background(canvasBase.bgRed.r, canvasBase.bgRed.g, canvasBase.bgRed.b);
+      showLevel_1Graphics();
     }
   }
+
+  // else if (startedLevel_2 == 3) {
+  //   showLevel_1Graphics();
+  //
+  //   if (inPlay) {
+  //     level_2Play();
+  //   } else {
+  //     level_2Rect.clear();
+  //     level_2Rect.background(canvasBase.bgRed.r, canvasBase.bgRed.g, canvasBase.bgRed.b);
+  //     showLevel_1Graphics();
+  //   }
+  // }
+  console.log(startedLevel_2);
 } // END LEVEL_2
 
 
@@ -316,17 +347,18 @@ function displayLevel_1Start() {
 }
 
 function level_1Play() {
-  //reset rect_1:
+  //reset rect_1
   level_1Rect.clear();
   level_1Rect.background(canvasBase.bgTeal.r, canvasBase.bgTeal.g, canvasBase.bgTeal.b);
-
+  // detect poses
   if (poses.length > 0) {
     updateUser(poses[0]);
   }
-  showUnicornsFront(); // display unicorns
-  //display unicornAce after 15s
+  // display unicorns
+  showUnicornsFront();
+  //display unicornAce after 35s
   if (millis() > 35000)
-    showUnicornAceFront(); // display unicornAce
+    showUnicornAceFront();
 
   // draw rect_1
   imageMode(CORNER);
@@ -334,11 +366,7 @@ function level_1Play() {
 }
 
 function showUnicornsFront() {
-  // display injured counted
-  level_1Rect.push();
-  level_1Rect.fill(0);
-  level_1Rect.text(injured, 200, 200);
-  level_1Rect.pop();
+  textBase.displayAttempts();
 
   for (let i = 0; i < unicornsFront.length; i++) {
     let unicornFront = unicornsFront[i];
@@ -346,10 +374,10 @@ function showUnicornsFront() {
     // check if unicorn touches user
     let d = dist(unicornFront.x, unicornFront.y, user.displayX, user.y - unicornFront.safeDist);
     if (d < unicornFront.safeDist && unicornFront.istouched === false) {
-      injured += 1;
+      textBase.attemptsLeft -= 1;
       unicornFront.istouched = true;
     }
-    if (injured > 3) {
+    if (textBase.attemptsLeft <= 0) {
       state = `limbo`;
     }
     unicornFront.moveWrap();
@@ -380,7 +408,6 @@ function updateUser(poses) {
 
 //********** LEVEL_2 FUNCTIONS **************************
 function showLevel_1Graphics() {
-  // level_1Rect.clear();
   level_1Rect.background(canvasBase.bgTeal.r, canvasBase.bgTeal.g, canvasBase.bgTeal.b);
   // draw unicorns
   for (let i = 0; i < unicorns.length; i++) {
@@ -398,6 +425,35 @@ function showLevel_1Graphics() {
   textBase.displayLevel_2Title();
   textBase.displayLevel_2Tips();
   fistDiagram.displayFistDiagram();
+  textBase.displayPause();
+}
+
+function level_2GetPasscode() {
+  //reset rect_2:
+  level_2Rect.clear();
+  level_2Rect.background(canvasBase.bgRed.r, canvasBase.bgRed.g, canvasBase.bgRed.b);
+
+  vault.displayVaultStatic(); // display vault that turns by poses
+  textBase.displayPause(); // display pause
+
+  textBase.vaultMoniter(extLibrary);
+  if (!extLibrary.instructionSpoken) {
+    textBase.displayCurrentInstruction(extLibrary);
+  }
+
+  if (extLibrary.attemptsLeft <= 2) {
+    textBase.displayAttempts(extLibrary);
+  } else if (extLibrary.attemptsLeft < 0) {
+    textBase.displayDenied(extLibrary);
+  }
+  if (extLibrary.correct) {
+    startedLevel_2 = 3;
+  }
+  textBase.displayRetrieved(extLibrary);
+
+  // draw rect_2
+  imageMode(CORNER);
+  image(level_2Rect, canvasBase.canvas_2.x, canvasBase.canvas_2.y);
 }
 
 function level_2Play() {
@@ -436,16 +492,28 @@ function keyPressed() {
     }
   }
   if (state === `level_2`) {
-    if (startedLevel_2 === 0 && keyCode === 32) {
-      startedLevel_2 = 1;
+    if (startedLevel_2 === 1 && keyCode === 32) {
+      startedLevel_2 = 2;
       inPlay = true;
     }
-    if (startedLevel_2 === 1 && keyCode === 32) {
+    if (startedLevel_2 === 2 && keyCode === 32) {
+      // run responsiveVoice "Declare your name."
+      extLibrary.timedPrompt();
       inPlay = !inPlay; // pause
     }
+    // if (startedLevel_2 === 3 && keyCode === 32) {
+    //   inPlay = !inPlay; // pause
+    // }
   }
+
+  // for testing
+  if (keyCode === ENTER) {}
 }
 
+// for testing
+if (responsiveVoice.isPlaying()) {
+  console.log("speaking");
+}
 
 
 

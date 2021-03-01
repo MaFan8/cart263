@@ -27,18 +27,18 @@ class TextBase {
     };
     this.spacing = 30;
     this.LevelRectSpacing = 50;
-    // main parameters
-    textStyle(BOLD);
-    textAlign(LEFT, TOP);
-    textFont(`monospace`);
+    this.attemptsLeft = 3;
+    this.denied;
+    this.retreived;
 
+    // ALL TEXT
     this.loading = `Loading...`;
     this.go = `Press "SPACE" to initiate dream!`;
     this.pause = `Press "SPACE" to start or pause.`;
     // start state text
     this.title = `ACE INCEPTION`;
-    this.startInfo = `Ace doesn't sanction his pet Spike's love interest. Help infiltrate Ace's \nsubconsious and implant acceptance of Spike's and Fuzzy's love.`;
-    this.startTips = `* In order to achieve inception, you MUST...\n  - Pass through Ace's 1st dream state.\n  - Establish inception in his 2nd state.\n  - Escape his subconsious by preforming \n    kicks in both states.\n  - If you die in a dream state, you will lost \n    in limbo.`;
+    this.startInfo = `Ace doesn't sanction his pet Spike's\nlove interest. Help infiltrate Ace's\nsubconsious and implant acceptance of Spike's and Fuzzy's love.`;
+    this.startTips = `* In order to achieve inception, you MUST...\n  1. Pass through Ace's 1st dream state.\n  2. Establish inception as Fuzzy in his 2nd state.\n  3. Escape his subconsious by preforming \n    kicks in both states.\n  ** If you die in a dream state, you will lost \n     in limbo.`;
 
     // level_1 text
     this.level_1Title = `INITIAL DREAM STATE`;
@@ -46,9 +46,24 @@ class TextBase {
 
     // level_2 text
     this.level_2Title = `FINAL DREAM STATE`;
-    this.level_2Tips = `Unlocking the vault will allow you to implant your\nidea. Retrieve your code and access the vault by \nentering the code combination.\n\nMove hands up/down counter to eachother to turn the dail. Hand detection works best when elbows are \ndisplayed on screen.`
+    this.level_2Tips = `Unlocking the vault will allow you to implant your\nidea. Retrieve your code (AS THE APLACE) and access \nthe vault by entering the code combination.\n\nMove hands up/down counter to eachother to turn the dail. Hand detection works best when elbows are \ndisplayed on screen.`
+    this.userAccount = {
+      name: ``,
+      passcode: ``,
+    };
+
+    this.currentNameAnswer = ``;
+
+
+    // END TEXT
+
+    // main parameters
+    textStyle(BOLD);
+    textAlign(LEFT, TOP);
+    textFont(`monospace`);
   }
 
+  // START FUNCTIONS
   displayLoading() {
     push();
     fill(255 + sin(frameCount*0.05) * 128);
@@ -89,7 +104,7 @@ class TextBase {
     fill(this.fill1.r, this.fill2.g, this.fill2.b);
     textSize(this.size);
     textAlign(LEFT, BASELINE);
-    text(this.startInfo, width/3, this.titleY *2.5, width - width/2);
+    text(this.startInfo, width/3, this.titleY *2, width - width/2.3);
     pop();
   }
 
@@ -99,10 +114,12 @@ class TextBase {
     textSize(this.size -10);
     textAlign(LEFT, BASELINE);
     textLeading(this.spacing);
-    text(this.startTips, width/2.5, this.titleY *5, width - width/2);
+    text(this.startTips, width/2.5, this.titleY *4.5, width - width/2.5);
     pop();
   }
+  // END START FUNCTIONS
 
+  // LEVEL_1 FUNCTIONS
   displayLevel_1Title() {
     push();
     fill(this.fill3.r + sin(frameCount*0.01) * 255, this.fill3.g, this.fill3.b);
@@ -120,7 +137,9 @@ class TextBase {
     text(this.level_1Tips, width/3, height/3, width - width/2.1);
     pop();
   }
+  // END LEVEL_1 FUNTIONS
 
+  // LEVEL_2 FUNCTIONS
   displayLevel_2Title() {
     push();
     fill(this.fill4.r + sin(frameCount*0.01) * 255, this.fill4.g, this.fill4.b);
@@ -139,5 +158,73 @@ class TextBase {
     pop();
   }
 
+  vaultMoniter(extLibrary) {
+    let account = `<< RETRIEVE YOUR ACCOUNT >>
+
+  Name: ${extLibrary.currentNameAnswer}
+  Passcode: ${this.userAccount.passcode}`
+
+    level_2Rect.push();
+    level_2Rect.fill(50, 50, 50, 80);
+    level_2Rect.rectMode(CENTER);
+    level_2Rect.rect(level_2Rect.width/2, level_2Rect.height/2, level_2Rect.width-100, level_2Rect.height - 100);
+    level_2Rect.pop();
+    level_2Rect.push();
+    level_2Rect.textSize(this.size);
+    level_2Rect.textFont(`courier`);
+    level_2Rect.textAlign(LEFT);
+    level_2Rect.fill(255, 182, 0);
+    level_2Rect.text(account, level_2Rect.width/10, level_2Rect.height/4);
+    level_2Rect.pop();
+  }
+
+  displayCurrentInstruction(extLibrary) {
+    level_2Rect.push();
+    level_2Rect.fill(255);
+    level_2Rect.textSize(25);
+    level_2Rect.textAlign(CENTER, TOP);
+    level_2Rect.text(extLibrary.currentInstruction, width / 2, height / 2);
+    level_2Rect.pop();
+  }
+
+  displayAttempts(extLibrary) {
+    level_2Rect.push();
+    level_2Rect.fill(255);
+    level_2Rect.textSize(25);
+    level_2Rect.textAlign(CENTER, TOP);
+    level_2Rect.text(`Attempts Left: ${extLibrary.attemptsLeft}`, width / 2, height / 2 - 50);
+    level_2Rect.pop();
+  }
+
+  displayDenied(extLibrary) {
+    level_2Rect.push();
+    level_2Rect.fill(255);
+    level_2Rect.textSize(40);
+    level_2Rect.textAlign(CENTER, TOP);
+    level_2Rect.text(extLibrary.denied, width / 2, height / 2);
+    level_2Rect.pop();
+  }
+
+
+  displayRetrieved(extLibrary) {
+    level_2Rect.push();
+    level_2Rect.fill(255);
+    level_2Rect.textSize(40);
+    level_2Rect.textAlign(CENTER, TOP);
+    level_2Rect.text(extLibrary.retrieved, width / 2, height / 2);
+    level_2Rect.pop();
+  }
+
+
+  // END LEVEL_2 FUNCTIONS
+
+  displayAttempts() {
+    level_1Rect.push();
+    level_1Rect.fill(0);
+    level_1Rect.textFont(`monospace`);
+    level_1Rect.textSize(this.size);
+    level_1Rect.text(`Attempts Left: ${this.attemptsLeft}`, 100, 50);
+    level_1Rect.pop();
+  }
 
 }
