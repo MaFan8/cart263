@@ -14,7 +14,7 @@ class ImgBase {
     this.reCenter = 25;
 
     this.movePosition = 100;
-
+    // main parameters
     imageMode(CENTER);
   }
 
@@ -97,7 +97,6 @@ class ImgBase {
     level_2Rect.pop();
     level_2Rect.push();
     level_2Rect.translate(user.wristRX, user.wristRY);
-
     level_2Rect.scale(this.scale);
     level_2Rect.image(this.image, 0, 0);
     level_2Rect.pop();
