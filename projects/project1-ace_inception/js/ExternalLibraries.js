@@ -20,9 +20,14 @@ class ExternalLibraries {
     this.currentNameAnswer = ``;
     this.attemptsLeft = 3;
     this.correct = true;
+    this.passcodeSet = false;
     this.timer = 5;
     this.failed = false;
     this.passcode = ``;
+
+    //
+    this.setSpoken = false;
+
   }
 
   // loadPosenet() {
@@ -44,7 +49,6 @@ class ExternalLibraries {
   //   } // END POSENET
 
 
-
   timedPrompt() {
     let self = this;
     setTimeout(function() {
@@ -53,7 +57,6 @@ class ExternalLibraries {
   }
 
   speakNamePrompt(self) {
-    console.log(self);
     let promptName = `Declare your name.`;
     responsiveVoice.speak(promptName, "US English Female", {
       pitch: 0,

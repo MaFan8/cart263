@@ -53,6 +53,7 @@ let inPlay = false;
 let canvasBase;
 // External libraries
 let extLibrary;
+let passcodeData = ``;
 
 // Library variables: ml5 Posenet, annyang, ResponsiveVoice
 let videoImg, video;
@@ -65,6 +66,7 @@ let insctructionSpoken = false;
 
 // Text variables
 let textBase;
+let chosenNumbers = [];
 
 // Image variables: Start
 let img = {
@@ -74,8 +76,6 @@ let img = {
   sizeBig: 1.2,
   heartX: 250,
   heartY: 480,
-  videoX: -350,
-  videoY: 150,
   // kickX: 100,
   // kickY: 100,
 };
@@ -144,6 +144,7 @@ function setup() {
 
   // create library setup
   extLibrary = new ExternalLibraries();
+  loadStorage();
 
   // create text
   textBase = new TextBase;
@@ -175,8 +176,7 @@ function imagesSetup() {
   vault = new ImgBase(level_2Rect.width / 2, level_2Rect.height / 2, vaultImg, 1.5, level_2Rect);
   fistDiagram = new ImgBase(width / 2, level_2Rect.height, fistDiagramImg, 0.8, level_2Rect);
   fist = new ImgBase(0, 0, fistImg, 0.5, level_2Rect);
-  // videoImg = new ImgBase(-350, 150, video, level_2Rect);
-  videoImg = new ImgBase(img.videoX, img.videoY, video, level_2Rect);
+  videoImg = new ImgBase(0, 0, video, 1, level_2Rect);
 } // END CREATE IMAGES
 
 
@@ -208,6 +208,14 @@ function loadPosenet() {
   });
 } // END POSENET
 
+// JSON Storage
+function loadStorage() {
+  // Try to load the passcode data
+  let data = JSON.parse(localStorage.getItem(PASSCODE_KEY));
+  if (data) {
+    passcodeData = data;
+  }
+}
 
 
 // DRAW
@@ -264,13 +272,15 @@ function level_1() {
 // LEVEL_2
 function level_2() {
   // display graphics until state: 0 is loaded
-  // if (!loaded) {
-    showLevel_1Graphics();
-  // }
+  if (!loaded) {
+    loadPosenet();
+    loaded = true;
+  }
   // Load create background
   if (startedLevel_2 === 0) {
     level_1Rect.background(canvasBase.bgTeal.r, canvasBase.bgTeal.g, canvasBase.bgTeal.b);
     level_2Rect.background(canvasBase.bgRed.r, canvasBase.bgRed.g, canvasBase.bgRed.b);
+    showLevel_1Graphics();
     startedLevel_2 = 1;
   }
   // display until keypressed to switch to state: 2
@@ -290,9 +300,9 @@ function level_2() {
   }
   // load program to access vault
   else if (startedLevel_2 == 3) {
-    // loadPosenet();// for testing!!
 
-      level_2Play();
+    level_2Play();
+    showLevel_1unicorns();
     // }
     // else {
     //   level_2Rect.clear();
@@ -301,8 +311,18 @@ function level_2() {
     // }
 
     // TEST for setNumber
-    textBase.displayNumber();
+    // textBase.displayNumber();
+    if (vault.add) {
+      textBase.curIndex += 1;
+      vault.add = false;
+    } else if (vault.subtract) {
+      textBase.curIndex = textBase.curIndex - 1;
+      vault.subtract = false;
+    }
   }
+
+  // extLibrary.DisplaySetNumber(number);
+
 
 } // END LEVEL_2
 
@@ -450,24 +470,27 @@ function level_2GetPasscode() {
     extLibrary.showVoiceInstruction();
   }
   // then if name is correct, show password and speak confirmation of retrieval
-  else if (extLibrary.correct) {
+  else if (extLibrary.correct && extLibrary.passcodeSet === false) {
     setTimeout(function() {
       extLibrary.generatePasscode();
-      // setTimeout(function(){
-      //   textBase.displayLevel_2Timer();
-      // }, 5000);
+
+      // Set & Save generated passcode
+      passcodeData = extLibrary.passcode;
+      localStorage.setItem(PASSCODE_KEY, JSON.stringify(passcodeData));
+
+      let counter = 5;
+      let timerInterval = setInterval(function() {
+        console.log(counter);
+        textBase.updateTimer(counter);
+        counter++;
+        if (counter >= 20) {
+          clearInterval(timerInterval);
+        }
+      }, 10);
     }, 3000); // generate passcode after 3s
+
     extLibrary.showVoiceRetrieved(); // display retrieved text
-
-
-    // if (textBase.timer === 0) {
-    //   console.log("next");
-    //   startedLevel_2 = 3;
-    // }
-    // if (loaded) {
-    //   startedLevel_2 = 3;
-    // }
-
+    extLibrary.passcodeSet = true;
   }
   // then if attempts have been made, show attempts text
   if (extLibrary.attemptsLeft <= 2) {
@@ -476,13 +499,19 @@ function level_2GetPasscode() {
   // then if there are no more attempts, then
   if (extLibrary.attemptsLeft <= 0) {
     extLibrary.showVoiceDenied();
-    setTimeout(function(){
-      state = "limbo";}, 3000);
+    setTimeout(function() {
+      state = "limbo";
+    }, 3000);
   }
-
+  textBase.displayLevel_2Timer();
   // draw rect_2
   imageMode(CORNER);
   image(level_2Rect, canvasBase.canvas_2.x, canvasBase.canvas_2.y);
+
+  if (textBase.timer === 19) {
+    startedLevel_2 = 3;
+    loadPosenet();
+  }
 }
 
 function level_2Play() {
@@ -494,11 +523,17 @@ function level_2Play() {
   }
   vault.displayVault(user); // display vault that turns by poses
   fist.displayFists(user); // display hands
+  textBase.displayNumber();
 
+  // Check if password matches or not
+
+
+
+  videoImg.displayVideo();
   // draw rect_2 and video image
   imageMode(CORNER);
   image(level_2Rect, canvasBase.canvas_2.x, canvasBase.canvas_2.y);
-  // videoImg.displayVideo();
+
 }
 // ********** END - LEVEL_2 FUNCTIONS *******************
 
@@ -530,20 +565,19 @@ function keyPressed() {
     // else if (startedLevel_2 === 3 && keyCode === 32) {
     //   inPlay = !inPlay; // pause
     // }
-
-    console.log(startedLevel_2);
   }
 
-  // for testing
-  if (keyCode === UP_ARROW) {
-    textBase.curIndex += 1;
-  }
-  if (keyCode === DOWN_ARROW) {
-    textBase.curIndex = textBase.curIndex - 1;
-  }
+  // // for testing
+  // if (keyCode === UP_ARROW) {
+  //   textBase.curIndex += 1;
+  // }
+  // if (keyCode === DOWN_ARROW) {
+  //   textBase.curIndex = textBase.curIndex - 1;
+  // }
 
   if (keyCode === ENTER) {
-
+    textBase.set = true;
+    chosenNumbers.push(textBase.curIndex);
   }
 
   // if (keyCode === ENTER) {
