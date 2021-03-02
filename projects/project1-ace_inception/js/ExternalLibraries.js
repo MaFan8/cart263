@@ -20,6 +20,8 @@ class ExternalLibraries {
     this.currentNameAnswer = ``;
     this.attemptsLeft = 3;
     this.correct = true;
+    this.timer = 5;
+    this.failed = false;
     this.passcode = ``;
   }
 
@@ -97,7 +99,6 @@ class ExternalLibraries {
     }
     // else every wrong answer counts down from 3 attempts
     else {
-      console.log("wrong");
       this.attemptsLeft -= 1;
       this.correct = false
     }
@@ -110,9 +111,9 @@ class ExternalLibraries {
 
   generatePasscode() {
     if (this.correct) {
-    this.passcode = int(random(10, 1000000));
-    this.correct = false;
-  }
+      this.passcode = int(random(10, 1000000));
+      this.correct = false;
+    }
   }
 
   displayAttempts() {

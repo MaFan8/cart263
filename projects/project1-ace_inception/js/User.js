@@ -77,11 +77,4 @@ class User {
     }
   }
 
-  // displayHands() {
-  //   level_2Rect.push();
-  //   level_2Rect.fill(0);
-  //   level_2Rect.ellipse(this.wristLX, this.wristLY - this.movePosition, this.handSize);
-  //   level_2Rect.ellipse(this.wristRX, this.wristRY - this.movePosition, this.handSize);
-  //   level_2Rect.pop();
-  // }
 }

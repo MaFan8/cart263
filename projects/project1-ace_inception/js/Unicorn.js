@@ -4,7 +4,7 @@ class Unicorn {
     this.maxHeight = 90;
     this.alphaChange = -8;
     this.safeDist = 40;
-    this.istouched = false;
+    this.isTouched = false;
     this.reset();
     // for Ace only
     this.offScreen = 50;
@@ -112,7 +112,7 @@ class Unicorn {
     this.vy = 0;
     this.speed = 1.2;
     this.sizeIncrease = 0.8;
-    this.istouched = false;
+    this.isTouched = false;
   }
 
   displayStatic() {
