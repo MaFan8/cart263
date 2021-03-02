@@ -18,6 +18,7 @@ class ExternalLibraries {
     this.voiceDenied;
     this.voiceRetrieved;
     this.currentNameAnswer = ``;
+    this.attemptsLeft = 3;
     this.correct = true;
     this.passcode = ``;
   }
@@ -43,10 +44,12 @@ class ExternalLibraries {
 
 
   timedPrompt() {
-    console.log(this);
-    let  self =this;
-    setTimeout(function(){console.log("here");console.log(self);self.speakNamePrompt(self);}, 2000);
+    let self = this;
+    setTimeout(function() {
+      self.speakNamePrompt(self);
+    }, 2000);
   }
+
   speakNamePrompt(self) {
     console.log(self);
     let promptName = `Declare your name.`;
@@ -61,8 +64,9 @@ class ExternalLibraries {
         function() {
           if (annyang) {
             let commands = {
-              '*name': function(name){
-                self.setName(name)},
+              '*name': function(name) {
+                self.setName(name)
+              },
             };
             annyang.addCommands(commands);
             annyang.start();
@@ -82,28 +86,45 @@ class ExternalLibraries {
   }
 
   setName(name) {
-  this.instructionSpoken = true;
-  this.currentNameAnswer = name.toUpperCase();
-
-  if (this.currentNameAnswer === `FUZZY'S`) {
-    annyang.abort(); // stop Annyang
-    this.speakRetrieved(self);
-    // generate random passcode
-    setTimeout(generatePasscode, 3000);
-    this.currentNameAnswer = `FUZZY`;
-    this.correct = true;
-  } else {
-    console.log("wrong");
-    this.attemptsLeft -= 1;
-    this.correct = false
+    this.instructionSpoken = true;
+    this.currentNameAnswer = name.toUpperCase();
+    // if name spoken if right, then set speak confirmation and generate passcode
+    if (this.currentNameAnswer === `FUZZY'S`) {
+      annyang.abort(); // stop Annyang
+      this.speakRetrieved(self);
+      this.currentNameAnswer = `FUZZY`;
+      this.correct = true;
+    }
+    // else every wrong answer counts down from 3 attempts
+    else {
+      console.log("wrong");
+      this.attemptsLeft -= 1;
+      this.correct = false
+    }
+    // speak Denied if there are no more attempts left
+    if (this.attemptsLeft <= 0) {
+      this.speakDenied(self);
+      annyang.abort(); // stop Annyang
+    }
   }
-  if (this.attemptsLeft <= 0) {
-    this.speakDenied(self);
-    annyang.abort(); // stop Annyang
+
+  generatePasscode() {
+    if (this.correct) {
+    this.passcode = int(random(10, 1000000));
+    this.correct = false;
   }
-}
+  }
 
+  displayAttempts() {
+    level_2Rect.push();
+    level_2Rect.fill(255);
+    level_2Rect.textSize(15);
+    level_2Rect.textAlign(CENTER, TOP);
+    level_2Rect.text(`Attempts Left: ${this.attemptsLeft}`, level_2Rect.width / 2, level_2Rect.height - 220);
+    level_2Rect.pop();
+  }
 
+  //  DENIED FUNCTIONS
   speakDenied(self) {
     let promptDenied = `PASSCODE RETRIEVAL DENIED`;
     responsiveVoice.speak(promptDenied, "US English Female", {
@@ -111,24 +132,23 @@ class ExternalLibraries {
       rate: 1,
       volume: 0.5,
       onstart: function() {
-        // self.showDenied(promptDenied);
-        // this.denied = promptDenied;
-          self.voiceDenied = promptDenied;
+        self.voiceDenied = promptDenied;
       },
     });
   }
 
   showVoiceDenied() {
-    // this.denied = promptDenied;
     level_2Rect.push();
     level_2Rect.fill(255);
     level_2Rect.textSize(25);
     level_2Rect.textFont(`courier`);
     level_2Rect.textAlign(CENTER, TOP);
-    level_2Rect.text(this.voiceDenied, level_2Rect.width / 2, level_2Rect.height - 200);
+    level_2Rect.text(self.voiceDenied, level_2Rect.width / 2, level_2Rect.height - 200);
     level_2Rect.pop();
   }
+  // END DENIED FUNCTIONS
 
+  // RETREIVED FUNCTIONS
   speakRetrieved(self) {
     let promptRetrieved = `** IDENTITY VERIFIED... **\n *** PASSCODE RETRIEVED ***`;
     responsiveVoice.speak(promptRetrieved, "US English Female", {
@@ -136,28 +156,21 @@ class ExternalLibraries {
       rate: 1,
       volume: 0.5,
       onstart: function() {
-          self.voiceRetrieved = promptRetrieved;
-        // self.showRetrieved(promptRetrieved);
-        // this.retrieved = promptRetrieved;
+        self.voiceRetrieved = promptRetrieved;
       },
     });
   }
 
   showVoiceRetrieved() {
-    // this.retrieved = promptRetrieved;
     level_2Rect.push();
     level_2Rect.fill(255);
     level_2Rect.textSize(25);
     level_2Rect.textFont(`courier`);
     level_2Rect.textAlign(CENTER, TOP);
-    level_2Rect.text(this.voiceRetrieved, level_2Rect.width / 2, level_2Rect.height - 200);
+    level_2Rect.text(self.voiceRetrieved, level_2Rect.width / 2, level_2Rect.height - 200);
     level_2Rect.pop();
   }
-
-
-  generatePasscode() {
-    this.passcode = int(random(10, 1000000));
-  }
+  // END RETREIVED FUNCTIONS
 
 
 

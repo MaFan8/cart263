@@ -178,40 +178,13 @@ class TextBase {
     level_2Rect.pop();
   }
 
-  displayCurrentInstruction(extLibrary) {
+  displayLevel_2Pause() {
     level_2Rect.push();
-    level_2Rect.fill(255);
-    level_2Rect.textSize(25);
-    level_2Rect.textAlign(CENTER, TOP);
-    level_2Rect.text(extLibrary.currentInstruction, width / 2, height / 2);
-    level_2Rect.pop();
-  }
-
-  displayAttempts(extLibrary) {
-    level_2Rect.push();
-    level_2Rect.fill(255);
-    level_2Rect.textSize(25);
-    level_2Rect.textAlign(CENTER, TOP);
-    level_2Rect.text(`Attempts Left: ${extLibrary.attemptsLeft}`, width / 2, height / 2 - 50);
-    level_2Rect.pop();
-  }
-
-  displayDenied(extLibrary) {
-    level_2Rect.push();
-    level_2Rect.fill(255);
-    level_2Rect.textSize(40);
-    level_2Rect.textAlign(CENTER, TOP);
-    level_2Rect.text(extLibrary.denied, width / 2, height / 2);
-    level_2Rect.pop();
-  }
-
-
-  displayRetrieved(extLibrary) {
-    level_2Rect.push();
-    level_2Rect.fill(255);
-    level_2Rect.textSize(40);
-    level_2Rect.textAlign(CENTER, TOP);
-    level_2Rect.text(extLibrary.retrieved, width / 2, height / 2);
+    level_2Rect.fill(255 + sin(frameCount*0.05) *128);
+    level_2Rect.textFont(`monospace`);
+    level_2Rect.textAlign(CENTER, CENTER);
+    level_2Rect.textSize(this.size);
+    level_2Rect.text(this.pause, level_2Rect.width/2, level_2Rect.height/1.2);
     level_2Rect.pop();
   }
 

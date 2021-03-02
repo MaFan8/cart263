@@ -291,7 +291,6 @@ function level_2() {
     if (inPlay) {
       level_2GetPasscode();
       showLevel_1unicorns();
-      textBase.displayPause(); // display pause
     } else {
       level_2Rect.clear();
       level_2Rect.background(canvasBase.bgRed.r, canvasBase.bgRed.g, canvasBase.bgRed.b);
@@ -300,17 +299,17 @@ function level_2() {
 
   }
 
-  // else if (startedLevel_2 == 3) {
-  //   showLevel_1Graphics();
-  //
-  //   if (inPlay) {
-  //     level_2Play();
-  //   } else {
-  //     level_2Rect.clear();
-  //     level_2Rect.background(canvasBase.bgRed.r, canvasBase.bgRed.g, canvasBase.bgRed.b);
-  //     showLevel_1Graphics();
-  //   }
-  // }
+  else if (startedLevel_2 == 3) {
+    // showLevel_1Graphics();
+    //
+    // if (inPlay) {
+    //   level_2Play();
+    // } else {
+    //   level_2Rect.clear();
+    //   level_2Rect.background(canvasBase.bgRed.r, canvasBase.bgRed.g, canvasBase.bgRed.b);
+    //   showLevel_1Graphics();
+    // }
+  }
 } // END LEVEL_2
 
 
@@ -449,26 +448,30 @@ function level_2GetPasscode() {
   //reset rect_2:
   level_2Rect.clear();
   level_2Rect.background(canvasBase.bgRed.r, canvasBase.bgRed.g, canvasBase.bgRed.b);
+  vault.displayVaultStatic(); // display vault
+  textBase.vaultMoniter(extLibrary); // display Vault Moniter
+  textBase.displayLevel_2Pause(); // display pause
 
-  vault.displayVaultStatic(); // display vault that turns by poses
-  textBase.displayPause(); // display pause
 
-  textBase.vaultMoniter(extLibrary);
   if (!extLibrary.instructionSpoken) {
-    // textBase.displayCurrentInstruction(extLibrary);
     extLibrary.showVoiceInstruction();
   }
-
-  if (extLibrary.attemptsLeft <= 2) {
-    textBase.displayAttempts(extLibrary);
-  } else if (extLibrary.attemptsLeft < 0) {
+  // else {
+  else if (extLibrary.correct) {
+    setTimeout(function() {
+      extLibrary.generatePasscode();
+    }, 3000); // generate passcode after 3s
+    extLibrary.showVoiceRetrieved(); // display retrieved text
+  }
+  else if (extLibrary.attemptsLeft <= 2) {
+    extLibrary.displayAttempts();
+    extLibrary.showVoiceInstruction();
+  }
+  else if (extLibrary.attemptsLeft < 0) {
     extLibrary.showVoiceDenied();
   }
-  // if (extLibrary.correct) {
-  //   console.log("change state");
-  //   // startedLevel_2 = 3;
-  // }
-  // extLibrary.showVoiceRetrieved();
+// }
+
 
   // draw rect_2
   imageMode(CORNER);
@@ -519,7 +522,12 @@ function keyPressed() {
     }
     else if (startedLevel_2 === 2 && keyCode === 32) {
       inPlay = !inPlay; // pause
+      // if (extLibrary.correct) {
+      //   startedLevel_2 = 3;
+      //   inPlay = true;
+      // }
     }
+
     // if (startedLevel_2 === 3 && keyCode === 32) {
     //   inPlay = !inPlay; // pause
     // }
