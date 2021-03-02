@@ -36,6 +36,7 @@ const SPIKE_BACK_IMG = `assets/images/spikeBack.png`;
 const VAULT_IMG = `assets/images/vault.png`;
 const FIST_DIAGRAM_IMG = `assets/images/fistDiagram.png`;
 const FIST_IMG = `assets/images/fist.png`;
+const PASSCODE_KEY = `passcode-data`;
 
 
 let state = `level_2`; // start, level_1, level_2, limbo, end
@@ -43,7 +44,7 @@ let state = `level_2`; // start, level_1, level_2, limbo, end
 // Level variables
 let startedLevel_1 = 0; // 0, 1, 2
 let level_1Rect = undefined;
-let startedLevel_2 = 0; // 0, 1, 2
+let startedLevel_2 = 3; // 0, 1, 2, 3
 let level_2Rect = undefined;
 let loaded = false;
 let inPlay = false;
@@ -152,6 +153,7 @@ function setup() {
 
 // create images
 function imagesSetup() {
+  // START & LEVEL_1 images
   heart = new ImgBase(img.heartX, img.heartY, heartImg, img.sizeBig);
   aceBody = new Body(img.x, img.y, aceBodyImg, img.sizeSmall);
   aceHeadAngry = new ImgBase(img.x, img.y, aceHeadAngry, img.sizeSmall);
@@ -164,31 +166,17 @@ function imagesSetup() {
   unicornAceFront = new Unicorn(unicornAceFrontImg, level_1Rect);
   unicornAce = new Unicorn(unicornAceImg, level_1Rect);
   // setup unicorn images
-  // while(unicorns.length < NUM_UNICORNS){
   for (let i = 0; i < NUM_UNICORNS; i++) {
     let unicorn = new Unicorn(random(unicornImages), level_1Rect);
-
-    // let overlapping = false;
-    // // let protection = 0;
-    // for (let j = 0; j< unicorns.length; j++) {
-    //   let other = unicorns[j];
-    //   let d = dist(unicorn.randomX, unicorn.randomY, other.randomX, other.randomY)
-    //   if (d < unicorn.randomW + other.randomW || d < unicorn.randomH + other.randomW) {
-    //     overlapping = true;
-    //     break;
-    //   }
-    // }
-    // if (!overlapping) {
     unicorns.push(unicorn);
-    // }
   }
-
+  // LEVEL_2 Images
   user = new User(spikeBackImg, level_1Rect);
   vault = new ImgBase(level_2Rect.width / 2, level_2Rect.height / 2, vaultImg, 1.5, level_2Rect);
   fistDiagram = new ImgBase(width / 2, level_2Rect.height, fistDiagramImg, 0.8, level_2Rect);
   fist = new ImgBase(0, 0, fistImg, 0.5, level_2Rect);
-  videoImg = new ImgBase(-350, 150, video, level_2Rect);
-
+  // videoImg = new ImgBase(-350, 150, video, level_2Rect);
+  videoImg = new ImgBase(img.videoX, img.videoY, video, level_2Rect);
 } // END CREATE IMAGES
 
 
@@ -276,18 +264,21 @@ function level_1() {
 // LEVEL_2
 function level_2() {
   // display graphics until state: 0 is loaded
-  if (!loaded) {
+  // if (!loaded) {
     showLevel_1Graphics();
-  }
+  // }
   // Load create background
   if (startedLevel_2 === 0) {
     level_1Rect.background(canvasBase.bgTeal.r, canvasBase.bgTeal.g, canvasBase.bgTeal.b);
     level_2Rect.background(canvasBase.bgRed.r, canvasBase.bgRed.g, canvasBase.bgRed.b);
     startedLevel_2 = 1;
-  } else if (startedLevel_2 == 1) {
-    // display until keypressed to switch to state: 2
+  }
+  // display until keypressed to switch to state: 2
+  else if (startedLevel_2 == 1) {
     showLevel_1Graphics();
-  } else if (startedLevel_2 == 2) {
+  }
+  // load program to get passcode
+  else if (startedLevel_2 == 2) {
     if (inPlay) {
       level_2GetPasscode();
       showLevel_1unicorns();
@@ -296,20 +287,23 @@ function level_2() {
       level_2Rect.background(canvasBase.bgRed.r, canvasBase.bgRed.g, canvasBase.bgRed.b);
       showLevel_1Graphics();
     }
-
   }
-
+  // load program to access vault
   else if (startedLevel_2 == 3) {
-    // showLevel_1Graphics();
-    //
-    // if (inPlay) {
-    //   level_2Play();
-    // } else {
+    // loadPosenet();// for testing!!
+
+      level_2Play();
+    // }
+    // else {
     //   level_2Rect.clear();
     //   level_2Rect.background(canvasBase.bgRed.r, canvasBase.bgRed.g, canvasBase.bgRed.b);
-    //   showLevel_1Graphics();
+    //   // showLevel_1Graphics();
     // }
+
+    // TEST for setNumber
+    textBase.displayNumber();
   }
+
 } // END LEVEL_2
 
 
@@ -372,9 +366,9 @@ function showUnicornsFront() {
     unicornFront.move();
     // check if unicorn touches user
     let d = dist(unicornFront.x, unicornFront.y, user.displayX, user.y - unicornFront.safeDist);
-    if (d < unicornFront.safeDist && unicornFront.istouched === false) {
+    if (d < unicornFront.safeDist && unicornFront.isTouched === false) {
       textBase.attemptsLeft -= 1;
-      unicornFront.istouched = true;
+      unicornFront.isTouched = true;
     }
     if (textBase.attemptsLeft <= 0) {
       state = `limbo`;
@@ -450,28 +444,41 @@ function level_2GetPasscode() {
   level_2Rect.background(canvasBase.bgRed.r, canvasBase.bgRed.g, canvasBase.bgRed.b);
   vault.displayVaultStatic(); // display vault
   textBase.vaultMoniter(extLibrary); // display Vault Moniter
-  textBase.displayLevel_2Pause(); // display pause
 
-
+  // display speak name until voice is detected
   if (!extLibrary.instructionSpoken) {
     extLibrary.showVoiceInstruction();
   }
-  // else {
+  // then if name is correct, show password and speak confirmation of retrieval
   else if (extLibrary.correct) {
     setTimeout(function() {
       extLibrary.generatePasscode();
+      // setTimeout(function(){
+      //   textBase.displayLevel_2Timer();
+      // }, 5000);
     }, 3000); // generate passcode after 3s
     extLibrary.showVoiceRetrieved(); // display retrieved text
-  }
-  else if (extLibrary.attemptsLeft <= 2) {
-    extLibrary.displayAttempts();
-    extLibrary.showVoiceInstruction();
-  }
-  else if (extLibrary.attemptsLeft < 0) {
-    extLibrary.showVoiceDenied();
-  }
-// }
 
+
+    // if (textBase.timer === 0) {
+    //   console.log("next");
+    //   startedLevel_2 = 3;
+    // }
+    // if (loaded) {
+    //   startedLevel_2 = 3;
+    // }
+
+  }
+  // then if attempts have been made, show attempts text
+  if (extLibrary.attemptsLeft <= 2) {
+    extLibrary.displayAttempts();
+  }
+  // then if there are no more attempts, then
+  if (extLibrary.attemptsLeft <= 0) {
+    extLibrary.showVoiceDenied();
+    setTimeout(function(){
+      state = "limbo";}, 3000);
+  }
 
   // draw rect_2
   imageMode(CORNER);
@@ -491,9 +498,8 @@ function level_2Play() {
   // draw rect_2 and video image
   imageMode(CORNER);
   image(level_2Rect, canvasBase.canvas_2.x, canvasBase.canvas_2.y);
-  videoImg.displayVideo();
+  // videoImg.displayVideo();
 }
-
 // ********** END - LEVEL_2 FUNCTIONS *******************
 
 function limbo() {
@@ -508,8 +514,7 @@ function keyPressed() {
     if (startedLevel_1 === 1 && keyCode === 32) {
       startedLevel_1 = 2;
       inPlay = true;
-    }
-    else if (startedLevel_1 === 2 && keyCode === 32) {
+    } else if (startedLevel_1 === 2 && keyCode === 32) {
       inPlay = !inPlay; // pause
     }
   }
@@ -519,28 +524,42 @@ function keyPressed() {
       inPlay = true;
       // run responsiveVoice "Declare your name."
       extLibrary.timedPrompt();
-    }
-    else if (startedLevel_2 === 2 && keyCode === 32) {
+    } else if (startedLevel_2 === 2 && keyCode === 32) {
       inPlay = !inPlay; // pause
-      // if (extLibrary.correct) {
-      //   startedLevel_2 = 3;
-      //   inPlay = true;
-      // }
     }
-
-    // if (startedLevel_2 === 3 && keyCode === 32) {
+    // else if (startedLevel_2 === 3 && keyCode === 32) {
     //   inPlay = !inPlay; // pause
     // }
+
+    console.log(startedLevel_2);
   }
 
   // for testing
-  if (keyCode === ENTER) {}
+  if (keyCode === UP_ARROW) {
+    textBase.curIndex += 1;
+  }
+  if (keyCode === DOWN_ARROW) {
+    textBase.curIndex = textBase.curIndex - 1;
+  }
+
+  if (keyCode === ENTER) {
+
+  }
+
+  // if (keyCode === ENTER) {
+  //   let data =
+  //   JSON.parse(localStorage.getItem(PASSCODE_KEY));
+  //   if (data) {
+  //     setPasscodeData(data);
+  //     // let key =
+  //   }
+  // }
 }
 
-// for testing
-if (responsiveVoice.isPlaying()) {
-  console.log("speaking");
-}
+// // for testing
+// if (responsiveVoice.isPlaying()) {
+//   console.log("speaking");
+// }
 
 
 

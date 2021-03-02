@@ -51,9 +51,12 @@ class TextBase {
       name: ``,
       passcode: ``,
     };
-
     this.currentNameAnswer = ``;
+    this.timer = 5;
 
+    // Vault numbers
+    this.sourceText = "0123456789";
+    this.curIndex = 0;
 
     // END TEXT
 
@@ -178,15 +181,37 @@ class TextBase {
     level_2Rect.pop();
   }
 
-  displayLevel_2Pause() {
-    level_2Rect.push();
-    level_2Rect.fill(255 + sin(frameCount*0.05) *128);
-    level_2Rect.textFont(`monospace`);
-    level_2Rect.textAlign(CENTER, CENTER);
-    level_2Rect.textSize(this.size);
-    level_2Rect.text(this.pause, level_2Rect.width/2, level_2Rect.height/1.2);
-    level_2Rect.pop();
+  displayLevel_2Timer() {
+  level_2Rect.push();
+  level_2Rect.textSize(this.size);
+  level_2Rect.textFont(`courier`);
+  // level_2Rect.textAlign(LEFT);
+  level_2Rect.fill(0);
+  level_2Rect.text(this.timer, level_2Rect.width/10, level_2Rect.height/4);
+  if (frameCount % 60 == 0 && this.timer > 0) {
+    this.timer--;
   }
+  level_2Rect.pop();
+  console.log(this.timer);
+}
+
+displayNumber() {
+  push();
+  fill(255);
+  textSize(40);
+  textAlign(CENTER, CENTER);
+  text(
+    this.sourceText.substring(this.curIndex, this.curIndex+1),
+    width/2, height/2);
+  if (this.curIndex > this.sourceText.length -1) {
+    this.curIndex = 0;
+  }
+  if (this.curIndex < 0) {
+    this.curIndex = 9;
+  }
+}
+
+
 
 
   // END LEVEL_2 FUNCTIONS
