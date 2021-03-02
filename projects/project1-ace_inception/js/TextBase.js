@@ -57,7 +57,10 @@ class TextBase {
     // Vault numbers
     this.sourceText = "0123456789";
     this.curIndex = 0;
-
+    this.set = false;
+    this.textString = undefined;
+    this.stringTest = undefined;
+    this.hint = `** Press "ENTER" to input code BACKWARDS!! ** `
     // END TEXT
 
     // main parameters
@@ -69,36 +72,36 @@ class TextBase {
   // START FUNCTIONS
   displayLoading() {
     push();
-    fill(255 + sin(frameCount*0.05) * 128);
+    fill(255 + sin(frameCount * 0.05) * 128);
     textAlign(CENTER, CENTER);
     textSize(this.size);
-    text(this.loading, width/2, height/1.5);
+    text(this.loading, width / 2, height / 1.5);
     pop();
   }
 
   displayGo() {
     push();
-    fill(255 + sin(frameCount*0.1)*100);
+    fill(255 + sin(frameCount * 0.1) * 100);
     textAlign(CENTER, CENTER);
     textSize(this.size);
-    text(this.go, width/2, height -150);
+    text(this.go, width / 2, height - 150);
     pop();
   }
 
   displayPause() {
     push();
-    fill(255 + sin(frameCount*0.05) *128);
+    fill(255 + sin(frameCount * 0.05) * 128);
     textAlign(CENTER, CENTER);
     textSize(this.size);
-    text(this.pause, width/2, height/1.5);
+    text(this.pause, width / 2, height / 1.5);
     pop();
   }
 
   displayTitle() {
     push();
-    fill(this.fill1.r + sin(frameCount*0.01) * 255, this.fill1.g, this.fill1.b);
+    fill(this.fill1.r + sin(frameCount * 0.01) * 255, this.fill1.g, this.fill1.b);
     textSize(this.sizeLg);
-    text(this.title, width/3, this.titleY, width);
+    text(this.title, width / 3, this.titleY, width);
     pop();
   }
 
@@ -107,17 +110,17 @@ class TextBase {
     fill(this.fill1.r, this.fill2.g, this.fill2.b);
     textSize(this.size);
     textAlign(LEFT, BASELINE);
-    text(this.startInfo, width/3, this.titleY *2, width - width/2.3);
+    text(this.startInfo, width / 3, this.titleY * 2, width - width / 2.3);
     pop();
   }
 
   displayStartTips() {
     push();
-    fill(this.fill1.r, this.fill2.g -50, this.fill2.b -50);
-    textSize(this.size -10);
+    fill(this.fill1.r, this.fill2.g - 50, this.fill2.b - 50);
+    textSize(this.size - 10);
     textAlign(LEFT, BASELINE);
     textLeading(this.spacing);
-    text(this.startTips, width/2.5, this.titleY *4.5, width - width/2.5);
+    text(this.startTips, width / 2.5, this.titleY * 4.5, width - width / 2.5);
     pop();
   }
   // END START FUNCTIONS
@@ -125,10 +128,10 @@ class TextBase {
   // LEVEL_1 FUNCTIONS
   displayLevel_1Title() {
     push();
-    fill(this.fill3.r + sin(frameCount*0.01) * 255, this.fill3.g, this.fill3.b);
+    fill(this.fill3.r + sin(frameCount * 0.01) * 255, this.fill3.g, this.fill3.b);
     textSize(this.sizeLg);
     textAlign(CENTER);
-    text(this.level_1Title, width/2, height/5);
+    text(this.level_1Title, width / 2, height / 5);
     pop();
   }
 
@@ -137,7 +140,7 @@ class TextBase {
     fill(this.fill3.r, this.fill3.g, this.fill3.b);
     textSize(this.size);
     textAlign(LEFT, CENTER);
-    text(this.level_1Tips, width/3, height/3, width - width/2.1);
+    text(this.level_1Tips, width / 3, height / 3, width - width / 2.1);
     pop();
   }
   // END LEVEL_1 FUNTIONS
@@ -145,19 +148,19 @@ class TextBase {
   // LEVEL_2 FUNCTIONS
   displayLevel_2Title() {
     push();
-    fill(this.fill4.r + sin(frameCount*0.01) * 255, this.fill4.g, this.fill4.b);
+    fill(this.fill4.r + sin(frameCount * 0.01) * 255, this.fill4.g, this.fill4.b);
     textSize(this.sizeMd);
     textAlign(CENTER);
-    text(this.level_2Title, width/2, height/5);
+    text(this.level_2Title, width / 2, height / 5);
     pop();
   }
 
   displayLevel_2Tips() {
     push();
     fill(this.fill4.r, this.fill4.g, this.fill4.b);
-    textSize(this.size -10);
+    textSize(this.size - 10);
     textAlign(LEFT, CENTER);
-    text(this.level_2Tips, width/4, height/3, width - width/2.1);
+    text(this.level_2Tips, width / 4, height / 3, width - width / 2.1);
     pop();
   }
 
@@ -170,46 +173,76 @@ class TextBase {
     level_2Rect.push();
     level_2Rect.fill(50, 50, 50, 80);
     level_2Rect.rectMode(CENTER);
-    level_2Rect.rect(level_2Rect.width/2, level_2Rect.height/2, level_2Rect.width-100, level_2Rect.height - 100);
+    level_2Rect.rect(level_2Rect.width / 2, level_2Rect.height / 2, level_2Rect.width - 100, level_2Rect.height - 100);
     level_2Rect.pop();
     level_2Rect.push();
     level_2Rect.textSize(this.size);
     level_2Rect.textFont(`courier`);
     level_2Rect.textAlign(LEFT);
     level_2Rect.fill(255, 182, 0);
-    level_2Rect.text(account, level_2Rect.width/10, level_2Rect.height/4);
+    level_2Rect.text(account, level_2Rect.width / 10, level_2Rect.height / 4);
     level_2Rect.pop();
+  }
+  updateTimer(counter) {
+    this.timer = counter;
+
   }
 
   displayLevel_2Timer() {
-  level_2Rect.push();
-  level_2Rect.textSize(this.size);
-  level_2Rect.textFont(`courier`);
-  // level_2Rect.textAlign(LEFT);
-  level_2Rect.fill(0);
-  level_2Rect.text(this.timer, level_2Rect.width/10, level_2Rect.height/4);
-  if (frameCount % 60 == 0 && this.timer > 0) {
-    this.timer--;
-  }
-  level_2Rect.pop();
-  console.log(this.timer);
-}
+    level_2Rect.push();
+    level_2Rect.textSize(this.size);
+    level_2Rect.textFont(`courier`);
+    // level_2Rect.textAlign(LEFT);
+    level_2Rect.fill(0);
+    level_2Rect.text(this.timer, level_2Rect.width / 10, level_2Rect.height / 4);
+    // if (frameCount % 60 == 0 && this.timer > 0) {
+    //   this.timer--;
+    // }
+    level_2Rect.pop();
 
-displayNumber() {
-  push();
-  fill(255);
-  textSize(40);
-  textAlign(CENTER, CENTER);
-  text(
-    this.sourceText.substring(this.curIndex, this.curIndex+1),
-    width/2, height/2);
-  if (this.curIndex > this.sourceText.length -1) {
-    this.curIndex = 0;
   }
-  if (this.curIndex < 0) {
-    this.curIndex = 9;
+
+  displayNumber() {
+    level_2Rect.push();
+    level_2Rect.fill(0);
+    level_2Rect.rectMode(CENTER);
+    level_2Rect.rect(level_2Rect.width / 2, level_2Rect.height - 65, level_2Rect.width /2, 50);
+    level_2Rect.pop();
+    level_2Rect.fill(255);
+    level_2Rect.textFont(`monospace`);
+    level_2Rect.textSize(50);
+    level_2Rect.textAlign(CENTER, RIGHT);
+    level_2Rect.text(this.sourceText.substring(this.curIndex, this.curIndex + 1),level_2Rect.width / 2, level_2Rect.height / 2);
+    level_2Rect.push();
+    level_2Rect.fill(200);
+    level_2Rect.textSize(20);
+    level_2Rect.text(this.hint ,level_2Rect.width / 2, level_2Rect.height - 10);
+    level_2Rect.pop();
+
+    if (this.curIndex > this.sourceText.length - 1) {
+      this.curIndex = 0;
+    }
+    if (this.curIndex < 0) {
+      this.curIndex = 9;
+    }
+    if (this.set) {
+      // to display numbers in string
+      this.textString = ``;
+      for (let i = chosenNumbers.length - 1; i >= 0; i--) {
+        this.textString += chosenNumbers[i];
+        this.textString += ` `;
+      }
+      // to Check numbers in string
+      this.stringTest = ``;
+      for (let i = chosenNumbers.length - 1; i >= 0; i--) {
+        this.stringTest += chosenNumbers[i];
+      }
+      console.log(this.stringTest);
+      level_2Rect.textFont(`courier`);
+      level_2Rect.textSize(40);
+      level_2Rect.text(this.textString, level_2Rect.width / 2, level_2Rect.height - 50);
+    }
   }
-}
 
 
 
