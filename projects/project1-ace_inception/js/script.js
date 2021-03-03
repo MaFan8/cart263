@@ -38,7 +38,7 @@ const FIST_DIAGRAM_IMG = `assets/images/fistDiagram.png`;
 const FIST_IMG = `assets/images/fist.png`;
 
 
-let state = `level_2`; // start, level_1, level_2, limbo, end
+let state = `start`; // start, level_1, level_2, limbo, end
 
 // Level variables
 let startedLevel_1 = 0; // 0, 1, 2
