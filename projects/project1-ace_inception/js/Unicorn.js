@@ -4,7 +4,6 @@ class Unicorn {
     this.maxHeight = 90;
     this.alphaChange = -8;
     this.safeDist = 40;
-    this.isTouched = false;
     this.reset();
     // for Ace only
     this.offScreen = 50;
@@ -28,7 +27,7 @@ class Unicorn {
     this.x += this.vx;
     this.y += this.vy;
     this.width += this.sizeIncrease / 2;
-    this.height += this.sizeIncrease + (sin(frameCount / 5));
+    this.height += this.sizeIncrease;
     this.tint += 2;
 
     // once image goes beyond 1/3 or 2/3 of window edges, then raise the image size and speed
@@ -50,8 +49,8 @@ class Unicorn {
   moveRandom() {
     let r = random();
     if (r < this.jitterness) {
-      this.velX = random(-this.vSpeed, this.vSpeed);
-      this.velY = random(-this.vSpeed, this.vSpeed);
+      this.velX = random(-this.speed, this.speed);
+      this.velY = random(-this.speed, this.speed);
     }
     this.randomX = this.randomX + this.velX;
     this.randomY = this.randomY + this.velY;
@@ -97,8 +96,8 @@ class Unicorn {
   }
 
   reset() {
-    this.x = level_1Rect.random((this.width / 2 - 150), (this.width / 2 + 110));
-    this.y = level_1Rect.height / 2;
+    this.x = random((level_1Rect.width / 2 - 150), (level_1Rect.width / 2 + 110));
+    this.y = level_1Rect.height / 3;
     this.width = random(5, 25);
     this.height = random(8, 33);
     this.tint = 100;
