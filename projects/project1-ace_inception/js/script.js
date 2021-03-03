@@ -41,12 +41,12 @@ const VAULT_IMG = `assets/images/vault.png`;
 const FIST_DIAGRAM_IMG = `assets/images/fistdiagram.png`;
 const FIST_IMG = `assets/images/fist.png`;
 
-let state = `level_2`; // start, level_1, level_2, limbo, end
+let state = `start`; // start, level_1, level_2, limbo, end
 
 // Level variables
 let startedLevel_1 = 0; // 0, 1, 2
 let level_1Rect = undefined;
-let startedLevel_2 = 2; // 0, 1, 2, 3
+let startedLevel_2 = 0; // 0, 1, 2, 3
 let level_2Rect = undefined;
 let limboRect = undefined;
 let loaded = false;
