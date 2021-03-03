@@ -132,6 +132,7 @@ class Unicorn {
     if (this.switchedDirection) {
       level_1Rect.scale(-1, 1);
     };
+    level_1Rect.tint(255, 180)
     level_1Rect.image(this.image, 0, 0, this.randomW, this.randomH);
     level_1Rect.pop();
   }
