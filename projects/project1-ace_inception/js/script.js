@@ -24,7 +24,7 @@ http://codingtra.in
 const HEART_IMG = `assets/images/heart.png`;
 const ACE_HEAD_IMG = `assets/images/acehead.png`;
 const ACE_HEAD_ANGRY_IMG = `assets/images/acehead_angry.png`;
-const ACE_BODY_IMG = `assets/images/aceBody.png`;
+const ACE_BODY_IMG = `assets/images/acebody.png`;
 const ACE_KICK_IMG = `assets/images/ace_kick.png`;
 const SPIKE_IMG = `assets/images/spike.png`;
 const ALPACA_IMG = `assets/images/alpaca.png`;
@@ -36,9 +36,9 @@ const UNICORN_ACE_IMG = `assets/images/unicorn_ace.png`;
 const NUM_UNICORN_IMG = 4;
 const NUM_UNICORNS = 50;
 const UNICORN_IMG = `assets/images/unicorn`;
-const SPIKE_BACK_IMG = `assets/images/spikeBack.png`;
+const SPIKE_BACK_IMG = `assets/images/spikeback.png`;
 const VAULT_IMG = `assets/images/vault.png`;
-const FIST_DIAGRAM_IMG = `assets/images/fistDiagram.png`;
+const FIST_DIAGRAM_IMG = `assets/images/fistdiagram.png`;
 const FIST_IMG = `assets/images/fist.png`;
 
 let state = `level_2`; // start, level_1, level_2, limbo, end
