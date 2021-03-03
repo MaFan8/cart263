@@ -143,6 +143,8 @@ function setup() {
 
   // create library setup
   extLibrary = new ExternalLibraries();
+  loadPosenet(); // Load Posenet
+
 
   // create text
   textBase = new TextBase;
