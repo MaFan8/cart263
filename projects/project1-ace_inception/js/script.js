@@ -36,7 +36,6 @@ const SPIKE_BACK_IMG = `assets/images/spikeBack.png`;
 const VAULT_IMG = `assets/images/vault.png`;
 const FIST_DIAGRAM_IMG = `assets/images/fistDiagram.png`;
 const FIST_IMG = `assets/images/fist.png`;
-const PASSCODE_KEY = `passcode-data`;
 
 
 let state = `level_2`; // start, level_1, level_2, limbo, end
@@ -44,7 +43,7 @@ let state = `level_2`; // start, level_1, level_2, limbo, end
 // Level variables
 let startedLevel_1 = 0; // 0, 1, 2
 let level_1Rect = undefined;
-let startedLevel_2 = 3; // 0, 1, 2, 3
+let startedLevel_2 = 0; // 0, 1, 2, 3
 let level_2Rect = undefined;
 let loaded = false;
 let inPlay = false;
@@ -53,7 +52,6 @@ let inPlay = false;
 let canvasBase;
 // External libraries
 let extLibrary;
-let passcodeData = ``;
 
 // Library variables: ml5 Posenet, annyang, ResponsiveVoice
 let videoImg, video;
@@ -67,6 +65,7 @@ let insctructionSpoken = false;
 // Text variables
 let textBase;
 let chosenNumbers = [];
+let chosenNumLength = 6;
 
 // Image variables: Start
 let img = {
@@ -144,7 +143,6 @@ function setup() {
 
   // create library setup
   extLibrary = new ExternalLibraries();
-  loadStorage();
 
   // create text
   textBase = new TextBase;
@@ -208,15 +206,6 @@ function loadPosenet() {
   });
 } // END POSENET
 
-// JSON Storage
-function loadStorage() {
-  // Try to load the passcode data
-  let data = JSON.parse(localStorage.getItem(PASSCODE_KEY));
-  if (data) {
-    passcodeData = data;
-  }
-}
-
 
 // DRAW
 function draw() {
@@ -272,10 +261,10 @@ function level_1() {
 // LEVEL_2
 function level_2() {
   // display graphics until state: 0 is loaded
-  if (!loaded) {
-    loadPosenet();
-    loaded = true;
-  }
+  // if (!loaded) {
+  //   loadPosenet();
+  //   loaded = true;
+  // }
   // Load create background
   if (startedLevel_2 === 0) {
     level_1Rect.background(canvasBase.bgTeal.r, canvasBase.bgTeal.g, canvasBase.bgTeal.b);
@@ -300,28 +289,10 @@ function level_2() {
   }
   // load program to access vault
   else if (startedLevel_2 == 3) {
-
     level_2Play();
     showLevel_1unicorns();
-    // }
-    // else {
-    //   level_2Rect.clear();
-    //   level_2Rect.background(canvasBase.bgRed.r, canvasBase.bgRed.g, canvasBase.bgRed.b);
-    //   // showLevel_1Graphics();
-    // }
-
-    // TEST for setNumber
-    // textBase.displayNumber();
-    if (vault.add) {
-      textBase.curIndex += 1;
-      vault.add = false;
-    } else if (vault.subtract) {
-      textBase.curIndex = textBase.curIndex - 1;
-      vault.subtract = false;
-    }
   }
 
-  // extLibrary.DisplaySetNumber(number);
 
 
 } // END LEVEL_2
@@ -472,45 +443,45 @@ function level_2GetPasscode() {
   // then if name is correct, show password and speak confirmation of retrieval
   else if (extLibrary.correct && extLibrary.passcodeSet === false) {
     setTimeout(function() {
-      extLibrary.generatePasscode();
+      extLibrary.generatePasscode(); // generate passcode and display
 
-      // Set & Save generated passcode
-      passcodeData = extLibrary.passcode;
-      localStorage.setItem(PASSCODE_KEY, JSON.stringify(passcodeData));
-
-      let counter = 5;
+      let counter = 10;
       let timerInterval = setInterval(function() {
-        console.log(counter);
         textBase.updateTimer(counter);
-        counter++;
-        if (counter >= 20) {
+        loadPosenet(); // Load Posenet
+        counter--;
+        if (counter <= 0) {
           clearInterval(timerInterval);
         }
-      }, 10);
+      }, 1000);
     }, 3000); // generate passcode after 3s
 
-    extLibrary.showVoiceRetrieved(); // display retrieved text
     extLibrary.passcodeSet = true;
+  } else {
+    extLibrary.showVoiceRetrieved(); // display retrieved text
+    textBase.displayLevel_2Timer(); // display timer
   }
-  // then if attempts have been made, show attempts text
+
+  // if 2 or less attempts have been made, show attempts text
   if (extLibrary.attemptsLeft <= 2) {
-    extLibrary.displayAttempts();
+    extLibrary.displayAttempts(); // display attempts text
   }
-  // then if there are no more attempts, then
+  // if there are no more attempt
   if (extLibrary.attemptsLeft <= 0) {
-    extLibrary.showVoiceDenied();
+    extLibrary.showVoiceDenied(); // display denied text
+    // switch state after 3s
     setTimeout(function() {
       state = "limbo";
     }, 3000);
   }
-  textBase.displayLevel_2Timer();
+
   // draw rect_2
   imageMode(CORNER);
   image(level_2Rect, canvasBase.canvas_2.x, canvasBase.canvas_2.y);
-
-  if (textBase.timer === 19) {
+  // if timer is at 1
+  if (textBase.timer === 1) {
+    responsiveVoice.pause(); // pause responsiveVoice
     startedLevel_2 = 3;
-    loadPosenet();
   }
 }
 
@@ -523,10 +494,22 @@ function level_2Play() {
   }
   vault.displayVault(user); // display vault that turns by poses
   fist.displayFists(user); // display hands
-  textBase.displayNumber();
-
-  // Check if password matches or not
-
+  textBase.checkDail(vault); // check dail movement and translate to currentIndex
+  textBase.displayNumber(); // display number from dail Movement
+  if (textBase.set) {
+    textBase.displayChosenNumber(); // display chosen number
+    // Check if passcode matches with stored passcode
+    if (textBase.stringTest === (str(extLibrary.passcode))) {
+      console.log("yes!");
+    } else {
+      if (chosenNumbers.length === chosenNumLength) {
+        // switch state after 3s
+        setTimeout(function() {
+          state = "limbo";
+        }, 3000);
+    }
+  }
+  }
 
 
   videoImg.displayVideo();
@@ -577,23 +560,12 @@ function keyPressed() {
 
   if (keyCode === ENTER) {
     textBase.set = true;
+    if (chosenNumbers.length <= chosenNumLength) {
     chosenNumbers.push(textBase.curIndex);
   }
-
-  // if (keyCode === ENTER) {
-  //   let data =
-  //   JSON.parse(localStorage.getItem(PASSCODE_KEY));
-  //   if (data) {
-  //     setPasscodeData(data);
-  //     // let key =
-  //   }
-  // }
+}
 }
 
-// // for testing
-// if (responsiveVoice.isPlaying()) {
-//   console.log("speaking");
-// }
 
 
 

@@ -117,6 +117,7 @@ class ExternalLibraries {
       this.passcode = int(random(10, 1000000));
       this.correct = false;
     }
+    console.log(this.passcode);
   }
 
   displayAttempts() {

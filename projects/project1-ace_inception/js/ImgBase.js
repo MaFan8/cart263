@@ -76,6 +76,7 @@ class ImgBase {
     level_2Rect.pop();
   }
 
+
   displayFistDiagram() {
     push();
     translate(this.x, this.y -80);
