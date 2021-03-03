@@ -96,7 +96,7 @@ class Unicorn {
   }
 
   reset() {
-    this.x = random((width / 2 - 150), (width / 2 + 110));
+    this.x = random(400, 700);
     this.y = height / 3;
     this.width = random(5, 25);
     this.height = random(8, 33);
