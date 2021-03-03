@@ -52,7 +52,7 @@ class TextBase {
       passcode: ``,
     };
     this.currentNameAnswer = ``;
-    this.timer = 5;
+    this.timer = 10;
 
     // Vault numbers
     this.sourceText = "0123456789";
@@ -60,6 +60,7 @@ class TextBase {
     this.set = false;
     this.textString = undefined;
     this.stringTest = undefined;
+    this.screenHeight = 50;
     this.hint = `** Press "ENTER" to input code BACKWARDS!! ** `
     // END TEXT
 
@@ -183,30 +184,26 @@ class TextBase {
     level_2Rect.text(account, level_2Rect.width / 10, level_2Rect.height / 4);
     level_2Rect.pop();
   }
+
   updateTimer(counter) {
     this.timer = counter;
-
   }
 
   displayLevel_2Timer() {
     level_2Rect.push();
     level_2Rect.textSize(this.size);
     level_2Rect.textFont(`courier`);
-    // level_2Rect.textAlign(LEFT);
-    level_2Rect.fill(0);
-    level_2Rect.text(this.timer, level_2Rect.width / 10, level_2Rect.height / 4);
-    // if (frameCount % 60 == 0 && this.timer > 0) {
-    //   this.timer--;
-    // }
+    level_2Rect.fill(255);
+    level_2Rect.textAlign(CENTER, CENTER);
+    level_2Rect.text(`Time: ${this.timer}`, level_2Rect.width/2, level_2Rect.height -70);
     level_2Rect.pop();
-
   }
 
   displayNumber() {
     level_2Rect.push();
     level_2Rect.fill(0);
     level_2Rect.rectMode(CENTER);
-    level_2Rect.rect(level_2Rect.width / 2, level_2Rect.height - 65, level_2Rect.width /2, 50);
+    level_2Rect.rect(level_2Rect.width / 2, level_2Rect.height - 65, level_2Rect.width /2, this.screenHeight);
     level_2Rect.pop();
     level_2Rect.fill(255);
     level_2Rect.textFont(`monospace`);
@@ -225,7 +222,19 @@ class TextBase {
     if (this.curIndex < 0) {
       this.curIndex = 9;
     }
-    if (this.set) {
+  }
+
+  checkDail(vault) {
+    if (vault.add) {
+      this.curIndex += 1;
+      vault.add = false;
+    } else if (vault.subtract) {
+      this.curIndex = this.curIndex - 1;
+      vault.subtract = false;
+    }
+  }
+
+  displayChosenNumber() {
       // to display numbers in string
       this.textString = ``;
       for (let i = chosenNumbers.length - 1; i >= 0; i--) {
@@ -237,14 +246,11 @@ class TextBase {
       for (let i = chosenNumbers.length - 1; i >= 0; i--) {
         this.stringTest += chosenNumbers[i];
       }
-      console.log(this.stringTest);
       level_2Rect.textFont(`courier`);
       level_2Rect.textSize(40);
-      level_2Rect.text(this.textString, level_2Rect.width / 2, level_2Rect.height - 50);
+      level_2Rect.textAlign(CENTER);
+      level_2Rect.text(this.textString, level_2Rect.width / 2 +10, level_2Rect.height - this.screenHeight);
     }
-  }
-
-
 
 
   // END LEVEL_2 FUNCTIONS
