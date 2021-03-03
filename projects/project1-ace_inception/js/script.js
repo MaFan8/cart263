@@ -9,10 +9,14 @@ A game that enlists the user's help to infiltrate Ace's subconsious to implant a
 Uses:
 ml5.js Posenet:
 https://ml5js.org/reference/api-PoseNet/
-
-Annyang
+Annyang:
 https://www.talater.com/annyang/
+ResponsiveVoice:
+https://responsivevoice.org/api/
 
+References:
+Daniel Shiffman - Starfield
+http://codingtra.in
 
 */
 
@@ -37,14 +41,14 @@ const VAULT_IMG = `assets/images/vault.png`;
 const FIST_DIAGRAM_IMG = `assets/images/fistDiagram.png`;
 const FIST_IMG = `assets/images/fist.png`;
 
-
-let state = `start`; // start, level_1, level_2, limbo, end
+let state = `limbo`; // start, level_1, level_2, limbo, end
 
 // Level variables
 let startedLevel_1 = 0; // 0, 1, 2
 let level_1Rect = undefined;
 let startedLevel_2 = 0; // 0, 1, 2, 3
 let level_2Rect = undefined;
+let limboRect = undefined;
 let loaded = false;
 let inPlay = false;
 
@@ -68,6 +72,8 @@ let chosenNumbers = [];
 let chosenNumLength = 6;
 
 // Image variables: Start
+let stars = [];
+let numStars = 800;
 let img = {
   x: 200,
   y: 150,
@@ -99,7 +105,6 @@ let vaultImg, vault;
 let fistDiagramImg, fistDiagram;
 let fistImg, fist;
 
-
 // PRELOAD
 function preload() {
   // Load LEVEL_1 Images
@@ -128,24 +133,22 @@ function preload() {
   vaultImg = loadImage(`${VAULT_IMG}`);
   fistDiagramImg = loadImage(`${FIST_DIAGRAM_IMG}`);
   fistImg = loadImage(`${FIST_IMG}`);
-
 } // END PRELOAD
-
 
 // SETUP
 function setup() {
   // create canvas & background
-  canvasBase = new CanvasAndBg;
-  canvasBase.canvas_0;
+  canvasBase = new CanvasAndBg();
+  canvasBase.canvasStart();
   level_1Rect = createGraphics(canvasBase.canvas_1.w, canvasBase.canvas_1.h);
   level_2Rect = createGraphics(canvasBase.canvas_2.w, canvasBase.canvas_2.h);
-  canvasBase.bgOrange;
+  limboRect = createGraphics(canvasBase.canvas_3.w, canvasBase.canvas_3.h);
 
   // create library setup
   extLibrary = new ExternalLibraries();
 
   // create text
-  textBase = new TextBase;
+  textBase = new TextBase();
   // create images
   imagesSetup();
 } // END SETUP
@@ -153,13 +156,26 @@ function setup() {
 // create images
 function imagesSetup() {
   // START & LEVEL_1 images
+  for (let i = 0; i < numStars; i++) {
+    stars[i] = new Star();
+  }
   heart = new ImgBase(img.heartX, img.heartY, heartImg, img.sizeBig);
   aceBody = new Body(img.x, img.y, aceBodyImg, img.sizeSmall);
   aceHeadAngry = new ImgBase(img.x, img.y, aceHeadAngry, img.sizeSmall);
   aceHead = new ImgBase(width / 2, height / 2, aceHeadImg);
   // aceKick = new Body(img.kickX, img.kickY, aceKickImg);
-  spike = new ImgBase(img.heartX + 50, img.heartY - 60, spikeImg, img.sizeSmall);
-  alpaca = new ImgBase(img.heartX - 20, img.heartY, alpacaImg, img.sizeSmall + 0.2);
+  spike = new ImgBase(
+    img.heartX + 50,
+    img.heartY - 60,
+    spikeImg,
+    img.sizeSmall
+  );
+  alpaca = new ImgBase(
+    img.heartX - 20,
+    img.heartY,
+    alpacaImg,
+    img.sizeSmall + 0.2
+  );
   spikeBack = new User(spikeBackImg, level_1Rect);
   // unicorns
   unicornAceFront = new Unicorn(unicornAceFrontImg, level_1Rect);
@@ -171,21 +187,31 @@ function imagesSetup() {
   }
   // LEVEL_2 Images
   user = new User(spikeBackImg, level_1Rect);
-  vault = new ImgBase(level_2Rect.width / 2, level_2Rect.height / 2, vaultImg, 1.5, level_2Rect);
-  fistDiagram = new ImgBase(width / 2, level_2Rect.height, fistDiagramImg, 0.8, level_2Rect);
+  vault = new ImgBase(
+    level_2Rect.width / 2,
+    level_2Rect.height / 2,
+    vaultImg,
+    1.5,
+    level_2Rect
+  );
+  fistDiagram = new ImgBase(
+    width / 2,
+    level_2Rect.height,
+    fistDiagramImg,
+    0.8,
+    level_2Rect
+  );
   fist = new ImgBase(0, 0, fistImg, 0.5, level_2Rect);
   videoImg = new ImgBase(0, 0, video, 1, level_2Rect);
 } // END CREATE IMAGES
 
-
 // set interval for pushing images out randomly
-setInterval(function() {
+setInterval(function () {
   if (unicornsFront.length < NUM_UNICORNSFRONT) {
     let unicornFront = new Unicorn(random(unicornFrontImages), level_1Rect);
     unicornsFront.push(unicornFront);
   }
 }, randomNumber(2000, 10000));
-
 
 // POSENET
 function loadPosenet() {
@@ -193,23 +219,30 @@ function loadPosenet() {
   video = createCapture(VIDEO);
   video.hide();
   // get poses
-  poseNet = ml5.poseNet(video, {
-    flipHorizontal: true
-  }, function() {
-    console.log(`PoseNet loaded`);
-    loaded = true;
-  });
+  poseNet = ml5.poseNet(
+    video,
+    {
+      flipHorizontal: true,
+    },
+    function () {
+      console.log(`PoseNet loaded`);
+      loaded = true;
+    }
+  );
   // turn on poseNet
-  poseNet.on('pose', function(results) {
+  poseNet.on("pose", function (results) {
     poses = results;
     // console.log(poses);
   });
 } // END POSENET
 
-
 // DRAW
 function draw() {
-  canvasBase.bgOrange();
+  background(
+    canvasBase.bgOrange.r,
+    canvasBase.bgOrange.g,
+    canvasBase.bgOrange.b
+  );
 
   if (state === `start`) {
     start();
@@ -222,7 +255,6 @@ function draw() {
   } else if (state === `end`) {
     end();
   }
-
 } // END DRAW
 
 // START
@@ -239,7 +271,11 @@ function level_1() {
   }
   // Load Posenet Once
   if (startedLevel_1 === 0) {
-    level_1Rect.background(canvasBase.bgTeal.r, canvasBase.bgTeal.g, canvasBase.bgTeal.b);
+    level_1Rect.background(
+      canvasBase.bgTeal.r,
+      canvasBase.bgTeal.g,
+      canvasBase.bgTeal.b
+    );
     loadPosenet();
     startedLevel_1 = 1;
   }
@@ -252,7 +288,11 @@ function level_1() {
       level_1Play();
     } else {
       level_1Rect.clear();
-      level_1Rect.background(canvasBase.bgTeal.r, canvasBase.bgTeal.g, canvasBase.bgTeal.b);
+      level_1Rect.background(
+        canvasBase.bgTeal.r,
+        canvasBase.bgTeal.g,
+        canvasBase.bgTeal.b
+      );
       displayLevel_1Start();
     }
   }
@@ -260,15 +300,18 @@ function level_1() {
 
 // LEVEL_2
 function level_2() {
-  // display graphics until state: 0 is loaded
-  // if (!loaded) {
-  //   loadPosenet();
-  //   loaded = true;
-  // }
   // Load create background
   if (startedLevel_2 === 0) {
-    level_1Rect.background(canvasBase.bgTeal.r, canvasBase.bgTeal.g, canvasBase.bgTeal.b);
-    level_2Rect.background(canvasBase.bgRed.r, canvasBase.bgRed.g, canvasBase.bgRed.b);
+    level_1Rect.background(
+      canvasBase.bgTeal.r,
+      canvasBase.bgTeal.g,
+      canvasBase.bgTeal.b
+    );
+    level_2Rect.background(
+      canvasBase.bgRed.r,
+      canvasBase.bgRed.g,
+      canvasBase.bgRed.b
+    );
     showLevel_1Graphics();
     startedLevel_2 = 1;
   }
@@ -283,7 +326,11 @@ function level_2() {
       showLevel_1unicorns();
     } else {
       level_2Rect.clear();
-      level_2Rect.background(canvasBase.bgRed.r, canvasBase.bgRed.g, canvasBase.bgRed.b);
+      level_2Rect.background(
+        canvasBase.bgRed.r,
+        canvasBase.bgRed.g,
+        canvasBase.bgRed.b
+      );
       showLevel_1Graphics();
     }
   }
@@ -292,11 +339,7 @@ function level_2() {
     level_2Play();
     showLevel_1unicorns();
   }
-
-
-
 } // END LEVEL_2
-
 
 // ********** START FUNCTIONS ***************************
 function displayStartText() {
@@ -316,9 +359,15 @@ function displayStartImg() {
 }
 // ********** END -  START FUNCTIONS ********************
 
-
 // ********** LEVEL_1 FUNCTIONS *************************
 function displayLevel_1Start() {
+  background(
+    canvasBase.bgOrange.r,
+    canvasBase.bgOrange.g,
+    canvasBase.bgOrange.b
+  );
+  canvasBase.tintBgOrange();
+  displayStarGraphics();
   user.displayStatic();
   textBase.displayLevel_1Title();
   textBase.displayLevel_1Tips();
@@ -330,10 +379,37 @@ function displayLevel_1Start() {
   }
 }
 
+function displayStarGraphics() {
+  push();
+  translate(width / 2, height / 2);
+  for (var i = 0; i < stars.length; i++) {
+    stars[i].update();
+    stars[i].show();
+
+    if (state === `limbo`) {
+      stars[i].fill += -1;
+      stars[i].speed += 1;
+      stars[i].speed = constrain(stars[i].speed, 0.4, 3);
+    }
+  }
+  pop();
+}
+
 function level_1Play() {
+  background(
+    canvasBase.bgOrange.r,
+    canvasBase.bgOrange.g,
+    canvasBase.bgOrange.b
+  );
+  canvasBase.tintBgOrange();
+  displayStarGraphics();
   //reset rect_1
   level_1Rect.clear();
-  level_1Rect.background(canvasBase.bgTeal.r, canvasBase.bgTeal.g, canvasBase.bgTeal.b);
+  level_1Rect.background(
+    canvasBase.bgTeal.r,
+    canvasBase.bgTeal.g,
+    canvasBase.bgTeal.b
+  );
   // detect poses
   if (poses.length > 0) {
     updateUser(poses[0]);
@@ -341,8 +417,7 @@ function level_1Play() {
   // display unicorns
   showUnicornsFront();
   //display unicornAce after 35s
-  if (millis() > 35000)
-    showUnicornAceFront();
+  if (millis() > 35000) showUnicornAceFront();
 
   // draw rect_1
   imageMode(CORNER);
@@ -356,7 +431,12 @@ function showUnicornsFront() {
     let unicornFront = unicornsFront[i];
     unicornFront.move();
     // check if unicorn touches user
-    let d = dist(unicornFront.x, unicornFront.y, user.displayX, user.y - unicornFront.safeDist);
+    let d = dist(
+      unicornFront.x,
+      unicornFront.y,
+      user.displayX,
+      user.y - unicornFront.safeDist
+    );
     if (d < unicornFront.safeDist && unicornFront.isTouched === false) {
       textBase.attemptsLeft -= 1;
       unicornFront.isTouched = true;
@@ -373,7 +453,12 @@ function showUnicornAceFront() {
   if (!unicornAceFront.isPaused) {
     unicornAceFront.move();
     // check if unicornAce touches user
-    let d = dist(unicornAceFront.x, unicornAceFront.y, user.displayX, user.y - unicornAceFront.safeDist);
+    let d = dist(
+      unicornAceFront.x,
+      unicornAceFront.y,
+      user.displayX,
+      user.y - unicornAceFront.safeDist
+    );
     if (d < unicornAceFront.safeDist) {
       state = `level_2`;
     }
@@ -389,10 +474,20 @@ function updateUser(poses) {
 }
 // ********** END - LEVEL_1 FUNCTIONS *******************
 
-
 //********** LEVEL_2 FUNCTIONS **************************
 function showLevel_1Graphics() {
-  level_1Rect.background(canvasBase.bgTeal.r, canvasBase.bgTeal.g, canvasBase.bgTeal.b);
+  background(
+    canvasBase.bgOrangeLevel_1.r,
+    canvasBase.bgOrangeLevel_1.g,
+    canvasBase.bgOrangeLevel_1.b
+  );
+  displayStarGraphics();
+  level_1Rect.background(
+    canvasBase.bgTeal.r,
+    canvasBase.bgTeal.g,
+    canvasBase.bgTeal.b
+  );
+  canvasBase.tintBgTeal();
   // draw unicorns
   for (let i = 0; i < unicorns.length; i++) {
     let unicorn = unicorns[i];
@@ -413,7 +508,17 @@ function showLevel_1Graphics() {
 }
 
 function showLevel_1unicorns() {
-  level_1Rect.background(canvasBase.bgTeal.r, canvasBase.bgTeal.g, canvasBase.bgTeal.b);
+  background(
+    canvasBase.bgOrangeLevel_1.r,
+    canvasBase.bgOrangeLevel_1.g,
+    canvasBase.bgOrangeLevel_1.b
+  );
+  displayStarGraphics();
+  level_1Rect.background(
+    canvasBase.bgTeal.r,
+    canvasBase.bgTeal.g,
+    canvasBase.bgTeal.b
+  );
   // draw unicorns
   for (let i = 0; i < unicorns.length; i++) {
     let unicorn = unicorns[i];
@@ -432,7 +537,11 @@ function showLevel_1unicorns() {
 function level_2GetPasscode() {
   //reset rect_2:
   level_2Rect.clear();
-  level_2Rect.background(canvasBase.bgRed.r, canvasBase.bgRed.g, canvasBase.bgRed.b);
+  level_2Rect.background(
+    canvasBase.bgRed.r,
+    canvasBase.bgRed.g,
+    canvasBase.bgRed.b
+  );
   vault.displayVaultStatic(); // display vault
   textBase.vaultMoniter(extLibrary); // display Vault Moniter
 
@@ -442,11 +551,11 @@ function level_2GetPasscode() {
   }
   // then if name is correct, show password and speak confirmation of retrieval
   else if (extLibrary.correct && extLibrary.passcodeSet === false) {
-    setTimeout(function() {
+    setTimeout(function () {
       extLibrary.generatePasscode(); // generate passcode and display
 
       let counter = 10;
-      let timerInterval = setInterval(function() {
+      let timerInterval = setInterval(function () {
         textBase.updateTimer(counter);
         loadPosenet(); // Load Posenet
         counter--;
@@ -455,7 +564,6 @@ function level_2GetPasscode() {
         }
       }, 1000);
     }, 3000); // generate passcode after 3s
-
     extLibrary.passcodeSet = true;
   } else {
     extLibrary.showVoiceRetrieved(); // display retrieved text
@@ -470,7 +578,7 @@ function level_2GetPasscode() {
   if (extLibrary.attemptsLeft <= 0) {
     extLibrary.showVoiceDenied(); // display denied text
     // switch state after 3s
-    setTimeout(function() {
+    setTimeout(function () {
       state = "limbo";
     }, 3000);
   }
@@ -488,7 +596,11 @@ function level_2GetPasscode() {
 function level_2Play() {
   //reset rect_2:
   level_2Rect.clear();
-  level_2Rect.background(canvasBase.bgRed.r, canvasBase.bgRed.g, canvasBase.bgRed.b);
+  level_2Rect.background(
+    canvasBase.bgRed.r,
+    canvasBase.bgRed.g,
+    canvasBase.bgRed.b
+  );
   if (poses.length > 0) {
     updateUser(poses[0]);
   }
@@ -499,29 +611,49 @@ function level_2Play() {
   if (textBase.set) {
     textBase.displayChosenNumber(); // display chosen number
     // Check if passcode matches with stored passcode
-    if (textBase.stringTest === (str(extLibrary.passcode))) {
+    if (textBase.stringTest === str(extLibrary.passcode)) {
       console.log("yes!");
     } else {
       if (chosenNumbers.length === chosenNumLength) {
         // switch state after 3s
-        setTimeout(function() {
+        setTimeout(function () {
           state = "limbo";
         }, 3000);
+      }
     }
   }
-  }
-
 
   videoImg.displayVideo();
   // draw rect_2 and video image
   imageMode(CORNER);
   image(level_2Rect, canvasBase.canvas_2.x, canvasBase.canvas_2.y);
-
 }
 // ********** END - LEVEL_2 FUNCTIONS *******************
 
 function limbo() {
-  background(0);
+  // display Start Background + Graphics
+  background(
+    canvasBase.bgOrangeLevel_1.r,
+    canvasBase.bgOrangeLevel_1.g,
+    canvasBase.bgOrangeLevel_1.b
+  );
+  displayStarGraphics();
+  // display Level_1 Background + Graphics
+  showLevel_1unicorns();
+  // display Level_2 Background + Graphics
+  level_2Rect.background(
+    canvasBase.bgRed.r,
+    canvasBase.bgRed.g,
+    canvasBase.bgRed.b
+  );
+  canvasBase.tintBgRed(); // tint Red
+  displayStarGraphics();
+  // display Level_3 Background + graphics
+  limboRect.background(0);
+
+  // display LimboRect
+  imageMode(CORNER);
+  image(limboRect, canvasBase.canvas_3.x, canvasBase.canvas_3.y);
 }
 
 function keyPressed() {
@@ -551,9 +683,9 @@ function keyPressed() {
   }
 
   // // for testing
-  // if (keyCode === UP_ARROW) {
-  //   textBase.curIndex += 1;
-  // }
+  if (keyCode === UP_ARROW) {
+    state = "limbo";
+  }
   // if (keyCode === DOWN_ARROW) {
   //   textBase.curIndex = textBase.curIndex - 1;
   // }
@@ -561,13 +693,10 @@ function keyPressed() {
   if (keyCode === ENTER) {
     textBase.set = true;
     if (chosenNumbers.length <= chosenNumLength) {
-    chosenNumbers.push(textBase.curIndex);
+      chosenNumbers.push(textBase.curIndex);
+    }
   }
 }
-}
-
-
-
 
 // random function for FaceMesh
 function randomNumber(min, max) {
