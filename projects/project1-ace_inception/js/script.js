@@ -41,12 +41,12 @@ const VAULT_IMG = `assets/images/vault.png`;
 const FIST_DIAGRAM_IMG = `assets/images/fistDiagram.png`;
 const FIST_IMG = `assets/images/fist.png`;
 
-let state = `limbo`; // start, level_1, level_2, limbo, end
+let state = `level_2`; // start, level_1, level_2, limbo, end
 
 // Level variables
 let startedLevel_1 = 0; // 0, 1, 2
 let level_1Rect = undefined;
-let startedLevel_2 = 0; // 0, 1, 2, 3
+let startedLevel_2 = 2; // 0, 1, 2, 3
 let level_2Rect = undefined;
 let limboRect = undefined;
 let loaded = false;
@@ -389,7 +389,7 @@ function displayStarGraphics() {
     if (state === `limbo`) {
       stars[i].fill += -1;
       stars[i].speed += 1;
-      stars[i].speed = constrain(stars[i].speed, 0.4, 3);
+      stars[i].speed = constrain(stars[i].speed, 0.4, 5);
     }
   }
   pop();
@@ -613,6 +613,8 @@ function level_2Play() {
     // Check if passcode matches with stored passcode
     if (textBase.stringTest === str(extLibrary.passcode)) {
       console.log("yes!");
+      vault.displayVaultStatic();
+      vault.scale += 1;
     } else {
       if (chosenNumbers.length === chosenNumLength) {
         // switch state after 3s
@@ -685,6 +687,8 @@ function keyPressed() {
   // // for testing
   if (keyCode === UP_ARROW) {
     state = "limbo";
+    vault.displayVaultStatic();
+    vault.scale += 1;
   }
   // if (keyCode === DOWN_ARROW) {
   //   textBase.curIndex = textBase.curIndex - 1;
