@@ -42,17 +42,19 @@ const VAULT_IMG = `assets/images/vault.png`;
 const FIST_DIAGRAM_IMG = `assets/images/fistdiagram.png`;
 const FIST_IMG = `assets/images/fist.png`;
 
-let state = `level_2`; // start, level_1, level_2, limbo, end
+let state = `limbo`; // start, level_1, level_2, limbo, end
 
 // Level variables
 let startedLevel_1 = 0; // 0, 1, 2
 let level_1Rect = undefined;
-let startedLevel_2 = 4; // 0, 1, 2, 3
+let startedLevel_2 = 0; // 0, 1, 2, 3
 let level_2Rect = undefined;
+let startedLimbo = 0; //
 let limboRect = undefined;
 let loaded = false;
 let inPlay = false;
 let paused = true;
+let escapedLimbo = false;
 
 // Canvas & background variables
 let canvasBase;
@@ -347,11 +349,6 @@ function level_2() {
   }
   // load program to access vault
   else if (startedLevel_2 == 3) {
-    // if (!loaded) {
-    //   loadPosenet();
-    //   loaded = true;
-    // } // TESTING!!!
-    // showLevel_1unicorns();
     level_2Play();
   }
   // load when vault is accessed
@@ -361,6 +358,53 @@ function level_2() {
     level_2Vault();
   }
 } // END LEVEL_2
+
+// LIMBO
+function limbo() {
+  if (startedLimbo === 0) {
+    // display Start Background + Graphics
+    background(
+      canvasBase.bgOrangeLevel_1.r,
+      canvasBase.bgOrangeLevel_1.g,
+      canvasBase.bgOrangeLevel_1.b
+    );
+
+    // display Level_2 Background + Graphics
+    level_2Rect.background(
+      canvasBase.bgRed.r,
+      canvasBase.bgRed.g,
+      canvasBase.bgRed.b
+    );
+    startedLimbo = 1;
+  } else if (startedLimbo == 1) {
+    canvasBase.tintBgRed(); // tint Red
+    displayStarGraphics();
+    showLevel_1unicorns();
+    showLimboRectStart();
+  }
+
+  // // display Level_3 Background + graphics
+  // limboRect.background(0);
+  // displayLimboGraphics();
+  // canvasBase.mousePoint();
+  // translate(
+  //   canvasBase.canvas_3.x + canvasBase.canvas_3.x / 2,
+  //   canvasBase.canvas_3.y + canvasBase.canvas_3.y
+  // );
+  // canvasBase.checkInsideRect();
+  // if (canvasBase.insideLimbo) {
+  //   rotate(canvasBase.limboRectSpeed);
+  //   canvasBase.angleMode = canvasBase.angleMode + canvasBase.limboRectSpeed;
+  // }
+  // // display LimboRect
+  // imageMode(CENTER);
+  // angleMode(DEGREES);
+  // rotate(canvasBase.limboAngle);
+  // image(limboRect, 0, 0);
+  // if (escapedLimbo) {
+  //   repelSpikeLimbo();
+  // }
+} // END LIMBO
 
 // ********** START FUNCTIONS ***************************
 function displayStartText() {
@@ -601,7 +645,7 @@ function level_2GetPasscode() {
     extLibrary.showVoiceDenied(); // display denied text
     // switch state after 3s
     setTimeout(function () {
-      state = "limbo";
+      state = `limbo`;
     }, 3000);
   }
 
@@ -647,7 +691,7 @@ function level_2Play() {
       if (chosenNumbers.length === chosenNumLength) {
         // switch state after 3s
         setTimeout(function () {
-          state = "limbo";
+          state = `limbo`;
         }, 3000);
       }
     }
@@ -685,11 +729,10 @@ function level_2Vault() {
     canvasBase.bgRedLevel_3.g,
     canvasBase.bgRedLevel_3.b
   );
-
   displayVaultGraphics();
-
   textBase.displayKickTimerLevel_2();
   if (!paused) {
+    displayVaultGraphics();
     textBase.kickTimer -= 0.1;
   } else {
     textBase.displayKickTimerLevel_2();
@@ -697,7 +740,7 @@ function level_2Vault() {
   if (paused && textBase.kickTimer >= 0) {
     repelSpike();
   } else if (textBase.kickTimer <= 0) {
-    state = "limbo";
+    state = `limbo`;
   }
 }
 
@@ -735,31 +778,18 @@ function repelSpike() {
 
 // ********** END - LEVEL_2 FUNCTIONS *******************
 
-function limbo() {
-  // display Start Background + Graphics
-  background(
-    canvasBase.bgOrangeLevel_1.r,
-    canvasBase.bgOrangeLevel_1.g,
-    canvasBase.bgOrangeLevel_1.b
-  );
-  displayStarGraphics();
-  // display Level_1 Background + Graphics
-  showLevel_1unicorns();
-  // display Level_2 Background + Graphics
-  level_2Rect.background(
-    canvasBase.bgRed.r,
-    canvasBase.bgRed.g,
-    canvasBase.bgRed.b
-  );
-  canvasBase.tintBgRed(); // tint Red
-  displayStarGraphics();
-  // display Level_3 Background + graphics
-  limboRect.background(0);
-  displayLimboGraphics();
+//********** LIMBO FUNCTIONS **************************
 
-  // display LimboRect
-  imageMode(CORNER);
-  image(limboRect, canvasBase.canvas_3.x, canvasBase.canvas_3.y);
+function showLimboRectStart() {
+  limboRect.background(0);
+  textBase.displayLimboText();
+  imageMode(CENTER);
+  translate(
+    canvasBase.canvas_3.x + canvasBase.canvas_3.x / 2,
+    canvasBase.canvas_3.y + canvasBase.canvas_3.y
+  );
+  rotate(canvasBase.limboAngle);
+  image(limboRect, 0, 0);
 }
 
 function displayLimboGraphics() {
@@ -772,6 +802,27 @@ function displayLimboGraphics() {
   alpacaVault.moveRandomImg();
   alpacaVault.displayRandomImgLimbo();
 }
+
+function repelSpikeLimbo() {
+  for (let i = 0; i < dopeySpikes.length; i++) {
+    let dopeySpike = dopeySpikes[i];
+    // dopeySpike.chase = true;
+    dopeySpike.limboImgX -= (alpacaVault.limboImgX - dopeySpike.limboImgX) / 20;
+    dopeySpike.limboImgY -= (alpacaVault.limboImgY - dopeySpike.limboImgY) / 20;
+
+    if (dopeySpike.offScreen) {
+      dopeySpikes.splice(i, 1);
+      if (i <= 0) {
+        // switch state after 3s
+        setTimeout(function () {
+          state = `start`;
+        }, 3000);
+      }
+    }
+  }
+}
+
+// ********** END - LIMBO FUNCTIONS *******************
 
 function end() {
   background(0);
@@ -802,6 +853,11 @@ function keyPressed() {
       paused = false;
     }
   }
+  if (state === `limbo`) {
+    if (startedLimbo === 1 && keyCode === 32) {
+      startedLimbo = 2;
+    }
+  }
   // console.log(startedLevel_2);
 
   // // // for testing
@@ -820,7 +876,8 @@ function keyPressed() {
 }
 
 function mousePressed() {
-  alpacaVault.checkFoundAlpaca();
+  alpacaVault.checkFoundAlpaca(canvasBase);
+  alpacaVault.checkFoundAlpacaLimbo(canvasBase);
 }
 
 // random function for FaceMesh
