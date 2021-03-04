@@ -11,7 +11,6 @@ class ImgBase {
     this.thickness = 10;
     // vault
     this.enter = false;
-    this.rotateSpeed = 0;
     this.reCenter = 25;
     this.movePosition = 100;
     this.add = false;
@@ -88,8 +87,6 @@ class ImgBase {
     level_2Rect.scale(this.scale);
     level_2Rect.image(this.image, 0, -this.reCenter);
     level_2Rect.pop();
-
-    // console.log(this.angle);
   }
 
   displayFistDiagram() {

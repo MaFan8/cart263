@@ -57,6 +57,9 @@ class CanvasAndBg {
       g: 13,
       b: 0,
     };
+    this.limboRectSpeed = 0;
+    this.limboAngle = 0;
+    this.insideLimbo = false;
   }
 
   canvasStart() {
@@ -98,5 +101,26 @@ class CanvasAndBg {
     this.bgRed.g += -1;
     this.bgRed.r = constrain(this.bgRed.r, this.bgRedLevel_3.r, this.bgRed.r);
     this.bgRed.g = constrain(this.bgRed.g, this.bgRedLevel_3.g, this.bgRed.g);
+  }
+
+  checkInsideRect() {
+    if (
+      mouseX - this.canvas_3.x > 0 &&
+      mouseX - this.canvas_3.x < limboRect.width &&
+      mouseY - this.canvas_3.y > 0 &&
+      mouseY - this.canvas_3.y < limboRect.height
+    ) {
+      this.insideLimbo = true;
+      this.limboRectSpeed += 2;
+    }
+  }
+
+  mousePoint() {
+    limboRect.push();
+    limboRect.fill(200);
+    limboRect.rectMode(CENTER);
+    limboRect.translate(mouseX - this.canvas_3.x, mouseY - this.canvas_3.y);
+    limboRect.ellipse(0, 0, 20);
+    limboRect.pop();
   }
 }

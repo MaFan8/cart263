@@ -190,12 +190,12 @@ class Unicorn {
     level_1Rect.pop();
   }
 
-  checkFoundAlpaca() {
+  checkFoundAlpaca(canvasBase) {
     if (
-      mouseX - 250 > this.randomImgX - this.randomImgSize &&
-      mouseX - 250 < this.randomImgX + this.randomImgSize &&
-      mouseY - 150 > this.randomImgY - this.randomImgSize &&
-      mouseY - 150 < this.randomImgY + this.randomImgSize
+      mouseX - canvasBase.canvas_2.x > this.randomImgX - this.randomImgSize &&
+      mouseX - canvasBase.canvas_2.x < this.randomImgX + this.randomImgSize &&
+      mouseY - canvasBase.canvas_2.y > this.randomImgY - this.randomImgSize &&
+      mouseY - canvasBase.canvas_2.y < this.randomImgY + this.randomImgSize
     ) {
       paused = true;
     }
@@ -239,6 +239,17 @@ class Unicorn {
     }
   }
 
+  checkFoundAlpacaLimbo(canvasBase) {
+    if (
+      mouseX - canvasBase.canvas_3.x > this.limboImgX - this.limboImgSize &&
+      mouseX - canvasBase.canvas_3.x < this.limboImgX + this.limboImgSize &&
+      mouseY - canvasBase.canvas_3.y > this.limboImgY - this.limboImgSize &&
+      mouseY - canvasBase.canvas_3.y < this.limboImgY + this.limboImgSize
+    ) {
+      escapedLimbo = true;
+    }
+  }
+
   moveRandomImg() {
     // make image shaky
     this.limboImgX += random(-this.imgShake, this.imgShake);
@@ -251,7 +262,7 @@ class Unicorn {
     limboRect.translate(this.limboImgX, this.limboImgY);
     limboRect.tint(255, this.alpha);
     limboRect.scale(this.imgScale);
-    limboRect.image(this.image, 0, 0, this.randomImgSize, this.randomImgSize);
+    limboRect.image(this.image, 0, 0, this.limboImgSize, this.limboImgSize);
     limboRect.pop();
   }
 }
