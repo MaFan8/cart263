@@ -372,7 +372,7 @@ class TextBase {
     if (this.kickTimer <= 2000) {
       level_2Rect.fill(255);
       level_2Rect.textSize(this.size - 8);
-      level_2Rect.text(`Time: ${Math.floor(this.kickTimer)}`, 60, 50);
+      level_2Rect.text(`Time: ${Math.floor(this.kickTimer)}`, 120, 50);
     }
   }
   // END LEVEL_2 FUNCTIONS

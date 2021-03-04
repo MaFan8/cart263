@@ -43,12 +43,12 @@ const VAULT_IMG = `assets/images/vault.png`;
 const FIST_DIAGRAM_IMG = `assets/images/fistdiagram.png`;
 const FIST_IMG = `assets/images/fist.png`;
 
-let state = `level_2`; // start, level_1, level_2, limbo, end
+let state = `limbo`; // start, level_1, level_2, limbo, end
 
 // Level variables
 let startedLevel_1 = 0; // 0, 1, 2
 let level_1Rect = undefined;
-let startedLevel_2 = 0; // 0, 1, 2, 3
+let startedLevel_2 = 0; // 0, 1, 2, 3, 4, 5
 let level_2Rect = undefined;
 let startedLimbo = 0; //0, 1, 2, 3
 let limboRect = undefined;
@@ -171,11 +171,11 @@ function imagesSetup() {
     stars[i] = new Star();
   }
   heart = new ImgBase(img.heartX, img.heartY, heartImg, img.sizeBig);
-  heartEnd = new ImgBase(width / 2, height / 2, heartImg, 2.5);
+  heartEnd = new ImgBase(width/3, height / 3, heartImg, 1);
   aceBody = new Body(img.x, img.y, aceBodyImg, img.sizeSmall);
   aceHeadAngry = new ImgBase(img.x, img.y, aceHeadAngry, img.sizeSmall);
-  aceHeadEnd = new ImgBase(width / 2 + 80, height / 3, aceHeadImg, 1);
-  aceKickEnd = new Body(width / 2 + 80, height / 2 - 80, aceKickImg, 1);
+  aceHeadEnd = new ImgBase(width / 2 +50, height / 3, aceHeadImg, 1);
+  aceKickEnd = new Body(width / 2 , height / 2 - 80, aceKickImg, 1);
   spike = new ImgBase(
     img.heartX + 50,
     img.heartY - 60,
@@ -676,7 +676,7 @@ function level_2Play() {
       // switch state after 3s
       setTimeout(function () {
         poseNet.removeListener("pose", callback); // Stop Posenet from detecting poses
-        video.pause();
+        video.stop();
         startedLevel_2 = 4;
       }, 3000);
     } else {
@@ -704,6 +704,7 @@ function level_2VaultIntro() {
     canvasBase.bgRed.b
   );
   canvasBase.tintBgRed();
+
   for (let i = 0; i < dopeySpikes.length; i++) {
     let dopeySpike = dopeySpikes[i];
     dopeySpike.displayRandomImg();
@@ -721,16 +722,16 @@ function level_2Vault() {
     canvasBase.bgRedLevel_3.g,
     canvasBase.bgRedLevel_3.b
   );
-}
 
-function displayVaultGraphics() {
+displayVaultGraphics();
   textBase.displayKickTimerLevel_2();
   if (!paused) {
     displayVaultGraphics();
     textBase.kickTimer -= 0.1;
-  } else {
-    textBase.displayKickTimerLevel_2();
   }
+  // else {
+  //   textBase.displayKickTimerLevel_2();
+  // }
   if (paused && textBase.kickTimer >= 0) {
     repelSpike();
   } else if (textBase.kickTimer <= 0) {
@@ -758,12 +759,12 @@ function repelSpike() {
     dopeySpike.randomImgY -=
       (alpacaVault.randomImgY - dopeySpike.randomImgY) / 20;
 
-    if (dopeySpike.randomOffScreen) {
+    if (dopeySpike.imgOffScreen) {
       dopeySpikes.splice(i, 1);
       if (i <= 0) {
         // switch state after 3s
         setTimeout(function () {
-          state = "end";
+          state = `end`;
         }, 3000);
       }
     }
@@ -868,6 +869,8 @@ function end() {
   spikeEnd.display();
   alpacaEnd.display();
   textBase.displayEndTitle();
+
+
 }
 
 function keyPressed() {
@@ -900,14 +903,12 @@ function keyPressed() {
       startedLimbo = 2;
     }
   }
-  // console.log(startedLevel_2);
 
   // // // for testing
   if (keyCode === UP_ARROW) {
-    state = `limbo`;
+    video.stop();
+    console.log(video)
   }
-  // if (keyCode === DOWN_ARROW) {
-  // }
 
   if (keyCode === ENTER) {
     textBase.set = true;
