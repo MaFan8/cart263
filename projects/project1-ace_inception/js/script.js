@@ -37,12 +37,13 @@ const NUM_UNICORN_IMG = 4;
 const NUM_UNICORNS = 50;
 const UNICORN_IMG = `assets/images/unicorn`;
 const SPIKE_BACK_IMG = `assets/images/spikeback.png`;
+const NUM_SPIKE = 6;
 const NUM_DOPEY_SPIKE = 80;
 const VAULT_IMG = `assets/images/vault.png`;
 const FIST_DIAGRAM_IMG = `assets/images/fistdiagram.png`;
 const FIST_IMG = `assets/images/fist.png`;
 
-let state = `limbo`; // start, level_1, level_2, limbo, end
+let state = `end`; // start, level_1, level_2, limbo, end
 
 // Level variables
 let startedLevel_1 = 0; // 0, 1, 2
@@ -86,19 +87,23 @@ let img = {
   sizeBig: 1.2,
   heartX: 250,
   heartY: 480,
-  // kickX: 100,
-  // kickY: 100,
+  kickX: 100,
+  kickY: 100,
+  spikeX: undefined,
+  spikeY: undefined,
+  spacing: 50,
 };
-let heartImg, heart;
+let heartImg, heart, heartEnd;
 // Image variables: Level_1
-let aceHeadImg, aceHead;
+let aceHeadImg, aceHeadEnd;
 let aceHeadAngryImg, aceHeadAngry;
 let aceBodyImg, aceBody;
-let aceKickImg, aceKick;
-let spikeImg, spike;
+let aceKickImg, aceKickEnd;
+let spikeImg, spike, spikeEnd;
 let dopeySpikes = [];
 let spikeBackImg, spikeBack;
-let alpacaImg, alpaca, alpacaVault;
+let spikeBackEnds = [];
+let alpacaImg, alpaca, alpacaVault, alpacaEnd;
 //unicorns images
 let unicornAceFrontImg, unicornAceFront;
 let unicornAceImg, unicornAce;
@@ -166,16 +171,18 @@ function imagesSetup() {
     stars[i] = new Star();
   }
   heart = new ImgBase(img.heartX, img.heartY, heartImg, img.sizeBig);
+  heartEnd = new ImgBase(width / 2, height / 2, heartImg, 2.5);
   aceBody = new Body(img.x, img.y, aceBodyImg, img.sizeSmall);
   aceHeadAngry = new ImgBase(img.x, img.y, aceHeadAngry, img.sizeSmall);
-  aceHead = new ImgBase(width / 2, height / 2, aceHeadImg);
-  // aceKick = new Body(img.kickX, img.kickY, aceKickImg);
+  aceHeadEnd = new ImgBase(width / 2 + 80, height / 3, aceHeadImg, 1);
+  aceKickEnd = new Body(width / 2 + 80, height / 2 - 80, aceKickImg, 1);
   spike = new ImgBase(
     img.heartX + 50,
     img.heartY - 60,
     spikeImg,
     img.sizeSmall
   );
+  spikeEnd = new ImgBase(width / 3 + 120, height / 3, spikeImg, img.sizeSmall);
   // Array of Spike images
   for (let i = 0; i < NUM_DOPEY_SPIKE; i++) {
     let dopeySpike = new Unicorn(spikeImg, level_2Rect);
@@ -188,7 +195,12 @@ function imagesSetup() {
     img.sizeSmall + 0.2
   );
   alpacaVault = new Unicorn(alpacaImg, level_2Rect);
+  alpacaEnd = new ImgBase(width / 4 + 120, height / 2.5, alpacaImg, 1);
   spikeBack = new User(spikeBackImg, level_1Rect);
+  for (let i = 0; i < NUM_SPIKE; i++) {
+    let spikeBackEnd = new Unicorn(spikeBackImg);
+    spikeBackEnds.push(spikeBackEnd);
+  }
   // unicorns
   unicornAceFront = new Unicorn(unicornAceFrontImg, level_1Rect);
   unicornAce = new Unicorn(unicornAceImg, level_1Rect);
@@ -835,7 +847,29 @@ function repelSpikeLimbo() {
 // ********** END - LIMBO FUNCTIONS *******************
 
 function end() {
-  background(0);
+  background(
+    canvasBase.bgOrange.r,
+    canvasBase.bgOrange.g,
+    canvasBase.bgOrange.b
+  );
+  displayStarGraphics();
+  // display spikeBackEnds
+
+  for (let i = 0; i < spikeBackEnds.length; i++) {
+    let spikeBackEnd = spikeBackEnds[i];
+    if (frameCount % 350 == 1) {
+      spikeBackEnd.displaySpikeEnd();
+      spikeBackEnd.moveRandom();
+    }
+  }
+
+  aceKickEnd.display();
+  aceHeadEnd.display();
+  aceHeadEnd.move();
+  heartEnd.displayHeart();
+  spikeEnd.display();
+  alpacaEnd.display();
+  textBase.displayEndTitle();
 }
 
 function keyPressed() {

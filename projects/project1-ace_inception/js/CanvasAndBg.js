@@ -81,6 +81,21 @@ class CanvasAndBg {
     );
   }
 
+  brightBgOrange() {
+    this.bgOrangeLevel_1.r += 1;
+    this.bgOrangeLevel_1.g += 1;
+    this.bgOrangeLevel_1.r = constrain(
+      this.bgOrangeLevel_1.r,
+      this.bgOrange.r,
+      this.bgOrangeLevel_1.r
+    );
+    this.bgOrangeLevel_1.g = constrain(
+      this.bgOrangeLevel_1.g,
+      this.bgOrange.g,
+      this.bgOrangeLevel_1.g
+    );
+  }
+
   tintBgTeal() {
     this.bgTeal.g += -1;
     this.bgTeal.b += -1;

@@ -82,6 +82,9 @@ class TextBase {
     this.limboTitle = `WELCOME TO LIMBO...`;
     this.limboText = `Maybe there's a chance\nto get out...\n\nSimply find and click on the alpaca.`;
 
+    // end variables
+    this.endTitle = `AMAYYAZING!!`;
+
     // END TEXT
 
     // main parameters
@@ -407,5 +410,19 @@ class TextBase {
       limboRect.height / 1.2
     );
     limboRect.pop();
+  }
+
+  // END FUNCTIONS
+  displayEndTitle() {
+    push();
+    fill(
+      this.fill3.r + sin(frameCount * 0.01) * 255,
+      this.fill3.g,
+      this.fill3.b
+    );
+    textSize(this.sizeLg * 1.5);
+    textAlign(CENTER);
+    text(this.endTitle, width / 2, height - height / 4);
+    pop();
   }
 }

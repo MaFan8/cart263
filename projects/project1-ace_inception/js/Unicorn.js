@@ -265,4 +265,20 @@ class Unicorn {
     limboRect.image(this.image, 0, 0, this.limboImgSize, this.limboImgSize);
     limboRect.pop();
   }
+
+  // end
+
+  displaySpikeEnd() {
+    this.x = random(width);
+    this.y = random(height);
+    this.angle = random(360);
+    this.scale = random(0.5, 1);
+    push();
+    translate(this.x, this.y);
+    angleMode(this.angle);
+    rotate(this.angle);
+    scale(this.scale);
+    image(this.image, 0, 0);
+    pop();
+  }
 }
