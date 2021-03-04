@@ -37,20 +37,22 @@ const NUM_UNICORN_IMG = 4;
 const NUM_UNICORNS = 50;
 const UNICORN_IMG = `assets/images/unicorn`;
 const SPIKE_BACK_IMG = `assets/images/spikeback.png`;
+const NUM_DOPEY_SPIKE = 80;
 const VAULT_IMG = `assets/images/vault.png`;
 const FIST_DIAGRAM_IMG = `assets/images/fistdiagram.png`;
 const FIST_IMG = `assets/images/fist.png`;
 
-let state = `start`; // start, level_1, level_2, limbo, end
+let state = `level_2`; // start, level_1, level_2, limbo, end
 
 // Level variables
 let startedLevel_1 = 0; // 0, 1, 2
 let level_1Rect = undefined;
-let startedLevel_2 = 0; // 0, 1, 2, 3
+let startedLevel_2 = 4; // 0, 1, 2, 3
 let level_2Rect = undefined;
 let limboRect = undefined;
 let loaded = false;
 let inPlay = false;
+let paused = true;
 
 // Canvas & background variables
 let canvasBase;
@@ -61,6 +63,7 @@ let extLibrary;
 let videoImg, video;
 let user;
 let poseNet;
+let callback;
 let pose;
 let poses = [];
 let name;
@@ -91,8 +94,9 @@ let aceHeadAngryImg, aceHeadAngry;
 let aceBodyImg, aceBody;
 let aceKickImg, aceKick;
 let spikeImg, spike;
+let dopeySpikes = [];
 let spikeBackImg, spikeBack;
-let alpacaImg, alpaca;
+let alpacaImg, alpaca, alpacaVault;
 //unicorns images
 let unicornAceFrontImg, unicornAceFront;
 let unicornAceImg, unicornAce;
@@ -170,12 +174,18 @@ function imagesSetup() {
     spikeImg,
     img.sizeSmall
   );
+  // Array of Spike images
+  for (let i = 0; i < NUM_DOPEY_SPIKE; i++) {
+    let dopeySpike = new Unicorn(spikeImg, level_2Rect);
+    dopeySpikes.push(dopeySpike);
+  }
   alpaca = new ImgBase(
     img.heartX - 20,
     img.heartY,
     alpacaImg,
     img.sizeSmall + 0.2
   );
+  alpacaVault = new Unicorn(alpacaImg, level_2Rect);
   spikeBack = new User(spikeBackImg, level_1Rect);
   // unicorns
   unicornAceFront = new Unicorn(unicornAceFrontImg, level_1Rect);
@@ -229,11 +239,12 @@ function loadPosenet() {
       loaded = true;
     }
   );
-  // turn on poseNet
-  poseNet.on("pose", function (results) {
+  callback = function (results) {
     poses = results;
     // console.log(poses);
-  });
+  };
+  // turn on poseNet
+  poseNet.on("pose", callback);
 } // END POSENET
 
 // DRAW
@@ -336,8 +347,18 @@ function level_2() {
   }
   // load program to access vault
   else if (startedLevel_2 == 3) {
+    // if (!loaded) {
+    //   loadPosenet();
+    //   loaded = true;
+    // } // TESTING!!!
+    // showLevel_1unicorns();
     level_2Play();
-    showLevel_1unicorns();
+  }
+  // load when vault is accessed
+  else if (startedLevel_2 == 4) {
+    level_2VaultIntro();
+  } else if (startedLevel_2 == 5) {
+    level_2Vault();
   }
 } // END LEVEL_2
 
@@ -460,6 +481,7 @@ function showUnicornAceFront() {
       user.y - unicornAceFront.safeDist
     );
     if (d < unicornAceFront.safeDist) {
+      poseNet.removeListener("pose", callback);
       state = `level_2`;
     }
   }
@@ -550,17 +572,17 @@ function level_2GetPasscode() {
     extLibrary.showVoiceInstruction();
   }
   // then if name is correct, show password and speak confirmation of retrieval
-  else if (extLibrary.correct && extLibrary.passcodeSet === false) {
+  else if (extLibrary.correct && !extLibrary.passcodeSet) {
     setTimeout(function () {
       extLibrary.generatePasscode(); // generate passcode and display
-
-      let counter = 10;
+      // start 10s countdown
+      let counter = 5;
       let timerInterval = setInterval(function () {
-        textBase.updateTimer(counter);
+        textBase.updateTimer(counter); // update timer text
         loadPosenet(); // Load Posenet
-        counter--;
+        counter--; // counting down
         if (counter <= 0) {
-          clearInterval(timerInterval);
+          clearInterval(timerInterval); // clear setInterval
         }
       }, 1000);
     }, 3000); // generate passcode after 3s
@@ -594,6 +616,7 @@ function level_2GetPasscode() {
 }
 
 function level_2Play() {
+  showLevel_1unicorns();
   //reset rect_2:
   level_2Rect.clear();
   level_2Rect.background(
@@ -605,6 +628,7 @@ function level_2Play() {
     updateUser(poses[0]);
   }
   vault.displayVault(user); // display vault that turns by poses
+
   fist.displayFists(user); // display hands
   textBase.checkDail(vault); // check dail movement and translate to currentIndex
   textBase.displayNumber(); // display number from dail Movement
@@ -612,9 +636,13 @@ function level_2Play() {
     textBase.displayChosenNumber(); // display chosen number
     // Check if passcode matches with stored passcode
     if (textBase.stringTest === str(extLibrary.passcode)) {
-      console.log("yes!");
-      vault.displayVaultStatic();
-      vault.scale += 1;
+      vault.enter = true; // enter vault
+      // switch state after 3s
+      setTimeout(function () {
+        poseNet.removeListener("pose", callback); // Stop Posenet from detecting poses
+        video.pause();
+        startedLevel_2 = 4;
+      }, 3000);
     } else {
       if (chosenNumbers.length === chosenNumLength) {
         // switch state after 3s
@@ -630,6 +658,81 @@ function level_2Play() {
   imageMode(CORNER);
   image(level_2Rect, canvasBase.canvas_2.x, canvasBase.canvas_2.y);
 }
+
+function level_2VaultIntro() {
+  showLevel_1unicorns();
+  level_2Rect.clear();
+  level_2Rect.background(
+    canvasBase.bgRed.r,
+    canvasBase.bgRed.g,
+    canvasBase.bgRed.b
+  );
+  canvasBase.tintBgRed();
+  for (let i = 0; i < dopeySpikes.length; i++) {
+    let dopeySpike = dopeySpikes[i];
+    dopeySpike.displayRandomImg();
+  }
+  textBase.displayVaultText();
+  textBase.displayKickTimerLevel_2();
+  textBase.infoShown = true;
+}
+
+function level_2Vault() {
+  showLevel_1unicorns();
+  level_2Rect.clear();
+  level_2Rect.background(
+    canvasBase.bgRedLevel_3.r,
+    canvasBase.bgRedLevel_3.g,
+    canvasBase.bgRedLevel_3.b
+  );
+
+  displayVaultGraphics();
+
+  textBase.displayKickTimerLevel_2();
+  if (!paused) {
+    textBase.kickTimer -= 0.1;
+  } else {
+    textBase.displayKickTimerLevel_2();
+  }
+  if (paused && textBase.kickTimer >= 0) {
+    repelSpike();
+  } else if (textBase.kickTimer <= 0) {
+    state = "limbo";
+  }
+}
+
+function displayVaultGraphics() {
+  for (let i = 0; i < dopeySpikes.length; i++) {
+    let dopeySpike = dopeySpikes[i];
+    dopeySpike.checkOffScreen();
+    dopeySpike.moveRandomImg();
+    dopeySpike.displayRandomImg();
+  }
+  alpacaVault.moveRandomImg();
+  alpacaVault.displayRandomImg();
+}
+
+function repelSpike() {
+  for (let i = 0; i < dopeySpikes.length; i++) {
+    let dopeySpike = dopeySpikes[i];
+    // dopeySpike.chase = true;
+    dopeySpike.randomImgX -=
+      (alpacaVault.randomImgX - dopeySpike.randomImgX) / 20;
+    dopeySpike.randomImgY -=
+      (alpacaVault.randomImgY - dopeySpike.randomImgY) / 20;
+
+    if (dopeySpike.offScreen) {
+      dopeySpikes.splice(i, 1);
+      if (i <= 0) {
+        // switch state after 3s
+        setTimeout(function () {
+          state = "end";
+        }, 3000);
+      }
+    }
+  }
+}
+
 // ********** END - LEVEL_2 FUNCTIONS *******************
 
 function limbo() {
@@ -652,10 +755,26 @@ function limbo() {
   displayStarGraphics();
   // display Level_3 Background + graphics
   limboRect.background(0);
+  displayLimboGraphics();
 
   // display LimboRect
   imageMode(CORNER);
   image(limboRect, canvasBase.canvas_3.x, canvasBase.canvas_3.y);
+}
+
+function displayLimboGraphics() {
+  for (let i = 0; i < dopeySpikes.length; i++) {
+    let dopeySpike = dopeySpikes[i];
+    dopeySpike.checkOffScreenLimbo();
+    dopeySpike.moveRandomImg();
+    dopeySpike.displayRandomImgLimbo();
+  }
+  alpacaVault.moveRandomImg();
+  alpacaVault.displayRandomImgLimbo();
+}
+
+function end() {
+  background(0);
 }
 
 function keyPressed() {
@@ -674,24 +793,22 @@ function keyPressed() {
     if (startedLevel_2 === 1 && keyCode === 32) {
       startedLevel_2 = 2;
       inPlay = true;
-      // run responsiveVoice "Declare your name."
       extLibrary.timedPrompt();
     } else if (startedLevel_2 === 2 && keyCode === 32) {
       inPlay = !inPlay; // pause
+    } else if (startedLevel_2 === 4 && keyCode === 32) {
+      startedLevel_2 = 5;
+      textBase.infoShown = true;
+      paused = false;
     }
-    // else if (startedLevel_2 === 3 && keyCode === 32) {
-    //   inPlay = !inPlay; // pause
-    // }
   }
+  // console.log(startedLevel_2);
 
-  // // for testing
+  // // // for testing
   if (keyCode === UP_ARROW) {
-    state = "limbo";
-    vault.displayVaultStatic();
-    vault.scale += 1;
+    state = `limbo`;
   }
   // if (keyCode === DOWN_ARROW) {
-  //   textBase.curIndex = textBase.curIndex - 1;
   // }
 
   if (keyCode === ENTER) {
@@ -700,6 +817,10 @@ function keyPressed() {
       chosenNumbers.push(textBase.curIndex);
     }
   }
+}
+
+function mousePressed() {
+  alpacaVault.checkFoundAlpaca();
 }
 
 // random function for FaceMesh

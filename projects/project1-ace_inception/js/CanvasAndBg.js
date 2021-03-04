@@ -54,7 +54,7 @@ class CanvasAndBg {
     };
     this.bgRedLevel_3 = {
       r: 61,
-      g: 15,
+      g: 13,
       b: 0,
     };
   }

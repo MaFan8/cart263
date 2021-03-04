@@ -7,9 +7,10 @@ class ImgBase {
     this.angle = 0;
     this.angleSpeed = 0.05;
     // heart
-    this.stroke = (255);
-    this.thickness = (10);
+    this.stroke = 255;
+    this.thickness = 10;
     // vault
+    this.enter = false;
     this.rotateSpeed = 0;
     this.reCenter = 25;
     this.movePosition = 100;
@@ -26,14 +27,14 @@ class ImgBase {
     if (this.angle >= 10) {
       this.angle = -8;
     } else {
-      this.angleSpeed
+      this.angleSpeed;
     }
   }
 
   displayHeart() {
     push();
     translate(this.x, this.y);
-    scale(this.scale + sin(frameCount)*0.2);
+    scale(this.scale + sin(frameCount) * 0.2);
     image(this.image, 0, 0);
     pop();
   }
@@ -59,29 +60,43 @@ class ImgBase {
 
   displayVault(user) {
     level_2Rect.push();
-    level_2Rect.translate(this.x, this.y +this.reCenter);
-    this.rotateSpeed += 0.02;
-    if (user.wristLY < level_2Rect.height/2 && user.wristRY > level_2Rect.height/2) {
+    level_2Rect.translate(this.x, this.y + this.reCenter);
+    this.rotateSpeed += 0.08;
+    if (
+      user.wristLY < level_2Rect.height / 2 &&
+      user.wristRY > level_2Rect.height / 2
+    ) {
       level_2Rect.rotate(this.rotateSpeed);
+      this.angle = this.rotateSpeed + this.angle;
       this.add = true;
-    }
-    else if (user.wristLY > level_2Rect.height/2 && user.wristRY < level_2Rect.height/2) {
+    } else if (
+      user.wristLY > level_2Rect.height / 2 &&
+      user.wristRY < level_2Rect.height / 2
+    ) {
       level_2Rect.rotate(-this.rotateSpeed);
+      this.angle = this.angle - this.rotateSpeed;
       this.subtract = true;
+    }
+
+    if (this.enter) {
+      vault.scale += 0.4;
     }
     level_2Rect.imageMode(CENTER);
     level_2Rect.tint(255, 80);
+    level_2Rect.angleMode(DEGREES);
+    level_2Rect.rotate(this.angle);
     level_2Rect.scale(this.scale);
     level_2Rect.image(this.image, 0, -this.reCenter);
     level_2Rect.pop();
-  }
 
+    // console.log(this.angle);
+  }
 
   displayFistDiagram() {
     push();
-    translate(this.x, this.y -80);
+    translate(this.x, this.y - 80);
     imageMode(CORNER);
-    scale(this.scale + sin(frameCount/20)*0.1);
+    scale(this.scale + sin(frameCount / 20) * 0.1);
     image(this.image, 0, 0);
     pop();
   }
@@ -92,7 +107,13 @@ class ImgBase {
     level_2Rect.imageMode(CORNER);
     level_2Rect.translate(video.width, 0);
     level_2Rect.scale(-1, 1);
-    level_2Rect.image(video, -60, 0, level_2Rect.width + 20, level_2Rect.height);
+    level_2Rect.image(
+      video,
+      -60,
+      0,
+      level_2Rect.width + 20,
+      level_2Rect.height
+    );
     level_2Rect.pop();
   }
 
@@ -100,7 +121,7 @@ class ImgBase {
     level_2Rect.push();
     level_2Rect.translate(user.wristLX, user.wristLY - 100);
     level_2Rect.scale(this.scale);
-    level_2Rect.image(this.image, 0,0);
+    level_2Rect.image(this.image, 0, 0);
     level_2Rect.pop();
     level_2Rect.push();
     level_2Rect.translate(user.wristRX, user.wristRY - 100);
@@ -108,5 +129,4 @@ class ImgBase {
     level_2Rect.image(this.image, 0, 0);
     level_2Rect.pop();
   }
-
 }
