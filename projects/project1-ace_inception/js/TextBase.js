@@ -74,9 +74,14 @@ class TextBase {
     this.hint = `** Press "ENTER" to input code BACKWARDS!! ** `;
     // vault accessed text
     this.infoShown = false;
-    this.kickTitle = `Finally!!!!`;
+    this.kickTitle = `FINALLY!!!!`;
     this.kickText = `1. To initiate inception:\n   Find and click on Fuzzy BEFORE your\n   time runs out.\n\nThis will automatically preformed your kicks in all dream states in order to escape\nAce's monkey-filled mind.`;
     this.kickTimer = 20;
+
+    // Limbo variables
+    this.limboTitle = `WELCOME TO LIMBO...`;
+    this.limboText = `Maybe there's a chance\nto get out...\n\nSimply find and click on the alpaca.`;
+
     // END TEXT
 
     // main parameters
@@ -368,4 +373,39 @@ class TextBase {
     }
   }
   // END LEVEL_2 FUNCTIONS
+
+  // START LIMBO FUNCTIONS
+  displayLimboText() {
+    limboRect.textFont(`courier`);
+    // title
+    limboRect.push();
+    limboRect.fill(128);
+    limboRect.textSize(this.size);
+    limboRect.textAlign(CENTER);
+    limboRect.text(this.limboTitle, limboRect.width / 2, limboRect.height / 5);
+    limboRect.pop();
+    // text
+    limboRect.push();
+    limboRect.fill(this.fill4.r, this.fill4.g, this.fill4.b);
+    limboRect.textSize(this.size - 10);
+    limboRect.textAlign(CENTER);
+    limboRect.text(
+      this.limboText,
+      limboRect.width / 8,
+      limboRect.height / 3,
+      limboRect.width - limboRect.width / 4
+    );
+    limboRect.pop();
+    // pause
+    limboRect.push();
+    limboRect.fill(255 + sin(frameCount * 0.05) * 128);
+    limboRect.textAlign(CENTER, CENTER);
+    limboRect.textSize(this.size - 10);
+    limboRect.text(
+      `Press "SPACE" to start.`,
+      limboRect.width / 2,
+      limboRect.height / 1.2
+    );
+    limboRect.pop();
+  }
 }
