@@ -43,14 +43,14 @@ const VAULT_IMG = `assets/images/vault.png`;
 const FIST_DIAGRAM_IMG = `assets/images/fistdiagram.png`;
 const FIST_IMG = `assets/images/fist.png`;
 
-let state = `start`; // start, level_1, level_2, limbo, end
+let state = `level_2`; // start, level_1, level_2, limbo, end
 
 // Level variables
 let startedLevel_1 = 0; // 0, 1, 2
 let level_1Rect = undefined;
 let startedLevel_2 = 0; // 0, 1, 2, 3
 let level_2Rect = undefined;
-let startedLimbo = 0; //
+let startedLimbo = 0; //0, 1, 2, 3
 let limboRect = undefined;
 let loaded = false;
 let inPlay = false;
@@ -268,7 +268,6 @@ function draw() {
     canvasBase.bgOrange.g,
     canvasBase.bgOrange.b
   );
-
   if (state === `start`) {
     start();
   } else if (state === `level_1`) {
@@ -305,10 +304,10 @@ function level_1() {
     startedLevel_1 = 1;
   }
   // add start/pause instruction after Posenet is loaded
-  else if (startedLevel_1 == 1 && loaded) {
+  else if (startedLevel_1 === 1 && loaded) {
     // display start until keypressed to switch to 2
     displayLevel_1Start();
-  } else if (startedLevel_1 == 2) {
+  } else if (startedLevel_1 === 2) {
     if (inPlay) {
       level_1Play();
     } else {
@@ -341,11 +340,11 @@ function level_2() {
     startedLevel_2 = 1;
   }
   // display until keypressed to switch to state: 2
-  else if (startedLevel_2 == 1) {
+  else if (startedLevel_2 === 1) {
     showLevel_1Graphics();
   }
   // load program to get passcode
-  else if (startedLevel_2 == 2) {
+  else if (startedLevel_2 === 2) {
     if (inPlay) {
       level_2GetPasscode();
       showLevel_1unicorns();
@@ -360,13 +359,13 @@ function level_2() {
     }
   }
   // load program to access vault
-  else if (startedLevel_2 == 3) {
+  else if (startedLevel_2 === 3) {
     level_2Play();
   }
   // load when vault is accessed
-  else if (startedLevel_2 == 4) {
+  else if (startedLevel_2 === 4) {
     level_2VaultIntro();
-  } else if (startedLevel_2 == 5) {
+  } else if (startedLevel_2 === 5) {
     level_2Vault();
   }
 } // END LEVEL_2
@@ -388,11 +387,11 @@ function limbo() {
       canvasBase.bgRed.b
     );
     startedLimbo = 1;
-  } else if (startedLimbo == 1) {
+  } else if (startedLimbo === 1) {
     canvasBase.tintBgRed(); // tint Red
     showLevel_1unicorns();
     showLimboRectStart();
-  } else if (startedLimbo == 2) {
+  } else if (startedLimbo === 2) {
     // display Level_3 Background + graphics
     playLimbo();
   }
@@ -453,13 +452,13 @@ function displayStarGraphics() {
 }
 
 function level_1Play() {
-  background(
-    canvasBase.bgOrange.r,
-    canvasBase.bgOrange.g,
-    canvasBase.bgOrange.b
-  );
-  canvasBase.tintBgOrange();
-  displayStarGraphics();
+  // background(
+  //   canvasBase.bgOrange.r,
+  //   canvasBase.bgOrange.g,
+  //   canvasBase.bgOrange.b
+  // );
+  // canvasBase.tintBgOrange();
+  // displayStarGraphics();
   //reset rect_1
   level_1Rect.clear();
   level_1Rect.background(
@@ -475,7 +474,6 @@ function level_1Play() {
   showUnicornsFront();
   //display unicornAce after 35s
   if (millis() > 35000) showUnicornAceFront();
-
   // draw rect_1
   imageMode(CORNER);
   image(level_1Rect, canvasBase.canvas_1.x, canvasBase.canvas_1.y);
@@ -760,7 +758,7 @@ function repelSpike() {
     dopeySpike.randomImgY -=
       (alpacaVault.randomImgY - dopeySpike.randomImgY) / 20;
 
-    if (dopeySpike.offScreen) {
+    if (dopeySpike.randomOffScreen) {
       dopeySpikes.splice(i, 1);
       if (i <= 0) {
         // switch state after 3s
@@ -837,7 +835,7 @@ function repelSpikeLimbo() {
       if (i <= 0) {
         // switch state after 3s
         setTimeout(function () {
-          state = `start`;
+          location.reload();
         }, 3000);
       }
     }

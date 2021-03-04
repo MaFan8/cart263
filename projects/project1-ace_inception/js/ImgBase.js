@@ -12,6 +12,7 @@ class ImgBase {
     // vault
     this.enter = false;
     this.reCenter = 25;
+    this.rotateSpeed = 0;
     this.movePosition = 100;
     this.add = false;
     this.subtract = false;

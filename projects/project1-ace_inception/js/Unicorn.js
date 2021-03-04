@@ -6,7 +6,7 @@ class Unicorn {
     this.safeDist = 40;
     this.reset();
     // for Ace only
-    this.offScreen = 50;
+    this.offScreen = 80;
     this.isPaused = false;
     this.startTime = 0;
     this.timePassed = 0;
@@ -20,7 +20,7 @@ class Unicorn {
     this.randomImgSize = random(20, 120);
     this.randomDirection = random(0, 1);
     this.imgScale = undefined;
-    this.alpha = 80;
+    this.alpha2 = 80;
     this.directionSet = false;
     this.overAlpaca = false;
     this.FoundAlpaca = false;
@@ -34,7 +34,7 @@ class Unicorn {
     this.vSpeed = 0.5;
     this.jitterness = 0.01;
     this.switchedDirection = false;
-    this.offScreen = false;
+    this.randomOffScreen = false;
     //limbo variables
     this.limboImgX = random(0, limboRect.width);
     this.limboImgY = random(0, limboRect.height);
@@ -47,7 +47,7 @@ class Unicorn {
     this.y += this.vy;
     this.width += this.sizeIncrease / 2;
     this.height += this.sizeIncrease;
-    this.tint += 2;
+    this.tint += 1;
 
     // once image goes beyond 1/3 or 2/3 of window edges, then raise the image size and speed
     if (
@@ -214,7 +214,7 @@ class Unicorn {
       this.randomImgY < 0 ||
       this.randomImgY > level_2Rect.height
     ) {
-      this.offScreen = true;
+      this.imgOffScreen = true;
     }
   }
 
@@ -222,7 +222,7 @@ class Unicorn {
     level_2Rect.push();
     level_2Rect.imageMode(CENTER);
     level_2Rect.translate(this.randomImgX, this.randomImgY);
-    level_2Rect.tint(255, this.alpha);
+    level_2Rect.tint(255, this.alpha2);
     level_2Rect.scale(this.imgScale);
     level_2Rect.image(this.image, 0, 0, this.randomImgSize, this.randomImgSize);
     level_2Rect.pop();
@@ -235,7 +235,7 @@ class Unicorn {
       this.limboImgY < 0 ||
       this.limboImgY > limboRect.height
     ) {
-      this.offScreen = true;
+      this.randomOffScreen = true;
     }
   }
 
@@ -260,7 +260,7 @@ class Unicorn {
     limboRect.push();
     limboRect.imageMode(CENTER);
     limboRect.translate(this.limboImgX, this.limboImgY);
-    limboRect.tint(255, this.alpha);
+    limboRect.tint(255, this.alpha2);
     limboRect.scale(this.imgScale);
     limboRect.image(this.image, 0, 0, this.limboImgSize, this.limboImgSize);
     limboRect.pop();

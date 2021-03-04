@@ -1,14 +1,5 @@
 class ExternalLibraries {
   constructor() {
-    // // Posenet
-    // this.videoImg;
-    // this.video;
-    // this.user;
-    // this.poseNet;
-    // this.pose;
-    // this.poses = [];
-    // this.loaded = false;
-
     // annyang
     this.name;
 
@@ -28,23 +19,6 @@ class ExternalLibraries {
     this.setSpoken = false;
   }
 
-  // loadPosenet() {
-  //     // start video and hide video element
-  //     this.video = createCapture(VIDEO);
-  //     this.video.hide();
-  //     // get poses
-  //     this.poseNet = ml5.poseNet(this.video, {
-  //       flipHorizontal: true
-  //     }, function() {
-  //       console.log(`PoseNet loaded`);
-  //       this.loaded = true;
-  //     });
-  //     // turn on poseNet
-  //     this.poseNet.on('pose', function(results) {
-  //       this.poses = results;
-  //       // console.log(poses);
-  //     });
-  //   } // END POSENET
 
   timedPrompt() {
     let self = this;
@@ -115,8 +89,8 @@ class ExternalLibraries {
 
   generatePasscode() {
     if (this.correct) {
-      // this.passcode = int(random(10, 1000000));
-      this.passcode = `0`; // TESTING
+      this.passcode = int(random(10, 1000000));
+      // this.passcode = `0`; // TESTING
       this.correct = false;
     }
     console.log(this.passcode);
