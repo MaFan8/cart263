@@ -378,32 +378,12 @@ function limbo() {
     startedLimbo = 1;
   } else if (startedLimbo == 1) {
     canvasBase.tintBgRed(); // tint Red
-    displayStarGraphics();
     showLevel_1unicorns();
     showLimboRectStart();
+  } else if (startedLimbo == 2) {
+    // display Level_3 Background + graphics
+    playLimbo();
   }
-
-  // // display Level_3 Background + graphics
-  // limboRect.background(0);
-  // displayLimboGraphics();
-  // canvasBase.mousePoint();
-  // translate(
-  //   canvasBase.canvas_3.x + canvasBase.canvas_3.x / 2,
-  //   canvasBase.canvas_3.y + canvasBase.canvas_3.y
-  // );
-  // canvasBase.checkInsideRect();
-  // if (canvasBase.insideLimbo) {
-  //   rotate(canvasBase.limboRectSpeed);
-  //   canvasBase.angleMode = canvasBase.angleMode + canvasBase.limboRectSpeed;
-  // }
-  // // display LimboRect
-  // imageMode(CENTER);
-  // angleMode(DEGREES);
-  // rotate(canvasBase.limboAngle);
-  // image(limboRect, 0, 0);
-  // if (escapedLimbo) {
-  //   repelSpikeLimbo();
-  // }
 } // END LIMBO
 
 // ********** START FUNCTIONS ***************************
@@ -547,6 +527,7 @@ function showLevel_1Graphics() {
     canvasBase.bgOrangeLevel_1.g,
     canvasBase.bgOrangeLevel_1.b
   );
+
   displayStarGraphics();
   level_1Rect.background(
     canvasBase.bgTeal.r,
@@ -579,6 +560,7 @@ function showLevel_1unicorns() {
     canvasBase.bgOrangeLevel_1.g,
     canvasBase.bgOrangeLevel_1.b
   );
+
   displayStarGraphics();
   level_1Rect.background(
     canvasBase.bgTeal.r,
@@ -729,7 +711,9 @@ function level_2Vault() {
     canvasBase.bgRedLevel_3.g,
     canvasBase.bgRedLevel_3.b
   );
-  displayVaultGraphics();
+}
+
+function displayVaultGraphics() {
   textBase.displayKickTimerLevel_2();
   if (!paused) {
     displayVaultGraphics();
@@ -801,6 +785,32 @@ function displayLimboGraphics() {
   }
   alpacaVault.moveRandomImg();
   alpacaVault.displayRandomImgLimbo();
+}
+
+function playLimbo() {
+  limboRect.clear();
+  showLevel_1unicorns();
+  limboRect.background(0);
+  translate(
+    canvasBase.canvas_3.x + canvasBase.canvas_3.x / 2,
+    canvasBase.canvas_3.y + canvasBase.canvas_3.y
+  );
+  displayLimboGraphics();
+  canvasBase.mousePoint();
+
+  canvasBase.checkInsideRect();
+  if (canvasBase.insideLimbo) {
+    rotate(canvasBase.limboRectSpeed);
+    canvasBase.angleMode = canvasBase.angleMode + canvasBase.limboRectSpeed;
+  }
+  // display LimboRect
+  imageMode(CENTER);
+  angleMode(DEGREES);
+  rotate(canvasBase.limboAngle);
+  image(limboRect, 0, 0);
+  if (escapedLimbo) {
+    repelSpikeLimbo();
+  }
 }
 
 function repelSpikeLimbo() {
