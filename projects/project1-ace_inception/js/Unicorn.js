@@ -272,7 +272,7 @@ class Unicorn {
     this.x = random(width);
     this.y = random(height);
     this.angle = random(360);
-    this.scale = random(0.5, 1);
+    this.scale = random(0.2, 1);
     push();
     translate(this.x, this.y);
     angleMode(this.angle);
