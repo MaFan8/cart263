@@ -14,6 +14,27 @@ https://www.talater.com/annyang/
 ResponsiveVoice:
 https://responsivevoice.org/api/
 
+Sounds:
+RyusaWorks - Drip Drop Plop
+https://freesound.org/s/531143/
+Kayasavas87 - Comical Grunts
+https://freesound.org/s/70757/
+mikewest - large rope pulley
+https://freesound.org/s/394222/
+discountrainbows = Fruitloop
+https://freesound.org/people/discountrainbows/sounds/465746/
+Matrixx_ - Portal_01
+https://freesound.org/s/461012/
+Setuniman  - Pomptp q46k
+https://freesound.org/s/149347/
+LittleRobotSoundFactory - Jingle Win Synth 01
+https://freesound.org/s/274179/
+andersmmg - Ding2
+https://freesound.org/s/523425/
+suntemple - Acvess DENIED
+https://freesound.org/s/249300/
+
+
 References:
 Daniel Shiffman - Starfield
 http://codingtra.in
@@ -43,7 +64,7 @@ const VAULT_IMG = `assets/images/vault.png`;
 const FIST_DIAGRAM_IMG = `assets/images/fistdiagram.png`;
 const FIST_IMG = `assets/images/fist.png`;
 
-let state = `start`; // start, level_1, level_2, limbo, end
+let state = `level_2`; // start, level_1, level_2, limbo, end
 
 // Level variables
 let startedLevel_1 = 0; // 0, 1, 2
@@ -71,6 +92,22 @@ let pose;
 let poses = [];
 let name;
 let insctructionSpoken = false;
+
+// sound variables
+let isPlayingSound = false;
+let fruitloop;
+let enterDream;
+let pauseSound;
+let levelUp;
+let monkey;
+let ding;
+let wrongAnswer;
+let dailSound;
+let dailTurn;
+let limboSound;
+let ahhSound;
+
+
 
 // Text variables
 let textBase;
@@ -144,10 +181,25 @@ function preload() {
   vaultImg = loadImage(`${VAULT_IMG}`);
   fistDiagramImg = loadImage(`${FIST_DIAGRAM_IMG}`);
   fistImg = loadImage(`${FIST_IMG}`);
+
+  // Sounds
+  fruitloop = loadSound(`assets/sounds/fruitloop.wav`);
+  enterDream = loadSound(`assets/sounds/enter.wav`);
+  pauseSound = loadSound(`assets/sounds/pause.wav`);
+  levelUp = loadSound(`assets/sounds/levelup.wav`);
+  monkey = loadSound(`assets/sounds/ritomonkey.wav`);
+  ding = loadSound(`assets/sounds/ding.wav`);
+  dailSound = loadSound(`assets/sounds/dail.wav`);
+  wrongAnswer = loadSound(`assets/sounds/wronganswer.wav`);
+  dailTurn = loadSound(`assets/sounds/dailturn.wav`);
+  limboSound = loadSound(`assets/sounds/limbo.wav`);
+  ahhSound = loadSound(`assets/sounds/ahh.wav`);
+
 } // END PRELOAD
 
 // SETUP
 function setup() {
+  fruitloop.loop(0, 1.2, 1); // start game sound
   // create canvas & background
   canvasBase = new CanvasAndBg();
   canvasBase.canvasStart();
@@ -373,6 +425,7 @@ function level_2() {
 // LIMBO
 function limbo() {
   if (startedLimbo === 0) {
+    fruitloop.loop(0, 0.9, 1); // play game sound
     // display Start Background + Graphics
     background(
       canvasBase.bgOrangeLevel_1.r,
@@ -452,14 +505,6 @@ function displayStarGraphics() {
 }
 
 function level_1Play() {
-  // background(
-  //   canvasBase.bgOrange.r,
-  //   canvasBase.bgOrange.g,
-  //   canvasBase.bgOrange.b
-  // );
-  // canvasBase.tintBgOrange();
-  // displayStarGraphics();
-  //reset rect_1
   level_1Rect.clear();
   level_1Rect.background(
     canvasBase.bgTeal.r,
@@ -485,6 +530,7 @@ function showUnicornsFront() {
   for (let i = 0; i < unicornsFront.length; i++) {
     let unicornFront = unicornsFront[i];
     unicornFront.move();
+
     // check if unicorn touches user
     let d = dist(
       unicornFront.x,
@@ -493,12 +539,14 @@ function showUnicornsFront() {
       user.y - unicornFront.safeDist
     );
     if (d < unicornFront.safeDist && unicornFront.isTouched === false) {
+      monkey.play();
       textBase.attemptsLeft -= 1;
       unicornFront.isTouched = true;
     }
     if (textBase.attemptsLeft <= 0) {
       state = `limbo`;
     }
+
     unicornFront.moveWrap();
     unicornFront.display();
   }
@@ -515,7 +563,9 @@ function showUnicornAceFront() {
       user.y - unicornAceFront.safeDist
     );
     if (d < unicornAceFront.safeDist) {
+      levelUp.play(0,1);
       poseNet.removeListener("pose", callback);
+      video.pause();
       state = `level_2`;
     }
   }
@@ -610,8 +660,9 @@ function level_2GetPasscode() {
   // then if name is correct, show password and speak confirmation of retrieval
   else if (extLibrary.correct && !extLibrary.passcodeSet) {
     setTimeout(function () {
+      ding.play(0,1, 1);// play ding sound
       extLibrary.generatePasscode(); // generate passcode and display
-      // start 10s countdown
+      // start 5s countdown
       let counter = 5;
       let timerInterval = setInterval(function () {
         textBase.updateTimer(counter); // update timer text
@@ -646,6 +697,7 @@ function level_2GetPasscode() {
   image(level_2Rect, canvasBase.canvas_2.x, canvasBase.canvas_2.y);
   // if timer is at 1
   if (textBase.timer === 1) {
+    fruitloop.loop(0, 1.2, 1); // start game sound
     responsiveVoice.pause(); // pause responsiveVoice
     startedLevel_2 = 3;
   }
@@ -672,15 +724,19 @@ function level_2Play() {
     textBase.displayChosenNumber(); // display chosen number
     // Check if passcode matches with stored passcode
     if (textBase.stringTest === str(extLibrary.passcode)) {
+      levelUp.play(0,1); //play level up Sound
       vault.enter = true; // enter vault
+      extLibrary.speakWelcome();// speak Welcome
       // switch state after 3s
       setTimeout(function () {
         poseNet.removeListener("pose", callback); // Stop Posenet from detecting poses
-        video.stop();
+        video.pause();
+        video.stop(); // doesn't seem either one works...
         startedLevel_2 = 4;
       }, 3000);
     } else {
       if (chosenNumbers.length === chosenNumLength) {
+        limboSound.play(0,1.1, 0.8); // play limboSound
         // switch state after 3s
         setTimeout(function () {
           state = `limbo`;
@@ -729,12 +785,11 @@ displayVaultGraphics();
     displayVaultGraphics();
     textBase.kickTimer -= 0.1;
   }
-  // else {
-  //   textBase.displayKickTimerLevel_2();
-  // }
   if (paused && textBase.kickTimer >= 0) {
+    ahhSound.play(0,1, 1); // play relief sound
     repelSpike();
   } else if (textBase.kickTimer <= 0) {
+    limboSound.play(0,1.1, 0.8); // play limboSound
     state = `limbo`;
   }
 }
@@ -760,6 +815,7 @@ function repelSpike() {
       (alpacaVault.randomImgY - dopeySpike.randomImgY) / 20;
 
     if (dopeySpike.imgOffScreen) {
+      ahhSound.play(0,1, 1); // play relief sound
       dopeySpikes.splice(i, 1);
       if (i <= 0) {
         // switch state after 3s
@@ -827,11 +883,11 @@ function playLimbo() {
 function repelSpikeLimbo() {
   for (let i = 0; i < dopeySpikes.length; i++) {
     let dopeySpike = dopeySpikes[i];
-    // dopeySpike.chase = true;
     dopeySpike.limboImgX -= (alpacaVault.limboImgX - dopeySpike.limboImgX) / 20;
     dopeySpike.limboImgY -= (alpacaVault.limboImgY - dopeySpike.limboImgY) / 20;
 
     if (dopeySpike.offScreen) {
+      ahhSound.play(0,1, 1); // play relief sound
       dopeySpikes.splice(i, 1);
       if (i <= 0) {
         // switch state after 3s
@@ -879,20 +935,26 @@ function keyPressed() {
   }
   if (state === `level_1`) {
     if (startedLevel_1 === 1 && keyCode === 32) {
+      enterDream.play(0, 1.2, 0.3); // play enter sound
       startedLevel_1 = 2;
       inPlay = true;
     } else if (startedLevel_1 === 2 && keyCode === 32) {
+      pauseSound.play(0,1); //play pause sound
       inPlay = !inPlay; // pause
     }
   }
   if (state === `level_2`) {
     if (startedLevel_2 === 1 && keyCode === 32) {
+      enterDream.play(0, 1.2, 0.3); // play enter sound
+      fruitloop.pause(); //pause game sound
       startedLevel_2 = 2;
       inPlay = true;
       extLibrary.timedPrompt();
     } else if (startedLevel_2 === 2 && keyCode === 32) {
+      pauseSound.play(0,1); //play pause sound
       inPlay = !inPlay; // pause
     } else if (startedLevel_2 === 4 && keyCode === 32) {
+      enterDream.play(0, 1.2, 0.3); // play enter sound
       startedLevel_2 = 5;
       textBase.infoShown = true;
       paused = false;
@@ -900,21 +962,21 @@ function keyPressed() {
   }
   if (state === `limbo`) {
     if (startedLimbo === 1 && keyCode === 32) {
+      enterDream.play(0, 1.3, 0.4); // play enter sound
       startedLimbo = 2;
     }
-  }
-
-  // // // for testing
-  if (keyCode === UP_ARROW) {
-    video.stop();
-    console.log(video)
   }
 
   if (keyCode === ENTER) {
     textBase.set = true;
     if (chosenNumbers.length <= chosenNumLength) {
       chosenNumbers.push(textBase.curIndex);
+      dailSound.play();
     }
+  }
+
+  if (keyCode === UP_ARROW) {
+    state = `limbo`;
   }
 }
 

@@ -78,12 +78,14 @@ class ExternalLibraries {
     // else every wrong answer counts down from 3 attempts
     else {
       this.attemptsLeft -= 1;
+      wrongAnswer.play(0,1.1, 0.8); // play wrongAnswer sound
       this.correct = false;
     }
     // speak Denied if there are no more attempts left
     if (this.attemptsLeft <= 0) {
       this.speakDenied(self);
       annyang.abort(); // stop Annyang
+      limboSound.play(0,1.1, 0.8); // play limboSound
     }
   }
 
@@ -164,4 +166,15 @@ class ExternalLibraries {
     level_2Rect.pop();
   }
   // END RETREIVED FUNCTIONS
+
+  // WELCOME FUNCTIONS
+  speakWelcome() {
+    let promptRetrieved = `WELCOME... FUZZY`;
+    responsiveVoice.speak(promptRetrieved, "US English Female", {
+      pitch: 0,
+      rate: 1,
+      volume: 0.5,
+
+    });
+  }
 }

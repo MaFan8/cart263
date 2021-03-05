@@ -126,7 +126,7 @@ class CanvasAndBg {
       mouseY - this.canvas_3.y < limboRect.height
     ) {
       this.insideLimbo = true;
-      this.limboRectSpeed += 2;
+      this.limboRectSpeed += 2.5;
     }
   }
 
