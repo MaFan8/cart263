@@ -1,9 +1,6 @@
 class ExternalLibraries {
   constructor() {
-    // annyang
     this.name;
-
-    //
     this.instructionSpoken = false;
     this.voiceInstruction;
     this.voiceDenied;
@@ -14,12 +11,10 @@ class ExternalLibraries {
     this.passcodeSet = false;
     this.failed = false;
     this.passcode = ``;
-
-    //
     this.setSpoken = false;
   }
 
-
+  // prompt set to start after 2s
   timedPrompt() {
     let self = this;
     setTimeout(function () {
@@ -27,6 +22,7 @@ class ExternalLibraries {
     }, 2000);
   }
 
+  // Ask for NAME prompt and load Annyang onend
   speakNamePrompt(self) {
     let promptName = `Declare your name.`;
     responsiveVoice.speak(promptName, "US English Female", {
@@ -51,6 +47,7 @@ class ExternalLibraries {
     });
   }
 
+
   showVoiceInstruction() {
     level_2Rect.push();
     level_2Rect.fill(255);
@@ -65,14 +62,15 @@ class ExternalLibraries {
     level_2Rect.pop();
   }
 
+  // set soken name to Annyang
   setName(name) {
     this.instructionSpoken = true;
-    this.currentNameAnswer = name.toUpperCase();
+    this.currentNameAnswer = name.toUpperCase(); // chang eto upperCase
     // if name spoken if right, then set speak confirmation and generate passcode
     if (this.currentNameAnswer === `FUZZY'S`) {
       annyang.abort(); // stop Annyang
       this.speakRetrieved(self);
-      this.currentNameAnswer = `FUZZY`;
+      this.currentNameAnswer = `FUZZY`; // change display
       this.correct = true;
     }
     // else every wrong answer counts down from 3 attempts
@@ -89,15 +87,17 @@ class ExternalLibraries {
     }
   }
 
+  // generate password
   generatePasscode() {
     if (this.correct) {
       this.passcode = int(random(10, 1000000));
       // this.passcode = `0`; // TESTING
       this.correct = false;
     }
-    console.log(this.passcode);
+    // console.log(this.passcode);
   }
 
+  // display attempts makde
   displayAttempts() {
     level_2Rect.push();
     level_2Rect.fill(255);
@@ -174,7 +174,6 @@ class ExternalLibraries {
       pitch: 0,
       rate: 1,
       volume: 0.5,
-
     });
   }
 }

@@ -1,13 +1,6 @@
 class CanvasAndBg {
   constructor() {
-    //canvas
     this.canvas_0 = createCanvas(1200, 800);
-    // this.canvas_0 = {
-    //   w: 1200,
-    //   h: 800,
-    //   x: 0,
-    //   y: 0,
-    // };
     this.canvas_1 = {
       w: 1000,
       h: 600,
@@ -69,46 +62,26 @@ class CanvasAndBg {
   tintBgOrange() {
     this.bgOrange.r += -1;
     this.bgOrange.g += -1;
-    this.bgOrange.r = constrain(
-      this.bgOrange.r,
-      this.bgOrangeLevel_1.r,
-      this.bgOrange.r
-    );
-    this.bgOrange.g = constrain(
-      this.bgOrange.g,
-      this.bgOrangeLevel_1.g,
-      this.bgOrange.g
-    );
+    this.bgOrange.r = constrain(this.bgOrange.r, this.bgOrangeLevel_1.r,
+      this.bgOrange.r);
+    this.bgOrange.g = constrain(this.bgOrange.g, this.bgOrangeLevel_1.g,
+      this.bgOrange.g);
   }
 
   brightBgOrange() {
     this.bgOrangeLevel_1.r += 1;
     this.bgOrangeLevel_1.g += 1;
-    this.bgOrangeLevel_1.r = constrain(
-      this.bgOrangeLevel_1.r,
-      this.bgOrange.r,
-      this.bgOrangeLevel_1.r
-    );
-    this.bgOrangeLevel_1.g = constrain(
-      this.bgOrangeLevel_1.g,
-      this.bgOrange.g,
-      this.bgOrangeLevel_1.g
-    );
+    this.bgOrangeLevel_1.r = constrain( his.bgOrangeLevel_1.r, this.bgOrange.r,
+      this.bgOrangeLevel_1.r);
+    this.bgOrangeLevel_1.g = constrain( this.bgOrangeLevel_1.g, this.bgOrange.g,
+      this.bgOrangeLevel_1.g);
   }
 
   tintBgTeal() {
     this.bgTeal.g += -1;
     this.bgTeal.b += -1;
-    this.bgTeal.g = constrain(
-      this.bgTeal.g,
-      this.bgTealLevel_2.g,
-      this.bgTeal.g
-    );
-    this.bgTeal.b = constrain(
-      this.bgTeal.b,
-      this.bgTealLevel_2.b,
-      this.bgTeal.b
-    );
+    this.bgTeal.g = constrain(this.bgTeal.g, this.bgTealLevel_2.g, this.bgTeal.g);
+    this.bgTeal.b = constrain(this.bgTeal.b, this.bgTealLevel_2.b, this.bgTeal.b);
   }
 
   tintBgRed() {

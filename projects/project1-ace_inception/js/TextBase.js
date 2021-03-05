@@ -84,7 +84,6 @@ class TextBase {
 
     // end variables
     this.endTitle = `AMAYYAZING!!`;
-
     // END TEXT
 
     // main parameters
@@ -252,16 +251,16 @@ class TextBase {
     level_2Rect.pop();
   }
 
+  // VAULT monitor setup
   displayNumber() {
+    // background
     level_2Rect.push();
     level_2Rect.fill(0);
     level_2Rect.rectMode(CENTER);
-    level_2Rect.rect(
-      level_2Rect.width / 2,
-      level_2Rect.height - 65,
-      level_2Rect.width / 2,
-      this.screenHeight
-    );
+    level_2Rect.rect( level_2Rect.width / 2, level_2Rect.height - 65,
+      level_2Rect.width / 2, this.screenHeight);
+
+    // number display
     level_2Rect.pop();
     level_2Rect.fill(255);
     level_2Rect.textFont(`monospace`);
@@ -269,15 +268,13 @@ class TextBase {
     level_2Rect.textAlign(CENTER, RIGHT);
     level_2Rect.text(
       this.sourceText.substring(this.curIndex, this.curIndex + 1),
-      level_2Rect.width / 2,
-      level_2Rect.height / 2
-    );
+      level_2Rect.width / 2, level_2Rect.height / 2);
     level_2Rect.push();
     level_2Rect.fill(200);
     level_2Rect.textSize(20);
     level_2Rect.text(this.hint, level_2Rect.width / 2, level_2Rect.height - 10);
     level_2Rect.pop();
-
+    // adjust number displayed
     if (this.curIndex > this.sourceText.length - 1) {
       this.curIndex = 0;
     }
@@ -286,6 +283,7 @@ class TextBase {
     }
   }
 
+  // use Dail to adust number
   checkDail(vault) {
     if (vault.add) {
       frameRate(5);
@@ -298,6 +296,7 @@ class TextBase {
     }
   }
 
+  // Chosen numbers
   displayChosenNumber() {
     // to display numbers in string
     this.textString = ``;
@@ -313,27 +312,22 @@ class TextBase {
     level_2Rect.textFont(`courier`);
     level_2Rect.textSize(40);
     level_2Rect.textAlign(CENTER);
-    level_2Rect.text(
-      this.textString,
-      level_2Rect.width / 2 + 10,
-      level_2Rect.height - this.screenHeight
-    );
+    level_2Rect.text( this.textString, level_2Rect.width / 2 + 10,
+      level_2Rect.height - this.screenHeight);
   }
 
+
   displayVaultText() {
+    level_2Rect.textFont(`courier`);
     // frame
     level_2Rect.push();
     level_2Rect.fill(128, 190);
     level_2Rect.rectMode(CENTER);
     level_2Rect.noStroke();
-    level_2Rect.rect(
-      level_2Rect.width / 2,
-      level_2Rect.height / 2 - 50,
-      level_2Rect.width / 1.2,
-      level_2Rect.height / 1.5
-    );
+    level_2Rect.rect(level_2Rect.width / 2, level_2Rect.height / 2 - 50,
+      level_2Rect.width / 1.2, level_2Rect.height / 1.5);
     level_2Rect.pop();
-    level_2Rect.textFont(`courier`);
+
     // Vault Title
     level_2Rect.push();
     level_2Rect.fill(this.fill5.r, this.fill5.g, this.fill5.b);
@@ -341,25 +335,19 @@ class TextBase {
     level_2Rect.textSize(this.size);
     level_2Rect.textStyle(BOLD);
     level_2Rect.textAlign(CENTER);
-    level_2Rect.text(
-      this.kickTitle,
-      level_2Rect.width / 2,
-      level_2Rect.height / 6
-    );
+    level_2Rect.text(this.kickTitle, level_2Rect.width / 2, level_2Rect.height / 6);
     level_2Rect.pop();
+
     // Vault Text
     level_2Rect.push();
     level_2Rect.fill(0);
     level_2Rect.textSize(this.size - 10);
     level_2Rect.textAlign(LEFT);
-    level_2Rect.text(
-      this.kickText,
-      level_2Rect.width / 8,
-      level_2Rect.height / 4,
-      level_2Rect.width / 1.3
-    );
+    level_2Rect.text(this.kickText, level_2Rect.width / 8, level_2Rect.height / 4,
+      level_2Rect.width / 1.3);
     level_2Rect.pop();
 
+    // Pause text
     push();
     fill(255 + sin(frameCount * 0.05) * 128);
     textAlign(CENTER, CENTER);
@@ -368,6 +356,7 @@ class TextBase {
     pop();
   }
 
+  // Display timer to leave Vault
   displayKickTimerLevel_2() {
     if (this.kickTimer <= 2000) {
       level_2Rect.fill(255);
@@ -375,9 +364,12 @@ class TextBase {
       level_2Rect.text(`Time: ${Math.floor(this.kickTimer)}`, 120, 50);
     }
   }
+
   // END LEVEL_2 FUNCTIONS
 
+
   // START LIMBO FUNCTIONS
+  
   displayLimboText() {
     limboRect.textFont(`courier`);
     // title
