@@ -49,7 +49,7 @@ class TextBase {
     // start state text
     this.title = `ACE INCEPTION`;
     this.startInfo = `Ace doesn't sanction his pet Spike's\nlove interest. Help infiltrate Ace's\nsubconsious and implant acceptance of Spike's and Fuzzy's love.`;
-    this.startTips = `* In order to achieve inception, you MUST...\n  1. Pass through Ace's 1st dream state.\n  2. Establish inception as Fuzzy in his 2nd state.\n  3. Escape his subconsious by preforming \n    kicks in both states.\n  ** If you die in a dream state, you will lost \n     in limbo...`;
+    this.startTips = `* In order to achieve inception, you MUST...\n  1. Pass through Ace's 1st dream state.\n  2. Establish inception as Fuzzy in his 2nd state.\n  3. Escape his subconsious by preforming \n    kicks in both states.\n  ** If you die in a dream state, you will\nbe lost in limbo...`;
 
     // level_1 text
     this.level_1Title = `INITIAL DREAM STATE`;
@@ -369,7 +369,7 @@ class TextBase {
 
 
   // START LIMBO FUNCTIONS
-  
+
   displayLimboText() {
     limboRect.textFont(`courier`);
     // title
