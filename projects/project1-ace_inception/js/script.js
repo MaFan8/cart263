@@ -761,7 +761,7 @@ function repelSpike() {
       if (i <= 0) {
         setTimeout(function () {
           state = `end`;
-        }, 3000);
+        }, 5000);
       }
     }
   }
