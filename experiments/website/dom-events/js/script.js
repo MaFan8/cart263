@@ -79,6 +79,8 @@ document.addEventListener(`keydown`, function(event) {
   paragraph.innerText = paragraph.innerText + event.key; // adds key typed
 });
 
-document.addEventListener(`offline`, function(event) {
+// OFFLINE
+let mainHeading = document.getElementById(`main-heading`);
+window.addEventListener(`offline`, function(event) {
   mainHeading.innerText = `:(`;
 });
