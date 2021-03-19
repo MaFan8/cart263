@@ -1,16 +1,17 @@
-#secret-document {
+body {
+  background-color: black;
+  color: white;
+}
+
+#cultural-document {
   font-family: monospace;
   font-size: 1.25rem;
-  width: 50vw;
+  width: 70vw;
+  padding-top: 5vw;
   margin: auto;
 }
 
-.redacted {
-  background-color: black;
-  user-select: none;
-}
-
 .revealed {
-  color: red;
-  text-decoration: underline;
+  color: white;
+  /* text-decoration: underline; */
 }
