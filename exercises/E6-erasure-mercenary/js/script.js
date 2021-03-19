@@ -1,7 +1,7 @@
 "use strict";
 
-const REVEAL_PROBABLILITY = 0.1;
-const ERASE_PROBABILITY = 0.05;
+const ERASE_PROBABLILITY = 0.003;
+const SPAN_PROBABILITY = 0.1;
 const UPDATE_FREQUENCY = 2500;
 const SHAKESPEARE_URL = `https://raw.githubusercontent.com/dariusk/corpora/master/data/words/literature/shakespeare_phrases.json`;
 const NUM_LINES = 50;
@@ -23,13 +23,14 @@ function displayJSON(index, value) {
   for (let i = 0; i < NUM_LINES; i++) {
     let randomLine = Math.floor(lines.length * Math.random());
 
-    // randomly wrap span tags onto lines 12% of the time
-    let r = Math.random();
-    if (r < ERASE_PROBABILITY) {
-      outputLine = outputLine + "<span>" + lines[randomLine].trim() + "</span>" + ".\n";
-    } else {
-      outputLine = outputLine + lines[randomLine].trim() + ".\n";
-    }
+    outputLine = outputLine + "<span>" + lines[randomLine].trim() + "</span>" + ".\n";
+    // // randomly wrap span tags onto lines 12% of the time
+    // let r = Math.random();
+    // if (r < SPAN_PROBABILITY) {
+    //   outputLine = outputLine + "<span>" + lines[randomLine].trim() + "</span>" + ".\n";
+    // } else {
+    //   outputLine = outputLine + lines[randomLine].trim() + ".\n";
+    // }
   }
 
   $(`#paragraph-1`).html(outputLine); // add html elements onto 'p' tags
@@ -41,11 +42,11 @@ function revelation() {
 }
 
 function attemptErase() {
-  // replace text with an input field 10% of the time
+  // replace text with an input field 3% of the time
   let r = Math.random();
-  if (r < REVEAL_PROBABLILITY) {
+  if (r < ERASE_PROBABLILITY) {
     // change text color to red, then fadeOut
-    $(this).css('color', 'red').fadeOut(5000, function() {
+    $(this).css('color', 'red').fadeOut(8000, function() {
       // remove revealed class, change to text string
       $(this).removeClass(`revealed`);
       let textString = $(this).text();
@@ -71,7 +72,7 @@ function enterInput() {
       $(this).replaceWith(userInput);
     } else {
       // if wrong, text will be red
-      let userInput = "<span style = 'color:red'>" + $(this).val() + "</span>";
+      let userInput = "<span style = 'color:yellow'>" + $(this).val() + "</span>";
       $(this).replaceWith(userInput);
     }
   }
