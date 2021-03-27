@@ -19,7 +19,7 @@ let config = {
   // Finally, the scene property has an array of the different scenes
   // in our game, with the one listed first being loaded automatically
   // Right now we don't have a scene to load, so let's leave it empty
-  scene: []
+  scene: [Boot, Play]
 };
 
 // Here we actually create the game using this configuration!
