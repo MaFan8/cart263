@@ -10,9 +10,12 @@ class Play extends Phaser.Scene {
     this.avatar = this.physics.add.sprite(400, 400, `avatar`);
     this.avatar.setCollideWorldBounds(true);
 
-    let x = Math.random() * this.sys.canvas.width;
-    let y = Math.random() * this.sys.canvas.height;
-    this.sadness = this.physics.add.sprite(x, y, `thumbs-down`);
+    // Create a emoji in a random position
+    // let x = Math.random() * this.sys.canvas.width;
+    // let y = Math.random() * this.sys.canvas.height;
+    // this.sadness = this.physics.add.sprite(x, y, `thumbs-down`);
+    this.sadness = this.physics.add.sprite(0, 0, `thumbs-down`);
+    Phaser.Actions.RandomRectangle([this.sadness], this.physics.world.bounds);
 
     this.happiness = this.physics.add.group({
       key: `thumbs-up`,
@@ -34,9 +37,12 @@ class Play extends Phaser.Scene {
   }
 
   getSad(avatar, sadness) {
-    let x = Math.random() * this.sys.canvas.width;
-    let y = Math.random() * this.sys.canvas.height;
-    this.sadness.setPosition(x, y);
+    // let x = Math.random() * this.sys.canvas.width;
+    // let y = Math.random() * this.sys.canvas.height;
+    // this.sadness.setPosition(x, y);
+    // Note how we can use RandomRectangle() again here if we put the object we want
+    // to reposition randomly in an array!
+    Phaser.Actions.RandomRectangle([sadness], this.physics.world.bounds);
   }
 
   update() {
