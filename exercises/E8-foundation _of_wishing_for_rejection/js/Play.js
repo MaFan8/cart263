@@ -25,7 +25,12 @@ class Play extends Phaser.Scene {
     });
      // Phaser.Actions.RandomRectangle(this.happiness.getChildren(), this.physics.world.bounds);
 
-    this.physics.add.overlap(this.avatar, this.sadness, this.getSad, null, this);
+     this.emitter = this.add.emitter(this.physics.world.centerX, 200,200);
+     this.emitter.makeParticles(`thumbs-up`);
+
+     this.emitter.start(false, 5000, 20);
+
+    // this.physics.add.overlap(this.avatar, this.sadness, this.getSad, null, this);
     this.physics.add.collider(this.avatar, this.happiness);
     this.physics.add.collider(this.sadness, this.happiness);
     this.physics.add.collider(this.happiness, this.happiness);
