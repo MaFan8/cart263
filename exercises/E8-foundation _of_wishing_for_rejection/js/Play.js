@@ -1,3 +1,7 @@
+let anim;
+//https://phaser.io/examples/v3/view/game-objects/particle-emitter/custom-particles#
+//https://phaser.io/examples/v3/view/game-objects/particle-emitter/fire-max-10-particles#
+//https://photonstorm.github.io/phaser3-docs/Phaser.GameObjects.Particles.ParticleEmitterManager.html
 class Play extends Phaser.Scene {
   constructor () {
     super({
@@ -23,12 +27,73 @@ class Play extends Phaser.Scene {
       dragX: 50,
       dragY: 50
     });
+
+
+    this.config = {
+        key: 'walk',
+        frames: this.anims.generateFrameNumbers('mummy'),
+        frameRate: 18,
+        repeat: -1
+    };
+
+    //need an animation for the particles...
+
+    anim = this.anims.create(this.config);
+
+     this.particles = this.add.particles(`thumbs-up`);
+     this.particlesTwo = this.add.particles(`thumbs-down`);
+
+
+       // this.emitter = this.particles.createEmitter({
+       //         x: 100,
+       //         y: 100,
+       //         frame: 0,
+       //         quantity: 1,
+       //         frequency: 200,
+       //         angle: { min: 0, max: 30 },
+       //         speed: 200,
+       //         gravityY: 100,
+       //         lifespan: { min: 1000, max: 2000 },
+       //         particleClass: AnimatedParticle
+       //     });
+
+           this.emitter  = this.particles.createEmitter({
+                   alpha: { start: 1, end: 0 },
+                   scale: { start: 0.5, end: 2.5 },
+                   //tint: { start: 0xff945e, end: 0xff945e },
+                   speed: 20,
+                   accelerationY: -200,
+                   angle: { min: -85, max: -95 },
+                   rotate: { min: 180, max: 180 },
+                   lifespan: { min: 1000, max: 1100 },
+                   // blendMode: 'ADD',
+                   frequency: 110,
+                   maxParticles: 10,
+                   x: 400,
+                   y: 300
+               });
+
+           // this.emittertwo  = this.particlesTwo.createEmitter({
+           //         alpha: { start: 1, end: 0 },
+           //         scale: { start: 0.5, end: 2.5 },
+           //         //tint: { start: 0xff945e, end: 0xff945e },
+           //         speed: 20,
+           //         accelerationY: -300,
+           //         angle: { min: -85, max: -95 },
+           //         rotate: { min: -180, max: 180 },
+           //         lifespan: { min: 1000, max: 1100 },
+           //         blendMode: 'ADD',
+           //         frequency: 110,
+           //         maxParticles: 10,
+           //         x: 400,
+           //         y: 300
+           //     });
+
+
+
      // Phaser.Actions.RandomRectangle(this.happiness.getChildren(), this.physics.world.bounds);
 
-     this.emitter = this.add.emitter(this.physics.world.centerX, 200,200);
-     this.emitter.makeParticles(`thumbs-up`);
 
-     this.emitter.start(false, 5000, 20);
 
     // this.physics.add.overlap(this.avatar, this.sadness, this.getSad, null, this);
     this.physics.add.collider(this.avatar, this.happiness);
@@ -49,6 +114,7 @@ class Play extends Phaser.Scene {
 
   update() {
     this.handleInput();
+    //this.rt.draw(this.particles, 0, 0);
   }
 
   handleInput() {
@@ -73,4 +139,40 @@ class Play extends Phaser.Scene {
       this.avatar.setAcceleration(0);
     }
   }
+}
+
+
+//CUSTOM CLASS///
+class AnimatedParticle extends Phaser.GameObjects.Particles.Particle
+{
+    constructor (emitter)
+    {
+        super(emitter);
+
+        this.t = 0;
+        this.i = 0;
+    }
+
+    update (delta, step, processors)
+    {
+        let result = super.update(delta, step, processors);
+
+        this.t += delta;
+
+        if (this.t >= anim.msPerFrame)
+        {
+            this.i++;
+
+            if (this.i > 17)
+            {
+                this.i = 0;
+            }
+            //update the frame.
+            this.frame = anim.frames[this.i].frame;
+
+            this.t -= anim.msPerFrame;
+        }
+
+        return result;
+    }
 }
